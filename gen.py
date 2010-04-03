@@ -49,24 +49,18 @@ directives.register_directive('code-block', pygments_directive)
 
 # Call the docutils publisher to render the input as html::
 import os
+import sys
 from mako.lookup import TemplateLookup
 loader = TemplateLookup(directories=['./templates'], output_encoding='utf-8')
 listtpl = loader.get_template('list_tpl.mako')
 indextpl = loader.get_template('index_tpl.mako')
 
 path = './src/'
-namelist = []
-for filename in os.listdir(path):
-    if filename.endswith('.txt'):
-        fullpath = os.path.join(path, filename)
-        parts = dict2obj(publish_parts(source=open(fullpath).read(), writer_name='html', settings_overrides={'initial_header_level': 2, 'language_code':'zh_cn'}))
-        content = listtpl.render(c=parts)
+fullpath = sys.argv[1]
+parts = dict2obj(publish_parts(source=open(fullpath).read(), writer_name='html', settings_overrides={'initial_header_level': 2, 'language_code':'zh_cn'}))
+content = listtpl.render(c=parts)
 
-        basename = os.path.splitext(filename)[0]
-        destname = os.path.join('./html/',basename+'.html')
-        open(destname, 'w').write(content)
-        print destname
-        namelist.append(fullpath)
-
-#content = indextpl.render(c=namelist)
-#open('html/index.html', 'w').write(content)
+basename = os.path.splitext(os.path.basename(fullpath))[0]
+destname = os.path.join('./html/',basename+'.html')
+open(destname, 'w').write(content)
+print destname
