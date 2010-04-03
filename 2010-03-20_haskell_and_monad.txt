@@ -1,0 +1,58 @@
+==========================
+对 haskell 与 monad 的理解
+==========================
+
+.. 目录::
+
+haskell作为纯函数式语言如何处理IO
+---------------------------------
+
+并不是真正的处理，只是通过类型系统将跟IO相关的“不纯”的代码和其他纯函数式代码隔离开。通过编译期类型检查进行保证。
+
+具体实现就是通过叫 IO 的 type constructor [io]_ ，而这个 IO 就是 Monad 的一种。
+
+Monad是什么
+-----------
+
+在数学上Monad是一门处理状态转换的数学理论。
+
+对于haskell来说，Monad 就是一个 type class [monad]_ ，这个 type class 定义了一组接口，前面说的 IO 就是实现了这组接口的实例。
+
+.. code-block:: haskell
+
+  class Monad m where
+      (>>=) :: forall a b. m a -> (a -> m b) -> m b
+      (>>) :: forall a b. m a -> m b -> m b
+      return :: a -> m a
+      fail :: String -> m a
+
+这些接口目的何在
+----------------
+
+.. code-block:: haskell
+
+  foo,bar :: String->IO String
+  foo msg = return ("foo "++msg)
+  bar msg = return ("bar "++msg)
+
+  main = do
+      foo "world"
+      name <- getLine
+      bar name
+
+上面的do语法糖扩展出来实际上是下面这样：
+
+.. code-block:: haskell
+
+  foo "world" >>= 
+    (\_ ->
+      getLine >>=
+        (\name ->
+          bar name)))
+
+这些接口的目的就在于保证操作的顺序执行，也就是说实现了这些接口的类型，使用do语法就可以编写顺序执行的语句了。
+
+haskell 的 IO 类型就是利用这点保证IO操作的顺序执行，并通过类型系统将涉及IO和不涉及IO操作的函数清晰地区别开来。
+
+.. [io] http://www.haskell.org/ghc/docs/latest/html/libraries/base/System-IO.html
+.. [monad] http://www.haskell.org/ghc/docs/latest/html/libraries/base/Control-Monad.html

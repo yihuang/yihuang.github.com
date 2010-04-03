@@ -1,0 +1,48 @@
+===========
+A*算法证明
+===========
+
+定理
+----
+
+A* 算法找到的第一条路径就是最短路径
+
+算法描述
+--------
+
+.. code-block:: python
+
+    from heapq import heappop,heappush
+    openset = [start]
+    closeset = set()
+    while openset:
+        node = heappop(openset)
+        if node==target:
+            return node
+        if node.pos in closeset:
+            continue
+        closeset.add(node.pos)
+        for child in node.children():
+            child.hsrc = node.hsrc + 1
+            child.htarget = calc_hvalue(child, target)
+            child.hvalue = child.hsrc + child.htarget
+            # sort by hvalue
+            heappush(openset, child) 
+
+其中 calc_hvalue 计算节点到目标最短路径长度的估计值，其结果 <= 实际的最短路径长度。
+
+证明
+----
+
+证明(反证法)：
+
+    假设通过A*算法首先找到了路径 p 来到终点，而 p 并非真正的最短路径；
+
+    那么根据算法描述，target.hvalue==len(p) ；
+    
+    再假设真正最短路径A为：n1,n2,n3,...,ni,...,nm，那么A中必有节点还在openset中未被访问，假设离起点最远的一个节点为 ni；
+
+    首先按照算法对启发函数的要求 ni.hvalue<=len(A)<len(p)=target.hvalue，也就是说 ni.hvalue<target.hvalue，按照算法描述，应该先访问 ni 节点而不是 target 节点；
+    
+    产生矛盾，故原算法正确。
+
