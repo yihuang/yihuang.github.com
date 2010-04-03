@@ -48,21 +48,25 @@ pygments_directive.content = 1
 directives.register_directive('code-block', pygments_directive)
 
 # Call the docutils publisher to render the input as html::
-
-import sys
-#filename = sys.argv[1]
-filename = '2010-03-20_haskell_and_monad.txt'
-source = open(filename).read()
-parts = dict2obj(publish_parts(source=source, writer_name='html', settings_overrides={'initial_header_level': 2, 'language_code':'zh_cn'}))
-
-#import pdb;pdb.set_trace()
-
+import os
 from mako.lookup import TemplateLookup
 loader = TemplateLookup(directories=['./templates'], output_encoding='utf-8')
-tpl = loader.get_template('list_tpl.mako')
-content = tpl.render(c=parts)
+listtpl = loader.get_template('list_tpl.mako')
+indextpl = loader.get_template('index_tpl.mako')
 
-import os
-destname = './html/'+os.path.basename(filename)+'.html'
-open(destname, 'w').write(content)
-os.system('gnome-open %s'%destname)
+path = './src/'
+namelist = []
+for filename in os.listdir(path):
+    if filename.endswith('.txt'):
+        fullpath = os.path.join(path, filename)
+        parts = dict2obj(publish_parts(source=open(fullpath).read(), writer_name='html', settings_overrides={'initial_header_level': 2, 'language_code':'zh_cn'}))
+        content = listtpl.render(c=parts)
+
+        basename = os.path.splitext(filename)[0]
+        destname = os.path.join('./html/',basename+'.html')
+        open(destname, 'w').write(content)
+        print destname
+        namelist.append(fullpath)
+
+#content = indextpl.render(c=namelist)
+#open('html/index.html', 'w').write(content)

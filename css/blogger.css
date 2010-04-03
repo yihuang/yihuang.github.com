@@ -1,0 +1,218 @@
+html,body{margin:0;padding:0;}
+body{font: 85%/1.3 TrebuchetMS,Arial,sans-serif;
+    text-align: left;background: #fff;padding-bottom:20px;word-break: break-all;}
+#navbar{display:none;}
+a { color: #0066B3; background: inherit; text-decoration: none;}
+h1 { font: bold 2.1em Arial, Arial, Sans-Serif; color: #036DA7 }
+h2 { font: bold 1.1em Arial, Arial, Sans-Serif; padding: 0; margin: 0; }
+
+div#header{width:100%;overflow:hidden;background: #BBD9EE; }
+div#header h1,div#menu{width:770px;margin:0 auto;text-align:left}
+div#header h1{padding: 30px 0 0px;color: #fff}
+
+ul#nav,ul#nav li{list-style-type:none;margin:0;padding:0}
+ul#nav{float:right;font-size: 80%}
+ul#nav li{float:left;margin-left: 3px;text-align: center}
+ul#nav a{float:left;width: 95px;padding: 5px 0;background: #E7F1F8;text-decoration:none;color: #666; border-top : 1px solid #fff; border-left : 1px solid #fff; border-right : 1px solid #fff;}
+ul#nav a:hover{background: #fff;color: #000}
+ul#nav li.activelink a,ul#nav li.activelink a:hover{background: #FFF;color: #003}
+
+#right {
+	float: left;
+	width: 78%;
+	text-align: justify;
+}
+
+#left {
+	float: right;
+	width: 21%;
+	margin: 0 0 10px 0;
+	
+}
+
+#content {
+font: 95%/1.3 TrebuchetMS,Arial,sans-serif;
+	margin: 0 auto;
+    padding: 15px 10px 15px 15px;
+	background: #fff;
+	
+	
+}
+
+ul {  padding: 0; margin: 0;}
+
+/* add
+--------------------------------------------- */
+#left .box{
+border: 4px solid rgb(216, 219, 188); margin: 0.5em; padding: 0pt; background: rgb(255, 255, 255) none repeat scroll 0% 50%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; text-align: left; text-indent: 0pt; text-decoration: none; font-weight: normal; font-family: arial,sans-serif; font-size: 10pt; -moz-border-radius-topleft: 8px; -moz-border-radius-topright: 8px; -moz-border-radius-bottomright: 8px; -moz-border-radius-bottomleft: 8px;
+}
+#left .box h2{
+ border-bottom:1px solid #D8DBBC;
+ color:#2D8509;
+ font-size:16px;
+ font-weight:normal;
+ margin:0 0.5em;
+ padding:0.2em 0;
+}
+#left .box a{
+ color:#58BF2F;
+}
+.widget-content{
+border: medium none ; margin: 0pt 0.5em; padding: 0.2em; background: transparent none repeat scroll 0%; overflow: hidden; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; text-align: left; text-indent: 0pt; text-decoration: none; font-weight: normal;
+}
+#HTML5 .widget-content{
+margin:0;
+padding:0;
+}
+
+#left li{
+  list-style-type:none;
+}
+.description{
+  margin:0 auto;
+  color:gray;
+}
+.post-footer-line{
+  color:#666;
+}
+.date-header{
+  background: #eee;
+  padding: 1em 1em 0;
+}
+.post{
+  background: #eee;
+  margin:0 0 1.5em;
+  padding:0 1em 0.1px;
+}
+.post-title{
+  margin:0;
+  padding:10px 0;
+}
+
+#blog-pager-newer-link {
+  float: left;
+ }
+ 
+#blog-pager-older-link {
+  float: right;
+ }
+
+#blog-pager { 
+  text-align: center;
+ }
+
+.feed-links {
+  clear: both;
+  line-height: 2.5em;
+}
+
+.mytoggle{
+  cursor:pointer;
+  font-size:22px;
+  color:green;
+}
+/* Profile 
+----------------------------------------------- */
+.profile-img { 
+  float: left;
+  margin: 0 5px 5px 0;
+  padding: 4px;
+  border: 1px solid #ccc;
+}
+
+.profile-data {
+  margin:0;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  font: normal normal 78% 'Trebuchet MS', Trebuchet, Arial, Verdana, Sans-serif;
+  font-weight: bold;
+  line-height: 1.6em;
+}
+
+.profile-datablock { 
+  margin:.5em 0 .5em;
+}
+
+.profile-textblock { 
+  margin: 0.5em 0;
+  line-height: 1.6em;
+}
+
+.profile-link { 
+  font: normal normal 78% 'Trebuchet MS', Trebuchet, Arial, Verdana, Sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+div.highlight {
+  margin-left: 2em ;
+  margin-right: 2em ;
+  background-color: #eeeeee
+  }
+
+
+/* Colour code blocks */
+/* ------------------ */
+
+/* Pygments_ has an option to generate stylesheets for html and latex. */
+/* The following code is generated with the command */
+/* `pygmentize -S default -f html > pygments-default.css`:: */
+
+.c { color: #008800; font-style: italic } /* Comment */
+.err { border: 1px solid #FF0000 } /* Error */
+.k { color: #AA22FF; font-weight: bold } /* Keyword */
+.o { color: #666666 } /* Operator */
+.cm { color: #008800; font-style: italic } /* Comment.Multiline */
+.cp { color: #008800 } /* Comment.Preproc */
+.c1 { color: #008800; font-style: italic } /* Comment.Single */
+.gd { color: #A00000 } /* Generic.Deleted */
+.ge { font-style: italic } /* Generic.Emph */
+.gr { color: #FF0000 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #00A000 } /* Generic.Inserted */
+.go { color: #808080 } /* Generic.Output */
+.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.gs { font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #0040D0 } /* Generic.Traceback */
+.kc { color: #AA22FF; font-weight: bold } /* Keyword.Constant */
+.kd { color: #AA22FF; font-weight: bold } /* Keyword.Declaration */
+.kp { color: #AA22FF } /* Keyword.Pseudo */
+.kr { color: #AA22FF; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #AA22FF; font-weight: bold } /* Keyword.Type */
+.m { color: #666666 } /* Literal.Number */
+.s { color: #BB4444 } /* Literal.String */
+.na { color: #BB4444 } /* Name.Attribute */
+.nb { color: #AA22FF } /* Name.Builtin */
+.nc { color: #0000FF } /* Name.Class */
+.no { color: #880000 } /* Name.Constant */
+.nd { color: #AA22FF } /* Name.Decorator */
+.ni { color: #999999; font-weight: bold } /* Name.Entity */
+.ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.nf { color: #00A000 } /* Name.Function */
+.nl { color: #A0A000 } /* Name.Label */
+.nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.nt { color: #008000; font-weight: bold } /* Name.Tag */
+.nv { color: #B8860B } /* Name.Variable */
+.ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.mf { color: #666666 } /* Literal.Number.Float */
+.mh { color: #666666 } /* Literal.Number.Hex */
+.mi { color: #666666 } /* Literal.Number.Integer */
+.mo { color: #666666 } /* Literal.Number.Oct */
+.sb { color: #BB4444 } /* Literal.String.Backtick */
+.sc { color: #BB4444 } /* Literal.String.Char */
+.sd { color: #BB4444; font-style: italic } /* Literal.String.Doc */
+.s2 { color: #BB4444 } /* Literal.String.Double */
+.se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.sh { color: #BB4444 } /* Literal.String.Heredoc */
+.si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.sx { color: #008000 } /* Literal.String.Other */
+.sr { color: #BB6688 } /* Literal.String.Regex */
+.s1 { color: #BB4444 } /* Literal.String.Single */
+.ss { color: #B8860B } /* Literal.String.Symbol */
+.bp { color: #AA22FF } /* Name.Builtin.Pseudo */
+.vc { color: #B8860B } /* Name.Variable.Class */
+.vg { color: #B8860B } /* Name.Variable.Global */
+.vi { color: #B8860B } /* Name.Variable.Instance */
+.il { color: #666666 } /* Literal.Number.Integer.Long */
+
+/* .. _pygments:  http://pygments.org/ */

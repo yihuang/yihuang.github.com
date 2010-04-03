@@ -1,123 +1,34 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
 <title>对 haskell 与 monad 的理解</title>
-<style type="text/css">
 
-/* Stylesheet for pygments enhanced reStructured Text */
-/* ================================================== */
+        <link type="text/css" rel="stylesheet" href="../css/default.css"></link>
+    </head>
+    <body>
+        <h1 class="title">对 haskell 与 monad 的理解</h1>
 
-/* :Author:    Guenter Milde */
-/* :Copyright: 2007 G. Milde */
-/*             This stylesheet is released under the GPL v. 2 or later */
-
-/* This stylesheet provides syntax highlight for documents generated with a */
-/* pygments_ enhanced reStructured Text -> html converter. */
-
-/* Import the default docutils style sheet */
-/* --------------------------------------- */
-/* :: */
-
-@import url("/stylesheets/html4css1.css");         
-
-/* Indent the code block */
-/* --------------------- */
-
-/* Content copied from the `html4css1.css` rule for literal blocks. */
-/* Selector adapted to the output of Pygments_. :: */
-
-div.highlight {
-  margin-left: 2em ;
-  margin-right: 2em ;
-  background-color: #eeeeee
-  }
-
-
-/* Colour code blocks */
-/* ------------------ */
-
-/* Pygments_ has an option to generate stylesheets for html and latex. */
-/* The following code is generated with the command */
-/* `pygmentize -S default -f html > pygments-default.css`:: */
-
-.c { color: #008800; font-style: italic } /* Comment */
-.err { border: 1px solid #FF0000 } /* Error */
-.k { color: #AA22FF; font-weight: bold } /* Keyword */
-.o { color: #666666 } /* Operator */
-.cm { color: #008800; font-style: italic } /* Comment.Multiline */
-.cp { color: #008800 } /* Comment.Preproc */
-.c1 { color: #008800; font-style: italic } /* Comment.Single */
-.gd { color: #A00000 } /* Generic.Deleted */
-.ge { font-style: italic } /* Generic.Emph */
-.gr { color: #FF0000 } /* Generic.Error */
-.gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.gi { color: #00A000 } /* Generic.Inserted */
-.go { color: #808080 } /* Generic.Output */
-.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.gs { font-weight: bold } /* Generic.Strong */
-.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.gt { color: #0040D0 } /* Generic.Traceback */
-.kc { color: #AA22FF; font-weight: bold } /* Keyword.Constant */
-.kd { color: #AA22FF; font-weight: bold } /* Keyword.Declaration */
-.kp { color: #AA22FF } /* Keyword.Pseudo */
-.kr { color: #AA22FF; font-weight: bold } /* Keyword.Reserved */
-.kt { color: #AA22FF; font-weight: bold } /* Keyword.Type */
-.m { color: #666666 } /* Literal.Number */
-.s { color: #BB4444 } /* Literal.String */
-.na { color: #BB4444 } /* Name.Attribute */
-.nb { color: #AA22FF } /* Name.Builtin */
-.nc { color: #0000FF } /* Name.Class */
-.no { color: #880000 } /* Name.Constant */
-.nd { color: #AA22FF } /* Name.Decorator */
-.ni { color: #999999; font-weight: bold } /* Name.Entity */
-.ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.nf { color: #00A000 } /* Name.Function */
-.nl { color: #A0A000 } /* Name.Label */
-.nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.nt { color: #008000; font-weight: bold } /* Name.Tag */
-.nv { color: #B8860B } /* Name.Variable */
-.ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.mf { color: #666666 } /* Literal.Number.Float */
-.mh { color: #666666 } /* Literal.Number.Hex */
-.mi { color: #666666 } /* Literal.Number.Integer */
-.mo { color: #666666 } /* Literal.Number.Oct */
-.sb { color: #BB4444 } /* Literal.String.Backtick */
-.sc { color: #BB4444 } /* Literal.String.Char */
-.sd { color: #BB4444; font-style: italic } /* Literal.String.Doc */
-.s2 { color: #BB4444 } /* Literal.String.Double */
-.se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.sh { color: #BB4444 } /* Literal.String.Heredoc */
-.si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.sx { color: #008000 } /* Literal.String.Other */
-.sr { color: #BB6688 } /* Literal.String.Regex */
-.s1 { color: #BB4444 } /* Literal.String.Single */
-.ss { color: #B8860B } /* Literal.String.Symbol */
-.bp { color: #AA22FF } /* Name.Builtin.Pseudo */
-.vc { color: #B8860B } /* Name.Variable.Class */
-.vg { color: #B8860B } /* Name.Variable.Global */
-.vi { color: #B8860B } /* Name.Variable.Instance */
-.il { color: #666666 } /* Literal.Number.Integer.Long */
-
-/* .. _pygments:  http://pygments.org/ */
-
-</style>
-</head>
-<body>
-<div class="document" id="haskell-monad">
-<h1 class="title">对 haskell 与 monad 的理解</h1>
-
+        <div class="contents topic" id="id1">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#haskell-io" id="id6">haskell作为纯函数式语言如何处理IO</a></li>
+<li><a class="reference internal" href="#monad" id="id7">Monad是什么</a></li>
+<li><a class="reference internal" href="#id4" id="id8">这些接口目的何在</a></li>
+</ul>
+</div>
 <div class="section" id="haskell-io">
-<h1>haskell作为纯函数式语言如何处理IO</h1>
+<h2><a class="toc-backref" href="#id6">haskell作为纯函数式语言如何处理IO</a></h2>
 <p>并不是真正的处理，只是通过类型系统将跟IO相关的“不纯”的代码和其他纯函数式代码隔离开。通过编译期类型检查进行保证。</p>
-<p>具体实现就是通过叫 IO 的 type constructor <a class="citation-reference" href="#io" id="id1">[io]</a> ，而这个 IO 就是 Monad 的一种。</p>
+<p>具体实现就是通过叫 IO 的 type constructor <a class="citation-reference" href="#io" id="id2">[io]</a> ，而这个 IO 就是 Monad 的一种。</p>
 </div>
 <div class="section" id="monad">
-<h1>Monad是什么</h1>
+<h2><a class="toc-backref" href="#id7">Monad是什么</a></h2>
 <p>在数学上Monad是一门处理状态转换的数学理论。</p>
-<p>对于haskell来说，Monad 就是一个 type class <a class="citation-reference" href="#id4" id="id2">[monad]</a> ，这个 type class 定义了一组接口，前面说的 IO 就是实现了这组接口的实例。</p>
+<p>对于haskell来说，Monad 就是一个 type class <a class="citation-reference" href="#id5" id="id3">[monad]</a> ，这个 type class 定义了一组接口，前面说的 IO 就是实现了这组接口的实例。</p>
 <div class="highlight"><pre><span class="kr">class</span> <span class="kt">Monad</span> <span class="n">m</span> <span class="kr">where</span>
     <span class="p">(</span><span class="o">&gt;&gt;=</span><span class="p">)</span> <span class="ow">::</span> <span class="n">forall</span> <span class="n">a</span> <span class="n">b</span><span class="o">.</span> <span class="n">m</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span>
     <span class="p">(</span><span class="o">&gt;&gt;</span><span class="p">)</span> <span class="ow">::</span> <span class="n">forall</span> <span class="n">a</span> <span class="n">b</span><span class="o">.</span> <span class="n">m</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span>
@@ -125,8 +36,8 @@ div.highlight {
     <span class="n">fail</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">a</span>
 </pre></div>
 </div>
-<div class="section" id="id3">
-<h1>这些接口目的何在</h1>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id8">这些接口目的何在</a></h2>
 <div class="highlight"><pre><span class="nf">foo</span><span class="p">,</span><span class="n">bar</span> <span class="ow">::</span> <span class="kt">String</span><span class="ow">-&gt;</span><span class="kt">IO</span> <span class="kt">String</span>
 <span class="nf">foo</span> <span class="n">msg</span> <span class="ow">=</span> <span class="n">return</span> <span class="p">(</span><span class="s">&quot;foo &quot;</span><span class="o">++</span><span class="n">msg</span><span class="p">)</span>
 <span class="nf">bar</span> <span class="n">msg</span> <span class="ow">=</span> <span class="n">return</span> <span class="p">(</span><span class="s">&quot;bar &quot;</span><span class="o">++</span><span class="n">msg</span><span class="p">)</span>
@@ -143,21 +54,21 @@ div.highlight {
       <span class="p">(</span><span class="nf">\</span><span class="n">name</span> <span class="ow">-&gt;</span>
         <span class="n">bar</span> <span class="n">name</span><span class="p">)))</span>
 </pre></div>
-<p>因为IO操作在执行顺序上不能乱，而相同级别下的纯函数式表达式之间是没有执行顺序上的保证的，所以需要用上面这种方式来保证操作的顺序执行。do 只是一个语法糖，使得代码更接近我们习惯的命令式语言。</p>
-<p>整个 do block 返回一个 IO String ，执行 main 的时候这个 IO String 被求值，触发整个链条。</p>
-<table class="docutils citation" frame="void" id="id4" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[monad]</a></td><td><a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Control-Monad.html">http://www.haskell.org/ghc/docs/latest/html/libraries/base/Control-Monad.html</a></td></tr>
-</tbody>
-</table>
+<p>这些接口的目的就在于保证操作的顺序执行，也就是说实现了这些接口的类型，使用do语法就可以编写顺序执行的语句了。</p>
+<p>haskell 的 IO 类型就是利用这点保证IO操作的顺序执行，并通过类型系统将涉及IO和不涉及IO操作的函数清晰地区别开来。</p>
 <table class="docutils citation" frame="void" id="io" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[io]</a></td><td><a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/System-IO.html">http://www.haskell.org/ghc/docs/latest/html/libraries/base/System-IO.html</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id2">[io]</a></td><td><a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/System-IO.html">http://www.haskell.org/ghc/docs/latest/html/libraries/base/System-IO.html</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[monad]</a></td><td><a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Control-Monad.html">http://www.haskell.org/ghc/docs/latest/html/libraries/base/Control-Monad.html</a></td></tr>
 </tbody>
 </table>
 </div>
-</div>
-</body>
+
+    </body>
 </html>
