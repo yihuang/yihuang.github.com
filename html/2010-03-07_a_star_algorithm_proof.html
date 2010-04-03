@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<title>A*算法证明</title>
+<style type="text/css">
+
+/* Stylesheet for pygments enhanced reStructured Text */
+/* ================================================== */
+
+/* :Author:    Guenter Milde */
+/* :Copyright: 2007 G. Milde */
+/*             This stylesheet is released under the GPL v. 2 or later */
+
+/* This stylesheet provides syntax highlight for documents generated with a */
+/* pygments_ enhanced reStructured Text -> html converter. */
+
+/* Import the default docutils style sheet */
+/* --------------------------------------- */
+/* :: */
+
+@import url("/stylesheets/html4css1.css");         
+
+/* Indent the code block */
+/* --------------------- */
+
+/* Content copied from the `html4css1.css` rule for literal blocks. */
+/* Selector adapted to the output of Pygments_. :: */
+
+div.highlight {
+  margin-left: 2em ;
+  margin-right: 2em ;
+  background-color: #eeeeee
+  }
+
+
+/* Colour code blocks */
+/* ------------------ */
+
+/* Pygments_ has an option to generate stylesheets for html and latex. */
+/* The following code is generated with the command */
+/* `pygmentize -S default -f html > pygments-default.css`:: */
+
+.c { color: #008800; font-style: italic } /* Comment */
+.err { border: 1px solid #FF0000 } /* Error */
+.k { color: #AA22FF; font-weight: bold } /* Keyword */
+.o { color: #666666 } /* Operator */
+.cm { color: #008800; font-style: italic } /* Comment.Multiline */
+.cp { color: #008800 } /* Comment.Preproc */
+.c1 { color: #008800; font-style: italic } /* Comment.Single */
+.gd { color: #A00000 } /* Generic.Deleted */
+.ge { font-style: italic } /* Generic.Emph */
+.gr { color: #FF0000 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #00A000 } /* Generic.Inserted */
+.go { color: #808080 } /* Generic.Output */
+.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.gs { font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #0040D0 } /* Generic.Traceback */
+.kc { color: #AA22FF; font-weight: bold } /* Keyword.Constant */
+.kd { color: #AA22FF; font-weight: bold } /* Keyword.Declaration */
+.kp { color: #AA22FF } /* Keyword.Pseudo */
+.kr { color: #AA22FF; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #AA22FF; font-weight: bold } /* Keyword.Type */
+.m { color: #666666 } /* Literal.Number */
+.s { color: #BB4444 } /* Literal.String */
+.na { color: #BB4444 } /* Name.Attribute */
+.nb { color: #AA22FF } /* Name.Builtin */
+.nc { color: #0000FF } /* Name.Class */
+.no { color: #880000 } /* Name.Constant */
+.nd { color: #AA22FF } /* Name.Decorator */
+.ni { color: #999999; font-weight: bold } /* Name.Entity */
+.ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.nf { color: #00A000 } /* Name.Function */
+.nl { color: #A0A000 } /* Name.Label */
+.nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.nt { color: #008000; font-weight: bold } /* Name.Tag */
+.nv { color: #B8860B } /* Name.Variable */
+.ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.mf { color: #666666 } /* Literal.Number.Float */
+.mh { color: #666666 } /* Literal.Number.Hex */
+.mi { color: #666666 } /* Literal.Number.Integer */
+.mo { color: #666666 } /* Literal.Number.Oct */
+.sb { color: #BB4444 } /* Literal.String.Backtick */
+.sc { color: #BB4444 } /* Literal.String.Char */
+.sd { color: #BB4444; font-style: italic } /* Literal.String.Doc */
+.s2 { color: #BB4444 } /* Literal.String.Double */
+.se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.sh { color: #BB4444 } /* Literal.String.Heredoc */
+.si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.sx { color: #008000 } /* Literal.String.Other */
+.sr { color: #BB6688 } /* Literal.String.Regex */
+.s1 { color: #BB4444 } /* Literal.String.Single */
+.ss { color: #B8860B } /* Literal.String.Symbol */
+.bp { color: #AA22FF } /* Name.Builtin.Pseudo */
+.vc { color: #B8860B } /* Name.Variable.Class */
+.vg { color: #B8860B } /* Name.Variable.Global */
+.vi { color: #B8860B } /* Name.Variable.Instance */
+.il { color: #666666 } /* Literal.Number.Integer.Long */
+
+/* .. _pygments:  http://pygments.org/ */
+
+</style>
+</head>
+<body>
+<div class="document" id="a">
+<h1 class="title">A*算法证明</h1>
+
+<div class="section" id="id1">
+<h1>定理</h1>
+<p>A* 算法找到的第一条路径就是最短路径</p>
+</div>
+<div class="section" id="id2">
+<h1>算法描述</h1>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">heapq</span> <span class="kn">import</span> <span class="n">heappop</span><span class="p">,</span><span class="n">heappush</span>
+<span class="n">openset</span> <span class="o">=</span> <span class="p">[</span><span class="n">start</span><span class="p">]</span>
+<span class="n">closeset</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<span class="k">while</span> <span class="n">openset</span><span class="p">:</span>
+    <span class="n">node</span> <span class="o">=</span> <span class="n">heappop</span><span class="p">(</span><span class="n">openset</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">node</span><span class="o">==</span><span class="n">target</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">node</span>
+    <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">pos</span> <span class="ow">in</span> <span class="n">closeset</span><span class="p">:</span>
+        <span class="k">continue</span>
+    <span class="n">closeset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">():</span>
+        <span class="n">child</span><span class="o">.</span><span class="n">hsrc</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">hsrc</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">child</span><span class="o">.</span><span class="n">htarget</span> <span class="o">=</span> <span class="n">calc_hvalue</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">child</span><span class="o">.</span><span class="n">hvalue</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">hsrc</span> <span class="o">+</span> <span class="n">child</span><span class="o">.</span><span class="n">htarget</span>
+        <span class="c"># sort by hvalue</span>
+        <span class="n">heappush</span><span class="p">(</span><span class="n">openset</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+</pre></div>
+<p>其中 calc_hvalue 计算节点到目标最短路径长度的估计值，其结果 &lt;= 实际的最短路径长度。</p>
+</div>
+<div class="section" id="id3">
+<h1>证明</h1>
+<p>证明(反证法)：</p>
+<blockquote>
+<p>假设通过A*算法首先找到了路径 p 来到终点，而 p 并非真正的最短路径；</p>
+<p>那么根据算法描述，target.hvalue==len(p) ；</p>
+<p>再假设真正最短路径A为：n1,n2,n3,...,ni,...,nm，那么A中必有节点还在openset中未被访问，假设离起点最远的一个节点为 ni；</p>
+<p>首先按照算法对启发函数的要求 ni.hvalue&lt;=len(A)&lt;len(p)=target.hvalue，也就是说 ni.hvalue&lt;target.hvalue，按照算法描述，应该先访问 ni 节点而不是 target 节点；</p>
+<p>产生矛盾，故原算法正确。</p>
+</blockquote>
+</div>
+</div>
+</body>
+</html>

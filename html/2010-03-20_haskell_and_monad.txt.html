@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<title>对 haskell 与 monad 的理解</title>
+
+        <link type="text/css" rel="stylesheet" href="../css/default.css"></link>
+    </head>
+    <body>
+        <h1 class="title">对 haskell 与 monad 的理解</h1>
+
+        <div class="contents topic" id="id1">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#haskell-io" id="id6">haskell作为纯函数式语言如何处理IO</a></li>
+<li><a class="reference internal" href="#monad" id="id7">Monad是什么</a></li>
+<li><a class="reference internal" href="#id4" id="id8">这些接口目的何在</a></li>
+</ul>
+</div>
+<div class="section" id="haskell-io">
+<h2><a class="toc-backref" href="#id6">haskell作为纯函数式语言如何处理IO</a></h2>
+<p>并不是真正的处理，只是通过类型系统将跟IO相关的“不纯”的代码和其他纯函数式代码隔离开。通过编译期类型检查进行保证。</p>
+<p>具体实现就是通过叫 IO 的 type constructor <a class="citation-reference" href="#io" id="id2">[io]</a> ，而这个 IO 就是 Monad 的一种。</p>
+</div>
+<div class="section" id="monad">
+<h2><a class="toc-backref" href="#id7">Monad是什么</a></h2>
+<p>在数学上Monad是一门处理状态转换的数学理论。</p>
+<p>对于haskell来说，Monad 就是一个 type class <a class="citation-reference" href="#id5" id="id3">[monad]</a> ，这个 type class 定义了一组接口，前面说的 IO 就是实现了这组接口的实例。</p>
+<div class="highlight"><pre><span class="kr">class</span> <span class="kt">Monad</span> <span class="n">m</span> <span class="kr">where</span>
+    <span class="p">(</span><span class="o">&gt;&gt;=</span><span class="p">)</span> <span class="ow">::</span> <span class="n">forall</span> <span class="n">a</span> <span class="n">b</span><span class="o">.</span> <span class="n">m</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span>
+    <span class="p">(</span><span class="o">&gt;&gt;</span><span class="p">)</span> <span class="ow">::</span> <span class="n">forall</span> <span class="n">a</span> <span class="n">b</span><span class="o">.</span> <span class="n">m</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span>
+    <span class="n">return</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">a</span>
+    <span class="n">fail</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">a</span>
+</pre></div>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id8">这些接口目的何在</a></h2>
+<div class="highlight"><pre><span class="nf">foo</span><span class="p">,</span><span class="n">bar</span> <span class="ow">::</span> <span class="kt">String</span><span class="ow">-&gt;</span><span class="kt">IO</span> <span class="kt">String</span>
+<span class="nf">foo</span> <span class="n">msg</span> <span class="ow">=</span> <span class="n">return</span> <span class="p">(</span><span class="s">&quot;foo &quot;</span><span class="o">++</span><span class="n">msg</span><span class="p">)</span>
+<span class="nf">bar</span> <span class="n">msg</span> <span class="ow">=</span> <span class="n">return</span> <span class="p">(</span><span class="s">&quot;bar &quot;</span><span class="o">++</span><span class="n">msg</span><span class="p">)</span>
+
+<span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="n">foo</span> <span class="s">&quot;world&quot;</span>
+    <span class="n">name</span> <span class="ow">&lt;-</span> <span class="n">getLine</span>
+    <span class="n">bar</span> <span class="n">name</span>
+</pre></div>
+<p>上面的do语法糖扩展出来实际上是下面这样：</p>
+<div class="highlight"><pre><span class="nf">foo</span> <span class="s">&quot;world&quot;</span> <span class="o">&gt;&gt;=</span>
+  <span class="p">(</span><span class="nf">\</span><span class="kr">_</span> <span class="ow">-&gt;</span>
+    <span class="n">getLine</span> <span class="o">&gt;&gt;=</span>
+      <span class="p">(</span><span class="nf">\</span><span class="n">name</span> <span class="ow">-&gt;</span>
+        <span class="n">bar</span> <span class="n">name</span><span class="p">)))</span>
+</pre></div>
+<p>这些接口的目的就在于保证操作的顺序执行，也就是说实现了这些接口的类型，使用do语法就可以编写顺序执行的语句了。</p>
+<p>haskell 的 IO 类型就是利用这点保证IO操作的顺序执行，并通过类型系统将涉及IO和不涉及IO操作的函数清晰地区别开来。</p>
+<table class="docutils citation" frame="void" id="io" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[io]</a></td><td><a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/System-IO.html">http://www.haskell.org/ghc/docs/latest/html/libraries/base/System-IO.html</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[monad]</a></td><td><a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Control-Monad.html">http://www.haskell.org/ghc/docs/latest/html/libraries/base/Control-Monad.html</a></td></tr>
+</tbody>
+</table>
+</div>
+
+    </body>
+</html>
