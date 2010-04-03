@@ -4,3 +4,5 @@ html/%.html : src/%.txt
 	python gen.py $<
 
 detailpages : $(htmls)
+	
+all : detailpages
