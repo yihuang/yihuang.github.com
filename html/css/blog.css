@@ -1,6 +1,6 @@
 html,body{margin:0;padding:0}
-body{font: 85%/1.3 TrebuchetMS,Arial,sans-serif;
-    text-align: left;background: #fff;padding-bottom:20px;line-height:1.5;}
+body{font: 85%/1.5 TrebuchetMS,Arial,sans-serif;
+    text-align: left;background: #fff;padding-bottom:20px;}
 a { color: #0066B3; background: inherit; text-decoration: none;}
 h1 { font: bold 2.1em Arial, Arial, Sans-Serif; color: #036DA7 }
 
@@ -52,7 +52,7 @@ ul#nav li.activelink a,ul#nav li.activelink a:hover{background: #FFF;color: #003
 }
 
 #content {
-    font: 95%/1.3 TrebuchetMS,Arial,sans-serif;
+    font: 95% TrebuchetMS,Arial,sans-serif;
     margin: 0 auto;
     padding: 15px;
     background: #fff;
