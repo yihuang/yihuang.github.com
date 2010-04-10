@@ -4,6 +4,7 @@ ${c.html_prolog%c.encoding}
         ${c.html_head%c.encoding}
         <link type="text/css" rel="stylesheet" href="css/html4css1.css"></link>
         <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+	      <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"></link>
     </head>
     <body>
         <div id="header">
