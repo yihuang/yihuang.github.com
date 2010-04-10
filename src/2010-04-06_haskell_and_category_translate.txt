@@ -29,8 +29,8 @@ Haskell与范畴论
 
 初看起来似乎所有态射都是函数，实际上不一定，比如下面这个例子，任何偏序结构 (*P*, :m:`\leq` ) 都构成范畴，该范畴中的对象就是 *P* 中的元素，两个元素 *a* 和 *b* 只要满足 :m:`a \leq b` ，那么 :m:`a \to a` 就是一个态射。另外，在相同的源对象和目的对象之间可以存在多个态射。我们拿 **Set** 范畴为例， :m:`\sin` 和 :m:`\cos` 都是从 :m:`R` 到 :m:`[-1,1]` 的函数，但是他们不是相同的态射。
 
-范畴论公理
-----------
+范畴公理
+--------
 
 范畴需要满足三个公理。第一也是最简单的一个就是，态射的组合需要满足结合律。记作：
 
@@ -47,7 +47,7 @@ Haskell与范畴论
 
 .. m:: g \circ id_A = id_B \circ g = g
 
-**Hask** ，Haskell范畴
+Hask ，Haskell范畴
 ------------------------
 
 本文重点关注一个叫 **Hask** 的范畴，该范畴由Haskell中所有类型组成，Haskell的函数就是它的态射， `(.)` 操作符便是态射组合，函数 `f::A->B` 就是 **Hask** 中的一个从类型 *A* 到类型 *B* 的态射。第一和第三个公理很容易验证通过，因为 `(.)` 操作符本身就是满足结合律的函数，而且很显然，对于任何函数 `f` 和 `g` ， `f.g` 还是一个函数。在 **Hask** 中，单位态射就是函数 `id` ，而且显然也满足第三个公理：
@@ -70,20 +70,20 @@ OK，我们已经介绍了一些范畴，这些范畴里面都有些对象，还
 * 将 *C* 中任意对象 *a* 转换为 *D* 中的 :m:`F(A)`
 * 将 *C* 中的态射 :m:`f : A \to B` 转换为 *D* 中的 :m:`F(f) : F(A) \to F(B)`
 
-“健忘”函子就有很典型的一个函子： :m:`\mathbf{Grp} \to \mathbf{Set}` ，它能将群转换成它底层的集合，并将群的态射转换成集合上的相同行为的函数。另一个例子就是超集函子： :m:`\mathbf{Set} \to \mathbf{Set}` ，它能将集合转换成他们的超集，并将函数 :m:`f : X \to Y` 转换成函数 :m:`\mathcal{P}(X) \to \mathcal{P}(Y)` ，后者接收 :m:`U \subset X` 组成的集合并转换成 :m:`f(U)` ，定义如下 :m:`f(U) = \{ \, f(u) : u \in U \, \}` 。对所有的范畴 *C* 都可以定义一个所谓的单位函子，也叫做 :m:`1_C : C \to C` ，它将对象和态射直接转换成它们自己。在后面要讲的 monad公理 一节中，我们将会看到单位函子的作用。
+“健忘”函子就有很典型的一个函子： :m:`\mathbf{Grp} \to \mathbf{Set}` ，它能将群转换成它底层的集合，并将群的态射转换成集合上的相同行为的函数。另一个例子就是超集函子： :m:`\mathbf{Set} \to \mathbf{Set}` ，它能将集合转换成他们的超集，并将函数 :m:`f : X \to Y` 转换成函数 :m:`\mathcal{P}(X) \to \mathcal{P}(Y)` ，后者接收 :m:`U \subset X` 组成的集合并转换成 :m:`f(U)` ，定义如下 :m:`f(U) = \{ \, f(u) : u \in U \, \}` 。对所有的范畴 *C* 都可以定义一个所谓的单位函子，也叫做 :m:`1_C : C \to C` ，它将对象和态射直接转换成它们自己。在后面要讲的 monad公理和他们的重要性_ 一节中，我们将会看到单位函子的作用。
 
 同样的，函子也需要遵守一些公理。第一，给定一个对象 *A* 上的单位态射 :m:`id_A` ， :m:`F(id_A)` 必须也是 :m:`F(A)` 上的单位态射，也就是说：
 
 .. m:: F(id_A) = id_{F(A)}
 
-第二，函子必须保持态射组合，也就是说：
+第二，函子在态射组合上必须满足分配率，也就是说：
 
 .. m:: F(f \circ g) = F(f) \circ F(g)
 
-**Hask** 上的函子
+Hask 上的函子
 ------------------
 
-估计你已经看出来了， typeclass `Functor` 确实和范畴论中的函子概念关系紧密。首先函子包括两部分：首先它将一个范畴中的对象转换成另一个范畴中的对象，其次它还将一个范畴中的态射转换成另一个范畴中的态射。Haskell中的函子其实是从 **Hask** 到 **Hask** 的子范畴 **Func** 的，范畴 **Func** 是在定义该函子的类型上面的一个范畴。比如函子 `list` 就是从范畴 **Hask** 到范畴 **Lst** 的函子， **Lst** 范畴只包含一个类型 `list` ，也就是说函子 `list` 能将任意类型 `T` 转换为 `[T]` 。范畴 **Lst** 中的态射就是定义在 `list` 类型上的函数，即： `[T]->[U]` 。那么所有这些东西又如何跟Haskell的 `Functor` typeclass 联系在一起呢？我们回忆一下 `Functor` 的定义：
+也许你已经看出来了， typeclass `Functor` 确实和范畴论中的函子概念关系紧密。首先函子包括两部分：首先它将一个范畴中的对象转换成另一个范畴中的对象，其次它还将一个范畴中的态射转换成另一个范畴中的态射。Haskell中的函子其实是从 **Hask** 到 **Hask** 的子范畴 **Func** 的，范畴 **Func** 是在定义该函子的类型上面的一个范畴。比如函子 `list` 就是从范畴 **Hask** 到范畴 **Lst** 的函子， **Lst** 范畴只包含一个类型 `list` ，也就是说函子 `list` 能将任意类型 `T` 转换为 `[T]` 。范畴 **Lst** 中的态射就是定义在 `list` 类型上的函数，即： `[T]->[U]` 。那么所有这些东西又如何跟Haskell的 `Functor` typeclass 联系在一起呢？我们回忆一下 `Functor` 的定义：
 
 .. code-block:: haskell
 
@@ -274,10 +274,10 @@ OK，前面我们已经对monad必须遵守的一些公理进行了一些直观�
 .. code-block:: haskell
 
       return x >>= f
-    = join (fmap f (return x)) -- By the definition of (>>=)
-    = join (return (f x))      -- By law 3
+    = join (fmap f (return x)) -- 根据 (>>=) 的定义
+    = join (return (f x))      -- 根据公理三
     = (join . return) (f x)
-    = id (f x)                 -- By law 2
+    = id (f x)                 -- 根据公理二
     = f x
 
 #. `m >>= return = m` 。证明：
@@ -285,9 +285,9 @@ OK，前面我们已经对monad必须遵守的一些公理进行了一些直观�
 .. code-block:: haskell
 
       m >>= return
-    = join (fmap return m)    -- By the definition of (>>=)
+    = join (fmap return m)    -- 根据 (>>=) 的定义
     = (join . fmap return) m
-    = id m                    -- By law 2
+    = id m                    -- 根据公理二
     = m
 
 #. `(m >>= f) >>= g = m >>= (\x -> f x >>= g)` 。证明（联想 `fmap f . fmap g = fmap (f . g)` ）：
@@ -295,22 +295,22 @@ OK，前面我们已经对monad必须遵守的一些公理进行了一些直观�
 .. code-block:: haskell
 
       (m >>= f) >>= g
-    = (join (fmap f m)) >>= g                          -- By the definition of (>>=)
-    = join (fmap g (join (fmap f m)))                  -- By the definition of (>>=)
+    = (join (fmap f m)) >>= g                          -- 根据 (>>=) 的定义
+    = join (fmap g (join (fmap f m)))                  -- 根据 (>>=) 的定义
     = (join . fmap g) (join (fmap f m))
     = (join . fmap g . join) (fmap f m)
-    = (join . join . fmap (fmap g)) (fmap f m)         -- By law 4
+    = (join . join . fmap (fmap g)) (fmap f m)         -- 根据公理四
     = (join . join . fmap (fmap g) . fmap f) m
-    = (join . join . fmap (fmap g . f)) m              -- By the distributive law of functors
+    = (join . join . fmap (fmap g . f)) m              -- 根据函子的分配率
     = (join . join . fmap (\x -> fmap g (f x))) m
-    = (join . fmap join . fmap (\x -> fmap g (f x))) m -- By law 1
-    = (join . fmap (join . (\x -> fmap g (f x)))) m    -- By the distributive law of functors
+    = (join . fmap join . fmap (\x -> fmap g (f x))) m -- 根据公理一
+    = (join . fmap (join . (\x -> fmap g (f x)))) m    -- 根据函子的分配率
     = (join . fmap (\x -> join (fmap g (f x)))) m
-    = (join . fmap (\x -> f x >>= g)) m                -- By the definition of (>>=)
+    = (join . fmap (\x -> f x >>= g)) m                -- 根据 (>>=) 的定义
     = join (fmap (\x -> f x >>= g) m)
-    = m >>= (\x -> f x >>= g)                          -- By the definition of (>>=)
+    = m >>= (\x -> f x >>= g)                          -- 根据 (>>=) 的定义
 
-这几天使用 return 和 (>>=) 的monad公理，可以翻译成如下的do语法糖：
+这几条使用 return 和 (>>=) 的monad公理，可以翻译成如下的do语法糖：
 
 =========================================== ===============================================
 无参(points-free)风格                       do语句块                                   

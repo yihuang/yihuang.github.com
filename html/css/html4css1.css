@@ -21,7 +21,7 @@ table.borderless td, table.borderless th {
 cite {
     background:#EEEEEE;
     font-family:monospace;
-    font-style:default; }
+    font-style:normal; }
 
 .first {
   /* Override more specific margin styles with "! important". */
@@ -155,13 +155,11 @@ hr.docutils {
 
 img.align-left, .figure.align-left{
   clear: left ;
-  float: left ;
-  margin-right: 1em }
+  float: left ;}
 
 img.align-right, .figure.align-right {
   clear: right ;
-  float: right ;
-  margin-left: 1em }
+  float: right ;}
 
 .align-left {
   text-align: left }
