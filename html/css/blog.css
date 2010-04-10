@@ -1,11 +1,11 @@
 html,body{margin:0;padding:0}
 body{font: 85%/1.5 TrebuchetMS,Arial,sans-serif;
-    text-align: left;background: #fff;padding-bottom:20px;}
+    text-align: center;background: #fff;padding-bottom:20px;}
 a { color: #0066B3; background: inherit; text-decoration: none;}
 h1 { font: bold 2.1em Arial, Arial, Sans-Serif; color: #036DA7 }
 
-div#header{width:100%;overflow:hidden;background: #BBD9EE; }
-div#header h1,div#menu{width:75%;margin:0 auto;text-align:left}
+div#header{width:100%;overflow:hidden;background: #BBD9EE;text-align:left; }
+div#header h1,div#menu{width:75%;margin:0 auto;}
 div#header h1{padding: 30px 0 0;color: #fff}
 div#header .description {color:gray;padding-left:12%;width:40%}
 
@@ -56,9 +56,11 @@ ul#nav li.activelink a,ul#nav li.activelink a:hover{background: #FFF;color: #003
     margin: 0 auto;
     padding: 15px;
     background: #fff;
+    text-align: left;
 }
 
 #middle {
     margin: 0 auto;
     padding: 15px;
+    text-align: left;
 }
