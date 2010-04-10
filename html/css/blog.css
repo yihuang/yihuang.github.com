@@ -52,7 +52,7 @@ ul#nav li.activelink a,ul#nav li.activelink a:hover{background: #FFF;color: #003
 }
 
 #content {
-    font: 95% TrebuchetMS,Arial,sans-serif;
+    font: 95%/1.5 TrebuchetMS,Arial,sans-serif;
     margin: 0 auto;
     padding: 15px;
     background: #fff;
