@@ -19,6 +19,12 @@ boxes=[
 </p>
     ''',
     u'''
+<h2>友情链接</h2>
+<ul style="list-style:none;padding-left:15px;">
+<li><a href="http://kjam.org/cn/" target="_blank">Kern.Jam</a></li>
+</ul>
+    ''',
+    u'''
 <h2>有谁在看</h2>
 <p>
 <script src="http://9.douban.com/service/badge/community/9031109/?show=&n=12&columns=3" type="text/javascript"></script>
