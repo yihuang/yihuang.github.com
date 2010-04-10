@@ -18,6 +18,11 @@ table.borderless td, table.borderless th {
      The right padding separates the table cells. */
   padding: 0 0.5em 0 0 ! important }
 
+cite {
+    background:#EEEEEE;
+    font-family:monospace;
+    font-style:default; }
+
 .first {
   /* Override more specific margin styles with "! important". */
   margin-top: 0 ! important }

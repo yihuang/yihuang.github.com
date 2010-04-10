@@ -58,7 +58,7 @@ def trans_doclist(article_list):
             else:
                 resultlist = rootlist[1:2]
         else:
-            article.title = u'吐槽'
+            article.title = u'碎片'
             resultlist = rootlist[:]
 
         ndoc.children = resultlist

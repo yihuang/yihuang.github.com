@@ -10,8 +10,8 @@ links=[
 boxes=[
     u'''
 <h2>个人简介</h2>
-<p>
 <img align="left" src="http://stdyun.net/fs/user_img48/10015102_2.jpg" style="margin:0 5px 0 0"/>
+<p>
 黃毅&nbsp;&nbsp;<br/>现居:广东深圳<br/><br/>
 07年武大毕业，供职于腾讯至今，开发web产品。<br/><br/>
 编程爱好者，python社区活跃分子。<br/>
@@ -30,16 +30,12 @@ u'''
 <script type="text/javascript" src="http://www.google.com/reader/public/javascript/user/15378179180142400162/state/com.google/broadcast?n=5&callback=GRC_p(%7Bc%3A%22green%22%2Ct%3A%22%22%2Cs%3A%22true%22%2Cn%3A%22true%22%2Cb%3A%22false%22%7D)%3Bnew%20GRC"></script>
 ''',
 u'''
-<script type="text/javascript" src="http://del.icio.us/feeds/js/huangyi?count=10;bullet=%C2%BB"></script><script src="http://l.yimg.com/hr/1377/js/del-linkrolls.js" type="text/javascript"></script>
-<script src="http://feeds.delicious.com/v2/json/huangyi?count=10&amp;callback=Delicious.Linkrolls_CB_84710" type="text/javascript"></script>
-<style type="text/css"> .delicious-posts ul {list-style-type:none; margin: 0 0 1em 0; padding: 0 } .delicious-tag,.delicious-extended {font-size:smaller} .delicious-extended{margin:0;padding:0 0 0.25em 0} .module-list-item .delicious-posts ul{margin:0;padding:0} .module-list-item .delicious-posts h2, .module-list-item .delicious-posts li:first-child{margin-top:0} </style>
+<script type="text/javascript" src="http://feeds.delicious.com/v2/js/huangyi?title=%E7%BE%8E%E5%91%B3%E4%B9%A6%E7%AD%BE&count=10&bullet=%C2%BB&sort=date&extended"></script>
 ''',
 u'''
-<script type="text/javascript" src="http://del.icio.us/feeds/js/tags/huangyi?count=50;size=12-21;color=99cc00-ff9900"></script><script src="http://l.yimg.com/hr/1377/js/del-tagrolls.js" type="text/javascript"></script>
-<script src="http://feeds.delicious.com/v2/json/tags/huangyi?callback=Delicious.Tagrolls_CB_61781&amp;count=50" type="text/javascript"></script>
+<script type="text/javascript" src="http://feeds.delicious.com/v2/js/networkbadge/huangyi?showadd&icon=m&name&itemcount&nwcount&fancount"></script>
 ''',
 u'''
-<script type="text/javascript" src="http://del.icio.us/feeds/js/networkbadge/huangyi?name;nwcount;fancount;icon"></script><script src="http://l.yimg.com/hr/1377/js/del-networkbadges.js" type="text/javascript"></script>
-<script src="http://feeds.delicious.com/v2/json/userinfo/huangyi?callback=Delicious.NetworkBadges_CB_92823" type="text/javascript"></script>
+<script type="text/javascript" src="http://feeds.delicious.com/v2/js/tags/huangyi?title=%E7%BE%8E%E5%91%B3Tag&count=30&sort=alpha&flow=cloud&color=73adff-3274d0&size=12-35"></script>
 ''',
 ]
