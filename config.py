@@ -14,7 +14,9 @@ boxes=[
 <img align="left" src="http://stdyun.net/fs/user_img48/10015102_2.jpg" style="margin:0 5px 0 0"/>
 黃毅&nbsp;&nbsp;<br/>现居:广东深圳<br/><br/>
 07年武大毕业，供职于腾讯至今，开发web产品。<br/><br/>
-编程爱好者，python社区活跃分子。</p>
+编程爱好者，python社区活跃分子。<br/>
+这是刚搭的，之前博客请翻墙访问： <a target="_blank" href="http://codeplayer.blogspot.com/">http://codeplayer.blogspot.com/</a>
+</p>
     ''',
     u'''
 <h2>有谁在看</h2>
