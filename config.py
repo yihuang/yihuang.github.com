@@ -10,7 +10,7 @@ links=[
 boxes=[
     u'''
 <h2>个人简介</h2>
-<img align="left" src="http://stdyun.net/fs/user_img48/10015102_2.jpg" style="margin:0 5px 0 0"/>
+<img align="left" src="images/avatar.jpg" style="margin:10px 5px 5px 5px"/>
 <p>
 黃毅&nbsp;&nbsp;<br/>现居:广东深圳<br/><br/>
 07年武大毕业，供职于腾讯至今，开发web产品。<br/><br/>
