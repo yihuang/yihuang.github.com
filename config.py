@@ -17,14 +17,15 @@ boxes=[
 编程爱好者，python社区活跃分子。</p>
     ''',
     u'''
-<h2>有谁关注</h2>
+<h2>有谁在看</h2>
 <p>
 <script src="http://9.douban.com/service/badge/community/9031109/?show=&n=12&columns=3" type="text/javascript"></script>
 </p>
 ''',
 u'''
-<script src="http://www.google.com/reader/ui/publisher.js" type="text/javascript"></script>
-<script src="http://www.google.com/reader/public/javascript/user/15378179180142400162/state/com.google/starred?n=5&callback=GRC_p(%7Bc%3A'green'%2Ct%3A'My%20Starred%20Items'%2Cs%3A'true'%7D)%3Bnew%20GRC" type="text/javascript"></script>
+<h2>Google Reader分享<h2>
+<script type="text/javascript" src="http://www.google.com/reader/ui/publisher-zh_CN.js"></script>
+<script type="text/javascript" src="http://www.google.com/reader/public/javascript/user/15378179180142400162/state/com.google/broadcast?n=5&callback=GRC_p(%7Bc%3A%22green%22%2Ct%3A%22%22%2Cs%3A%22true%22%2Cn%3A%22true%22%2Cb%3A%22false%22%7D)%3Bnew%20GRC"></script>
 ''',
 u'''
 <script type="text/javascript" src="http://del.icio.us/feeds/js/huangyi?count=10;bullet=%C2%BB"></script><script src="http://l.yimg.com/hr/1377/js/del-linkrolls.js" type="text/javascript"></script>
