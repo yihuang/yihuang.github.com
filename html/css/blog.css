@@ -46,6 +46,7 @@ ul#nav li.activelink a,ul#nav li.activelink a:hover{background: #FFF;color: #003
 }
 
 .box h2 {
+    font: bold 1.1em Arial, Arial, Sans-Serif; padding: 0; margin: 0; 
     color:#2D8509;
     border-bottom:1px solid #D8DBBC;
 }
