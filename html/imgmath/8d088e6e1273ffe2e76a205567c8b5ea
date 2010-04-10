@@ -1,0 +1,3 @@
+@Start
+join_M:M(M(x)){\to}M(x)
+@End

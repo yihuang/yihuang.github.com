@@ -1,0 +1,3 @@
+@Start
+join :: Monad m => m (m a) -> m a
+@End

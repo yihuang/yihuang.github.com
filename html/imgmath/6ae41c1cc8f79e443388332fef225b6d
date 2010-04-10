@@ -1,0 +1,3 @@
+@Start
+ f(u*v) = f(u)  \cdot  f(v)
+@End

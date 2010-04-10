@@ -1,0 +1,3 @@
+@Start
+ F(f \cdot g) = F(f) \cdot F(g)
+@End

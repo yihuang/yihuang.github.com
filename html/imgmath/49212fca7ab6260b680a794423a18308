@@ -1,0 +1,3 @@
+@Start
+ F(f \circ g)=F(f) \circ F(g)
+@End

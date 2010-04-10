@@ -1,0 +1,3 @@
+@Start
+ g{\leftarrow}id_A = id_B{\leftarrow}g = g
+@End

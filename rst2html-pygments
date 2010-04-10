@@ -1,10 +1,15 @@
 #!/usr/bin/python
-class Klass(object):
-    def __init__(self, d):
-        self.__dict__.update(d)
 
-def dict2obj(d):
-    return Klass(d)
+# :Author: David Goodger, the Pygments team, Guenter Milde
+# :Date: $Date: $
+# :Copyright: This module has been placed in the public domain.
+
+# This is a merge of the docutils_ `rst2html` front end with an extension
+# suggestion taken from the pygments_ documentation.
+
+"""
+A front end to docutils, producing HTML with syntax colouring using pygments
+"""
 
 try:
     import locale
@@ -12,7 +17,7 @@ try:
 except:
     pass
 
-from docutils.core import publish_parts, default_description
+from docutils.core import publish_cmdline, default_description
 
 description = ('Generates (X)HTML documents from standalone reStructuredText '
                'sources. Uses `pygments` to colorize the content of'
@@ -48,19 +53,9 @@ pygments_directive.content = 1
 directives.register_directive('code-block', pygments_directive)
 
 # Call the docutils publisher to render the input as html::
-import os
-import sys
-from mako.lookup import TemplateLookup
-loader = TemplateLookup(directories=['./templates'], output_encoding='utf-8')
-listtpl = loader.get_template('list_tpl.mako')
-indextpl = loader.get_template('index_tpl.mako')
 
-path = './src/'
-fullpath = sys.argv[1]
-parts = dict2obj(publish_parts(source=open(fullpath).read(), writer_name='html', settings_overrides={'initial_header_level': 2, 'language_code':'zh_cn'}))
-content = listtpl.render(c=parts)
+publish_cmdline(writer_name='html', description=description)
 
-basename = os.path.splitext(os.path.basename(fullpath))[0]
-destname = os.path.join('./html/',basename+'.html')
-open(destname, 'w').write(content)
-print destname
+# .. _doctutile: http://docutils.sf.net/
+# .. _pygments: http://pygments.org/
+# .. _Using Pygments in ReST documents: http://pygments.org/docs/rstdirective/

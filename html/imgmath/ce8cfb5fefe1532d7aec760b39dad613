@@ -1,0 +1,3 @@
+@Start
+g : A \to B
+@End

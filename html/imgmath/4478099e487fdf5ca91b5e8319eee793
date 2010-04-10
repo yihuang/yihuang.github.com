@@ -1,0 +1,3 @@
+@Start
+F(f):F(A){\leftarrow}F(B)
+@End

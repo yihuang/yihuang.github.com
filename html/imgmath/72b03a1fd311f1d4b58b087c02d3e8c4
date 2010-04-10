@@ -1,0 +1,3 @@
+@Start
+P(P(S)) \to P(S)
+@End

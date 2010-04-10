@@ -1,0 +1,3 @@
+@Start
+ \mathit{join}_S(L) = \bigcup L
+@End

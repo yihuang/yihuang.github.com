@@ -1,0 +1,3 @@
+@Start
+ g \circ id_A = id_B \circ g = g
+@End

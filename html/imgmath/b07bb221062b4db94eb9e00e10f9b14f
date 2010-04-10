@@ -1,0 +1,3 @@
+@Start
+\mathit{join}^M_X : M(M(X)) \to M(X)
+@End

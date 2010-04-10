@@ -1,0 +1,4 @@
+@Start
+
+    f(u*v) = f(u) {\circ} f(v)
+@End
