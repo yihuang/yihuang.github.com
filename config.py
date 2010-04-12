@@ -8,6 +8,7 @@ links=[
     u'<a href="/">Home</a>',
     u'<a href="/blog/">Blog</a>',
     u'<a href="http://del.icio.us/huangyi" target="_blank">Delicious</a>',
+    u'<a href="https://groups.google.com/group/yi-programmer-comment" target="_blank">Comments</a>',
 ]
 boxes=[
     u'''
