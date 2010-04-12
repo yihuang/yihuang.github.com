@@ -30,7 +30,7 @@ def load_articles():
                 dateobj = datetime(year,month,day)
                 filename_noext=os.path.splitext(filename)[0]
                 print 'load article', fullname
-                yield Klass(date=dateobj, fullname=fullname, filename=filename, filename_noext=filename_noext, url='http://%s%s.html'%(config.blogurl,filename_noext))
+                yield Klass(date=dateobj, fullname=fullname, filename=filename, filename_noext=filename_noext, url='%s%s.html'%(config.blogurl,filename_noext))
 
 def parse_doclist(p, article_list):
     for article in article_list:
