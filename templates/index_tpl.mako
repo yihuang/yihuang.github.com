@@ -25,7 +25,7 @@
             <div id="right">
                 % for article in articles:
                 <div class="post">
-                    <h2><a href="${article.filename_noext}.html">${article.title and article.title+' - ' or ''}${article.date}</a></h2>
+                    <h2><a href="${article.filename_noext}.html">${article.title and article.title+' - ' or ''}${article.date.date()}</a></h2>
                     ${article.content}
                 </div>
                 % endfor
