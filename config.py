@@ -1,5 +1,7 @@
 # coding: utf-8
 from utils import *
+domain = 'yi-programmer.com'
+blogurl = 'http://%s/blog/'%domain
 blogname=u'白菜'
 description=u'使用firefox浏览器可以获得更好的效果'
 links=[

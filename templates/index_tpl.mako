@@ -4,7 +4,8 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="KEYWords" contect="黃毅 yihuang codeplayer python haskell web前端"></meta>
-        <title>${cfg.blogname}</title>
+	<link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+	<title>${cfg.blogname}</title>
         <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
 	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"></link>
     </head>
