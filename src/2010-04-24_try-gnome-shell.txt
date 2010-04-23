@@ -1,0 +1,12 @@
+===================
+gnome shell试用截图
+===================
+
+刚装上ubuntu10.04，用了一会 gnome shell，虽然完成度还不是很好，总体感觉还是挺不错的。现截图如下：
+
+.. image:: images/screenshots/Screenshot.png
+.. image:: images/screenshots/Screenshot-1.png
+.. image:: images/screenshots/Screenshot-2.png
+.. image:: images/screenshots/Screenshot-3.png
+.. image:: images/screenshots/Screenshot-4.png
+.. image:: images/screenshots/Screenshot-5.png
