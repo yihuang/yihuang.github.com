@@ -9,6 +9,7 @@ detailpages=$(htmls)
 listpage=html/index.html
 
 all : $(listpage) $(detailpages)
+detail : $(detailpages)
 
 $(listpage) : $(texts) templates/index_tpl.mako *.py
 	ls src/*.txt -1r | python gen_list.py

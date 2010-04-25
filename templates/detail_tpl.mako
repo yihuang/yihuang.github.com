@@ -7,9 +7,7 @@ ${c.html_prolog%c.encoding}
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"></link>
         <style type="text/css">
         .contents {
-            float:right;
-            background:#EEE;
-	    margin-top:0;
+            margin-top:0;
         }
         </style>
     </head>

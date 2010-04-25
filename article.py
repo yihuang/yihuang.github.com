@@ -46,7 +46,7 @@ def parse_doclist(p, article_list):
 
 def trans_doclist(article_list):
     # 算法，从文档中萃取简介和目录
-    # 简单段落，取第一段
+    # 简单段落，取全部
     # 有标题的段落，取标题和第一段
     # 有标题有topic的，取标题和topic
     # 有标题有topic的有简介的，取标题和topic和简介
@@ -56,10 +56,15 @@ def trans_doclist(article_list):
         resultlist = []
         if rootlist[0].tagname == 'title':
             article.title = rootlist[0].astext()
-            if len(rootlist)>2 and rootlist[1].tagname == 'paragraph' and rootlist[2].tagname == 'topic':
-                resultlist = rootlist[1:3]
+            for idx,node in enumerate(rootlist):
+                if node.tagname=='topic':
+                    break
             else:
-                resultlist = rootlist[1:2]
+                idx=-1
+            if idx==-1: # no topic
+                resultlist = rootlist[1:]
+            else:
+                resultlist = rootlist[1:idx+1]
         else:
             article.title = u'碎片'
             resultlist = rootlist[:]

@@ -1,0 +1,100 @@
+==================
+pyclutter简易教程
+==================
+
+clutter 是一个动画GUI库，基于OpenGL图形加速，设计良好的api，基于GObject体系，和gtk环境良好整好。gnome3.0新的window manager mutter 就是基于这个库开发。
+
+linux 上 3D window manager 由来已久，但是除了游戏，大部分应用程序本身仍然还是使用2D进行渲染。clutter就是希望能够给应用程序提供一个易用的接口，使用3D效果创建新一代的UI。
+
+好用的接口总是让人心旷神怡的，processing已经让我惊艳过一次，这次 clutter 也不例外。下面就开始我们的 clutter 之旅吧。
+
+因为 clutter 的概念和接口都比较简单，本教程文字介绍并不多，主要通过代码展示clutter的基本概念。里面的代码和截图都是在我的电脑上实地跑出来的。
+
+.. contents:: 目录
+
+安装
+====
+
+如果你已经是ubuntu10.04的用户，那么clutter已经自带，你只需要再安装一个 pyclutter 的包即可。其他用户可到如下网站下去安装相应的库和相关的依赖：
+
+* clutter: http://clutter-project.org/download.html
+* pyclutter: http://www.clutter-project.org/sources/pyclutter/
+
+其他资源：
+
+* pyclutter的api文档： http://www.clutter-project.org/docs/pyclutter/stable/
+* programming clutter教程： http://www.openismus.com/documents/clutter_tutorial/1.0/docs/tutorial/html/index.html
+
+第一个窗口
+==========
+
+.. figure:: images/clutter-tutorial/Screenshot-simple.png
+    :align: right
+
+    运行结果
+
+.. code-block:: python
+    :filename: code/clutter-tutorial/simplewindow.py
+
+首先我们创建了一个 Stage 对象。这里先解释一下什么是 Stage 对象。
+
+在clutter中最重要的一个概念就是 Actor，它是 clutter 处理的基本元素，Actor可以有子Actor，也就是说Actor构成一个树状结构。
+而Stage就是这棵树的根节点。在运行的时候，Stage也就代表了整个窗口。
+
+在代码中，我们设置了窗口的标题，大小和背景色，并绑定了一个 destroy 的事件，这样我们点击窗口的关闭按钮时，程序可以正常退出。
+
+下面，我们在这个窗口中展示一些具体内容。
+
+基本元素
+========
+
+这个代码向窗口中添加了一个蓝色的矩形。
+
+.. figure:: images/clutter-tutorial/Screenshot-sqare.png
+    :align: right
+
+    运行结果
+
+.. code-block:: python
+    :filename: code/clutter-tutorial/sqare.py
+
+动起来
+======
+
+下面我们来加点有意思的东西：动画。下面的代码可以让多个矩形以不同的速度进行旋转。而且我们顺便加了个鼠标点击事件可以让你通过点击对某个图形进行隐藏。
+
+.. figure:: images/clutter-tutorial/Screenshot-rotate.png
+    :align: right
+
+    运行结果
+
+.. code-block:: python
+    :filename: code/clutter-tutorial/rotate.py
+
+组合动画
+=========
+
+多创建复杂动画的时候，将逻辑全都塞在一个 timeline 的回调函数里面未免显得臃肿，下面介绍clutter提供的多个timeline并行运行的机制。下面的代码可以让图形在旋转的同时进行缩放。
+
+.. figure:: images/clutter-tutorial/Screenshot-complex.png
+    :align: right
+
+    运行结果
+
+.. code-block:: python
+    :filename: code/clutter-tutorial/complex-animation.py
+
+Texture
+=======
+
+TODO
+
+使用json作为动画的配置文件
+==========================
+
+TODO
+
+Animation 和 Behaivour 介绍
+===========================
+
+TODO
