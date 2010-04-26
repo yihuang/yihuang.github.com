@@ -26,6 +26,7 @@ ${c.html_prolog%c.encoding}
         <div id="middle">
             ${c.html_title}
             ${c.fragment}
+	    ${c.footer}
         </div>
     </body>
     <link type="text/css" rel="stylesheet" href="css/pygments.css"></link>

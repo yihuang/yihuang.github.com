@@ -10,6 +10,8 @@ linux 上 3D window manager 由来已久，但是除了游戏，大部分应用�
 
 因为 clutter 的概念和接口都比较简单，本教程文字介绍并不多，主要通过代码展示clutter的基本概念。里面的代码和截图都是在我的电脑上实地跑出来的。
 
+代码目录： `code/clutter-tutorial/ <code/clutter-tutorial/>`__
+
 .. contents:: 目录
 
 安装

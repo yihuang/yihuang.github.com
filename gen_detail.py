@@ -26,10 +26,11 @@ listtpl = loader.get_template('detail_tpl.mako')
 
 path = './src/'
 fullpath = sys.argv[1]
-parts = dict2obj(publish_parts(source=sys.stdin.read(), writer_name='html'))
+basename = os.path.splitext(os.path.basename(fullpath))[0]
+source_url = 'src/%s.txt'%basename
+parts = dict2obj(publish_parts(source=sys.stdin.read(), writer_name='html', settings_overrides={'source_url':source_url}))
 content = listtpl.render(c=parts, cfg=config)
 
-basename = os.path.splitext(os.path.basename(fullpath))[0]
 destname = os.path.join('./html/',basename+'.html')
 open(destname, 'w').write(content)
 print destname
