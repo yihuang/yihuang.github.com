@@ -30,7 +30,7 @@ boxes=[
     u'''
 <h2>有谁在看</h2>
 <p>
-<script src="http://9.douban.com/service/badge/community/9031109/?show=&n=12&columns=3" type="text/javascript"></script>
+<script type="text/javascript" src="http://9.douban.com/service/badge/community/9361637/?show=&n=12&columns=3" ></script>
 </p>
 ''',
 u'''

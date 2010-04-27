@@ -7,11 +7,36 @@ import pygments_support
 import imgmathhack
 from utils import *
 import config
+from docutils.writers.html4css1 import Writer,HTMLTranslator
+from docutils import nodes
+
+class SummaryTranslator(HTMLTranslator):
+    def visit_reference(self, node):
+        atts = {'class': 'reference'}
+        if node.has_key('refuri'):
+            atts['href'] = node['refuri']
+            if ( self.settings.cloak_email_addresses
+                 and atts['href'].startswith('mailto:')):
+                atts['href'] = self.cloak_mailto(atts['href'])
+                self.in_mailto = 1
+            atts['class'] += ' external'
+        else:
+            assert node.has_key('refid'), \
+                   'References must have "refuri" or "refid" attribute.'
+            atts['href'] = self.document.settings.url + '#' + node['refid']
+            atts['class'] += ' internal'
+        if not isinstance(node.parent, nodes.TextElement):
+            assert len(node) == 1 and isinstance(node[0], nodes.image)
+            atts['class'] += ' image-reference'
+        self.body.append(self.starttag(node, 'a', '', **atts))
+
+g_writer = Writer()
+g_writer.translator_class = SummaryTranslator
 
 def init_publisher():
     from docutils.core import Publisher
     from docutils.io import StringOutput
-    p = Publisher(destination_class=StringOutput)
+    p = Publisher(destination_class=StringOutput,writer=g_writer)
     p.set_components('standalone', 'restructuredtext', 'html')
     p.get_settings()
     return p
@@ -40,6 +65,7 @@ def parse_doclist(p, article_list):
         p.set_source(source=StringIO(result), source_path=article.fullname)
         p.document = p.reader.read(p.source, p.parser, p.get_settings())
         p.apply_transforms()
+        p.document.settings.url = article.url
         article.doc = p.document
         article.ndoc = p.reader.new_document()
         yield article

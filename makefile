@@ -12,6 +12,7 @@ listpage=html/index.html
 
 all : $(listpage) $(detailpages)
 detail : $(detailpages)
+index : $(listpage)
 
 $(listpage) : $(texts) templates/index_tpl.mako  $(comm_dep)
 	ls src/*.txt -1r | python gen_list.py
