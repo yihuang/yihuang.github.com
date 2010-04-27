@@ -2,11 +2,11 @@
 pyclutter简易教程
 ==================
 
-clutter 是一个动画GUI库，基于OpenGL图形加速，设计良好的api，基于GObject体系，和gtk环境良好整好。gnome3.0新的window manager mutter 就是基于这个库开发。
+`clutter <http://clutter-project.org/>`__ 是一个动画GUI库，基于OpenGL图形加速，设计良好的api，基于GObject体系，和gtk环境良好整好。gnome3.0新的window manager mutter 就是基于这个库开发。
 
 linux 上 3D window manager 由来已久，但是除了游戏，大部分应用程序本身仍然还是使用2D进行渲染。clutter就是希望能够给应用程序提供一个易用的接口，使用3D效果创建新一代的UI。
 
-好用的接口总是让人心旷神怡的，processing已经让我惊艳过一次，这次 clutter 也不例外。下面就开始我们的 clutter 之旅吧。
+好用的接口总是让人心旷神怡的， `processing <http://processing.org/>`__ 已经让我惊艳过一次，这次 clutter 也不例外。下面就开始我们的 clutter 之旅吧。
 
 因为 clutter 的概念和接口都比较简单，本教程文字介绍并不多，主要通过代码展示clutter的基本概念。里面的代码和截图都是在我的电脑上实地跑出来的。
 
