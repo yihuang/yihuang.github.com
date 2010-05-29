@@ -15,8 +15,8 @@ detail : $(detailpages)
 index : $(listpage)
 
 $(listpage) : $(texts) templates/index_tpl.mako  $(comm_dep)
-	ls src/*.txt -1r | python gen_list.py
-	ls src/*.txt -1r | python gen_rss.py
+	ls -1r src/*.txt | python gen_list.py
+	ls -1r src/*.txt | python gen_rss.py
 
 clean :
 	rm html/*.html

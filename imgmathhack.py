@@ -81,8 +81,7 @@ class Tex_to_images(object):
         src = self.process(text)
         return '''\
 image:: %(src)s
-    :align: middle
-    :class: texmath
+    :class: texmath align-middle
     :alt: %(text)s
 ''' % locals()
     def texdisplay(self, text):

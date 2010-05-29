@@ -37,14 +37,15 @@ def init_publisher():
     from docutils.core import Publisher
     from docutils.io import StringOutput
     p = Publisher(destination_class=StringOutput,writer=g_writer)
-    p.set_components('standalone', 'restructuredtext', 'html')
     p.get_settings()
+    p.set_components('standalone', 'restructuredtext', 'html')
+    p.set_destination(None, None)
     return p
 
-def load_articles():
+def load_articles(inputfile=sys.stdin):
     src_dir = 'src/'
     filename_reg = re.compile(r'^(\d+-\d+-\d+)_(.*)')
-    for fullname in sys.stdin.readlines():
+    for fullname in inputfile.readlines():
         fullname = fullname.strip()
         filename = os.path.basename(fullname)
         if filename.endswith('.txt'):
