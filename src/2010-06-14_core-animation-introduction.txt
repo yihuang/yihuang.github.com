@@ -1,0 +1,95 @@
+=======================
+Core Animation编程指南
+=======================
+
+--------------------
+Core Animation 简介
+--------------------
+
+`原文 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/WhatisCoreAnimation.html#//apple_ref/doc/uid/TP40004689-SW1>`_
+
+Core Animation是一个Objc类库，用于处理图像渲染，投射和动画。
+
+它提供以下功能：
+
+* 通过简单的编程模型提供高性能的合成效果。
+* 基于熟悉的视图抽象，可以使用树状的对象体系创建复杂的用户界面
+* 轻量的数据结构。可以同时对上百个层进行显示和动画。
+* 抽象的动画接口，能够让动画运行在独立的线程。一旦动画配制完毕并启动后，Core Animation将负责它的运行和桢速。
+* 提升应用程序性能。程序只需要在变化时重画。resize时将应用程序需要做的处理降到最低并提供layout服务层，Core Animation让你不再需要手动处理桢速。
+* 灵活的layout管理器模型，自代的管理器能让你指定层和其兄弟层的相对位置和大小。
+
+使用 Core Animation，开发者不再需要底层图形接口就可以创建高性能的动态用户界面了。
+
+.. 目录::
+
+Core Animation类体系
+---------------------
+
+.. figure:: images/lk_class_hierarchy.jpg
+    :align: right
+    :figclass: center-figure
+
+    Core Animation类图
+
+Core Animation的类可分为以下几组：
+
+* 提供展示的内容的Layer类
+* Animation 和 timing 类
+* Layout 和 constraint 类
+* 将多个修改合成一个原子更新操作的事务类
+
+基本的 Core Animatin 类包含在 Quartz Core 框架中，也有另外的layer类在其他框架中定义。下图展示了 Core Animation 的类体系。
+
+CALayer
+--------
+
+`CALayer` 是Core Animation的基础，它的作用类似于 `NSView` 。每一个 `CALayer` 可以拥有一个父层和多个子层，由此形成一个树状结构的体系，叫做 layer tree。
+
+层从后往前的顺序进行渲染，子层的坐标系统是相对父层的局部坐标系统。还可以对层进行矩阵转换来实现复杂的展示效果（ `详情 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/Layers.html#//apple_ref/doc/uid/TP40006082-SW1>`__ ）。
+
+`CALayer` 中，除了继承还有多种方式可以为它提供显示内容，这一点有别于其他视图类（ `详情 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/ProvidingCALayerContent.html#//apple_ref/doc/uid/TP40006642-SW1>`__ ）：
+
+* 把层的 content 属性设置为Core Graphics image，或者代理
+* 提供代理对Core Graphics image context进行画图
+* 设置层公用的一些可视化属性，比如背景色，透明度等（ `详情 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/LayerVisProps.html#//apple_ref/doc/uid/TP40006074-SW1>`__ ）
+* Subclassing CALayer and implementing any of the above techniques in a more encapsulated manner.
+
+动画和时间函数
+----------------
+
+层的很多可视属性都可以产生隐式动画，这些属性称为可动画属性，修改层的可动画属性自动就会产生从当前值变化到目标值的动画，比如设置层的hidden属性为YES，就会产生一个淡出的动画。大部分可动画属性都有默认的动画，这些动画都是可以定制的。 `可动画属性列表 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/AnimProps.html#//apple_ref/doc/uid/TP40005942-SW1>`_
+
+可动画属性也可以进行显式动画，要创建显式动画你可以创建Core Animation动画类的实例并指定视觉效果，显式动画不会修改层对象的属性值，它仅仅是展示动画效果而已。
+
+Core Animation既提供基本动画也提供关键桢动画，你可以对层的整个内容进行动画也可以对部分属性进行动画。所有动画类都继承自抽象类 `CAAnimation` 。 `CAAnimation` 遵守 `CAMediaTiming` 协议，可以对动画进行简单的时长，速度，重复次数控制。它还遵守 `CAAction` 协议，可以让动画在层触发action时启动（ `详情 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/Actions.html#//apple_ref/doc/uid/TP40006095-SW1>`__ ）。
+
+动画类还定义了描述动画速度的基于简单bezier曲线的时间函数。比如ease-out时间函数会让动画在快结束的时候减速。
+
+Core Animation提供了许多或具体或抽象的动画类（ `详情 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/AnimatingLayers.html#//apple_ref/doc/uid/TP40006085-SW1>`__ ）：
+
+* `CATransition` 提供作用于整个层的转换效果。你还可以通过自定义的Core Image filter扩展转换效果。
+* `CAAnimationGroup` 可以打包多个动画对象并让他们同时执行。
+* `CAPropertyAnimation` 支持基于属性关键路径的动画。
+* `CABasicAnimation` 对属性做简单的插值
+* `CAKeyframeAnimation` 对关键桢动画提供支持。指定需要动画属性的关键路径，一个表示每一个阶段对应的值的数组，还有一个关键桢时间和时间函数的数组。动画运行时，依次设置每一个值的指定插值。
+
+`详情 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/Animation_Types_Timing/Introduction/Introduction.html#//apple_ref/doc/uid/TP40006166>`__
+
+Layout管理类
+------------
+
+Mac OS X 的 Core Animation 还提供更灵活的机制可以让你自己编写自定义的 layout 管理器。
+
+Core Animation 的 `CAConstraint` 类是个layout管理器，它根据你指定的约束条件对子层进行排列。每一个约束条件（封装在 CAConstraint 类的实例中）描述层和兄弟层或父层之间的几何属性的关系。
+
+`详情 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/Layout.html#//apple_ref/doc/uid/TP40006084-SW1>`__
+
+事务管理类 
+------------
+
+对可动画属性的任何修改都应该在事务中完成。 `CATransition` 类负责将多个动画操作打包成原子更新操作然后执行。支持嵌套事务。
+
+Core Animation 支持两种事务：隐式和显式。在当前没有事务的情况下对可动画属性进行修改会自动创建一个隐式的事务，在当前线程下一次迭代时自动提交。要创建显式事务，在对层进行修改之前给 `CATransition` 类发一个 `begin` 消息，修改后再发一个 `commit` 消息。
+
+`详情 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/Transactions.html#//apple_ref/doc/uid/TP40006096-SW1>`__
