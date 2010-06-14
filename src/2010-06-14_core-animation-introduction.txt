@@ -1,9 +1,9 @@
-=======================
-Core Animation编程指南
-=======================
+==============================
+Core Animation编程指南 - 简介
+==============================
 
 --------------------
-Core Animation 简介
+Core Animation 
 --------------------
 
 `原文 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/WhatisCoreAnimation.html#//apple_ref/doc/uid/TP40004689-SW1>`_
