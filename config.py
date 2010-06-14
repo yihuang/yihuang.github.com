@@ -7,8 +7,6 @@ description=u'&nbsp;&nbsp;'
 links=[
     u'<a href="/">Home</a>',
     u'<a href="/blog/">Blog</a>',
-    u'<a href="http://del.icio.us/huangyi" target="_blank">Delicious</a>',
-    u'<a href="https://groups.google.com/group/yi-programmer-comment" target="_blank">Comments</a>',
     u'<a href="https://groups.google.com/group/yi-programmer-comment" target="_blank">Comments</a>',
     u'<a href="http://9.douban.com/subject/9361637/" target="_blank">豆瓣九点</a>',
 ]
@@ -18,9 +16,8 @@ boxes=[
 <img align="left" src="images/avatar.jpg" style="margin:10px 5px 5px 5px"/>
 <p>
 黃毅&nbsp;&nbsp;<br/>现居:广东深圳<br/><br/>
-07年武大毕业，供职于腾讯至今，开发web产品。<br/><br/>
 编程爱好者，python社区活跃分子。<br/>
-这是刚搭的，之前博客请翻墙访问： <a target="_blank" href="http://codeplayer.blogspot.com/">http://codeplayer.blogspot.com/</a>
+旧博客入口： <a target="_blank" href="http://codeplayer.blogspot.com/">http://codeplayer.blogspot.com/</a>
 </p>
     ''',
     u'''
