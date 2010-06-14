@@ -9,6 +9,8 @@ links=[
     u'<a href="/blog/">Blog</a>',
     u'<a href="http://del.icio.us/huangyi" target="_blank">Delicious</a>',
     u'<a href="https://groups.google.com/group/yi-programmer-comment" target="_blank">Comments</a>',
+    u'<a href="https://groups.google.com/group/yi-programmer-comment" target="_blank">Comments</a>',
+    u'<a href="http://9.douban.com/subject/9361637/" target="_blank">豆瓣九点</a>',
 ]
 boxes=[
     u'''
