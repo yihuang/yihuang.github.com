@@ -23,6 +23,7 @@ boxes=[
     u'''
 <h2>友情链接</h2>
 <ul style="list-style:none;padding-left:15px;">
+<li><a href="http://www.caomoxuan.com/" target="_blank">三饱三倒</a></li>
 <li><a href="http://kjam.org/cn/" target="_blank">Kern.Jam</a></li>
 </ul>
     ''',
