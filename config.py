@@ -3,7 +3,7 @@ from utils import *
 domain = 'yi-programmer.com'
 blogurl = 'http://%s/blog/'%domain
 blogname=u'白菜 - 精确编程'
-description=u'推荐使用非IE浏览器浏览'
+description=u'&nbsp;&nbsp;'
 links=[
     u'<a href="/">Home</a>',
     u'<a href="/blog/">Blog</a>',
