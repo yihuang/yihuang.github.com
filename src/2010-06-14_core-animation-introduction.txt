@@ -14,10 +14,10 @@ Core Animation是一个Objc类库，用于处理图像渲染，投射和动画�
 
 * 通过简单的编程模型提供高性能的合成效果。
 * 基于熟悉的视图抽象，可以使用树状的对象体系创建复杂的用户界面
-* 轻量的数据结构。可以同时对上百个层进行显示和动画。
+* 轻量的数据结构。可以同时对上百个层进行展示和动画。
 * 抽象的动画接口，能够让动画运行在独立的线程。一旦动画配制完毕并启动后，Core Animation将负责它的运行和桢速。
-* 提升应用程序性能。程序只需要在变化时重画。resize时将应用程序需要做的处理降到最低并提供layout服务层，Core Animation让你不再需要手动处理桢速。
-* 灵活的layout管理器模型，自代的管理器能让你指定层和其兄弟层的相对位置和大小。
+* 提升应用程序性能。程序只需要在变化时重画。将应用程序在resize时需要做的处理降到最低并提供layout服务层，Core Animation让你不再需要手动处理桢速。
+* 灵活的layout管理器模型，自带的管理器能让你指定层和其兄弟层的相对位置和大小。
 
 使用 Core Animation，开发者不再需要底层图形接口就可以创建高性能的动态用户界面了。
 
@@ -46,9 +46,9 @@ CALayer
 
 `CALayer` 是Core Animation的基础，它的作用类似于 `NSView` 。每一个 `CALayer` 可以拥有一个父层和多个子层，由此形成一个树状结构的体系，叫做 layer tree。
 
-层从后往前的顺序进行渲染，子层的坐标系统是相对父层的局部坐标系统。还可以对层进行矩阵转换来实现复杂的展示效果（ `详情 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/Layers.html#//apple_ref/doc/uid/TP40006082-SW1>`__ ）。
+层从后往前的顺序进行渲染，子层基于和父层相对的局部坐标系统。还可以对层进行矩阵转换以实现复杂的展示效果（ `详情 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/Layers.html#//apple_ref/doc/uid/TP40006082-SW1>`__ ）。
 
-`CALayer` 中，除了继承还有多种方式可以为它提供显示内容，这一点有别于其他视图类（ `详情 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/ProvidingCALayerContent.html#//apple_ref/doc/uid/TP40006642-SW1>`__ ）：
+在 `CALayer` 中，除了继承还有多种方式可以为它提供显示的内容，这一点有别于其他视图类（ `详情 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/ProvidingCALayerContent.html#//apple_ref/doc/uid/TP40006642-SW1>`__ ）：
 
 * 把层的 content 属性设置为Core Graphics image，或者代理
 * 提供代理对Core Graphics image context进行画图
@@ -58,7 +58,7 @@ CALayer
 动画和时间函数
 ----------------
 
-层的很多可视属性都可以产生隐式动画，这些属性称为可动画属性，修改层的可动画属性自动就会产生从当前值变化到目标值的动画，比如设置层的hidden属性为YES，就会产生一个淡出的动画。大部分可动画属性都有默认的动画，这些动画都是可以定制的。 `可动画属性列表 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/AnimProps.html#//apple_ref/doc/uid/TP40005942-SW1>`_
+层的很多可视属性都可以产生隐式动画，这些属性称为可动画属性，修改层的可动画属性自动就会产生从当前值变化到目标值的动画，比如设置层的hidden属性为YES，就会产生一个淡出的动画。大部分可动画属性都有默认的动画，这些动画也是可以定制的。 `可动画属性列表 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/AnimProps.html#//apple_ref/doc/uid/TP40005942-SW1>`_
 
 可动画属性也可以进行显式动画，要创建显式动画你可以创建Core Animation动画类的实例并指定视觉效果，显式动画不会修改层对象的属性值，它仅仅是展示动画效果而已。
 
@@ -81,7 +81,7 @@ Layout管理类
 
 Mac OS X 的 Core Animation 还提供更灵活的机制可以让你自己编写自定义的 layout 管理器。
 
-Core Animation 的 `CAConstraint` 类是个layout管理器，它根据你指定的约束条件对子层进行排列。每一个约束条件（封装在 CAConstraint 类的实例中）描述层和兄弟层或父层之间的几何属性的关系。
+Core Animation 的 `CAConstraint` 类是个layout管理器，它根据你指定的约束条件对子层进行排列。每一个约束条件（封装在 `CAConstraint` 类的实例中）描述层和兄弟层或父层之间的几何属性的关系。
 
 `详情 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/Layout.html#//apple_ref/doc/uid/TP40006084-SW1>`__
 
