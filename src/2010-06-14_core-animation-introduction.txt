@@ -6,7 +6,11 @@ Core Animation编程指南 - 简介
 Core Animation 
 --------------------
 
-`原文 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/WhatisCoreAnimation.html#//apple_ref/doc/uid/TP40004689-SW1>`_
+.. meta::
+   :description: 苹果官方文档的翻译： Core Animation Programming Guide - Introduction
+   :keywords: cocoa animation architecture introduction 翻译
+
+`原文 <http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/WhatisCoreAnimation.html#//apple_ref/doc/uid/TP40004689-SW1>`__
 
 Core Animation是一个Objc类库，用于处理图像渲染，投射和动画。
 
