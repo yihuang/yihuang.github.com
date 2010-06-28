@@ -11,7 +11,8 @@
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
     </head>
     <body>
-        <div id="header">
+	<div id="wrapper">
+	<div id="header">
             <h1><a href="/blog/">${cfg.blogname}</a></h1>
             <div class="description">${cfg.description}</div>
             <div id="menu">
@@ -39,6 +40,7 @@
                 % endfor
             </div>
         </div>
+	</div>
         <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
         <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");

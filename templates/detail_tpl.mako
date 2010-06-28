@@ -12,6 +12,7 @@ ${c.html_prolog%c.encoding}
         </style>
     </head>
     <body>
+	<div id="wrapper">
         <div id="header">
             <h1><a href="/blog/">${cfg.blogname}</a></h1>
             <div class="description">${cfg.description}</div>
@@ -28,6 +29,7 @@ ${c.html_prolog%c.encoding}
             ${c.fragment}
             ${c.footer}
         </div>
+	</div>
     </body>
     <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
     <script type="text/javascript">
