@@ -1,0 +1,5 @@
+====================================
+译：为什么Linux上的字体问题这么麻烦
+====================================
+
+试用 `google翻译者工具 <http://translate.google.com/toolkit>`_ ，翻译了一篇小文： `为什么Linux上的字体问题这么麻烦 <http://docs.google.com/Doc?docid=0ATNCunc53PvnZGN6Zzh2dGtfNHJrZ2Y3Yjl4&hl=en>`_ 。
