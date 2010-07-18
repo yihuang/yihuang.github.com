@@ -2,23 +2,20 @@
 git 和 mercurial 的区别
 ========================
 
-`git <http://git-scm.com/>`_ 和 `mercurial <http://mercurial.selenic.com/>`_ 都是分布式版本控制系统，大部分概念都是一致的。
+`git <http://git-scm.com/>`_ 和 `mercurial <http://mercurial.selenic.com/>`_ 都是分布式版本控制系统，大部分概念和使用方式都是相当接近的。
 
-它们之间的详细区别可以参考以下文章：
+本文主要描述两点我认为最重要的两点区别，其他更详细的区别可以参考这两个链接 [1]_ [2]_ ：
 
-* http://mercurial.selenic.com/wiki/GitConcepts
-* http://rg03.wordpress.com/2009/04/07/mercurial-vs-git/
+#. 在commit(`mercurial`_ 里面叫做changeset)对象存储方式上， `git`_ 存储的是文件和目录的snapshot [3]_ ， `mercurial`_ 存储的与前一个commit之间的diff [4]_ 。这点区别大部分时候对于使用者是透明的，但是对于大点的项目来说还是很容易产生可观察到的差异的，比如 `git`_ 的方式会占用更多的空间， `mercurial`_ 的方式在执行很多操作的时候性能更低。可以说 `git`_ 的方式也是一种空间换时间的做法。另外， `git`_ 针对空间问题也专门提供了一个 `git gc <http://www.kernel.org/pub/software/scm/git/docs/git-gc.html>`_ 命令，可以扫描出内容相似的文件改用 diff 方式进行存储，需要手动执行；而 `mercurial`_ 也会按照一定的间隔采用 snapshot 方式存储commit数据，也可以部分优化性能问题。
 
-对我来说，它们之间最主要的区别有以下两点：
-
-#. 在commit(`mercurial`_ 里面叫做changeset)对象存储方式上， `git`_ 存储的是文件和目录的snapshot [1]_ ， `mercurial`_ 存储的与前一个commit之间的diff [2]_ 。这点区别大部分时候对于使用者是透明的，但是对于大点的项目来说还是很容易产生可观察到的差异的，比如 `git`_ 的方式会占用更多的空间， `mercurial`_ 的方式在执行很多操作的时候性能更低。可以说 `git`_ 的方式也是一种空间换时间的做法。另外， `git`_ 针对空间问题也专门提供了一个 `git gc <http://www.kernel.org/pub/software/scm/git/docs/git-gc.html>`_ 命令，可以扫描出内容相似的文件改用 diff 方式进行存储，需要手动执行；而 `mercurial`_ 也会按照一定的间隔采用 snapshot 方式存储commit数据，也可以部分优化性能问题。
-
-值得一提的是， `git`_ 存储方式的灵活性让它实际上可以看做是一个带有版本控制功能的文件系统 [3]_ ，所以一些 `git`_ 控把 `git`_ 看做是一个基础平台，而版本控制系统只是其中附带的一个应用，虽然就我所知除了版本控制系统也没有其他引人注目的应用。
+值得一提的是， `git`_ 存储方式的灵活性让它实际上可以看做是一个带有版本控制功能的文件系统 [5]_ ，所以一些 `git`_ 控把 `git`_ 看做是一个基础平台，而版本控制系统只是其中附带的一个应用，虽然就我所知除了版本控制系统也没有其他引人注目的应用。
 
 #. 在分支的处理方式上， `git`_ 把分支看做是对分支上最近一个commit的引用，当在分支上创建新的commit时，这个引用也相应地移动。使用 `git branch <http://www.kernel.org/pub/software/scm/git/docs/git-branch.html>`_ 命令你可以快速地创建切换任意分支。 `mercurial`_ 中并没有显示的分支的概念，当从其他地方pull过来新的commit时， `mercurial`_ 会自动产生隐式的分支，然后你再把他们merge到一起。那么 `mercurial`_ 中你要创建自己的分支怎么办呢，也简单，另外建个目录重新 clone 一份即可，就是比 `git`_ 的方式慢一些。
 
 另外，在线 `git`_ 服务有 http://github.com/ ，在线 `mercurial`_ 服务有 https://bitbucket.org/ 。
 
-.. [1] http://book.git-scm.com/1_the_git_object_model.html
-.. [2] http://mercurial.selenic.com/wiki/GitConcepts#History_model
-.. [3] http://marc.info/?l=linux-kernel&m=111314792424707
+.. [1] http://mercurial.selenic.com/wiki/GitConcepts
+.. [2] http://rg03.wordpress.com/2009/04/07/mercurial-vs-git/
+.. [3] http://book.git-scm.com/1_the_git_object_model.html
+.. [4] http://mercurial.selenic.com/wiki/GitConcepts#History_model
+.. [5] http://marc.info/?l=linux-kernel&m=111314792424707
