@@ -2,6 +2,10 @@
 git 和 mercurial 的区别
 ========================
 
+.. meta::
+    :description: git 和 mercurial 的区别
+    :keyword: git mercurial dvcs 区别
+
 `git <http://git-scm.com/>`_ 和 `mercurial <http://mercurial.selenic.com/>`_ 都是分布式版本控制系统，大部分概念和使用方式都是相当接近的。
 
 本文主要描述两点我认为最重要的两点区别，其他更详细的区别可以参考这两个链接 [1]_ [2]_ ：
