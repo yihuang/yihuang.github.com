@@ -1,0 +1,17 @@
+===========
+GO 语言要点
+===========
+
+想到哪，写到哪：
+
+#. 静态类型
+#. 类似c的结构体和其他基本类型；继承了c简洁的概念，简洁的内存模型的优良传统；
+#. 比c更一致的语法，比如go的for可以替代c语言的for和while
+#. 同样类似c有值类型和指针类型的区别，但指针不能移动
+#. 自动垃圾回收
+#. 内置类似python的字符串，map类型
+#. goroutine。酷似stacklesspython的tasklet，channel。
+#. 针对goroutine的select语法
+#. 可以给任意类型定义方法，任意！
+#. 独特的接口概念。类似java的interface，除了go的接口是隐式的，即类型不需要显式申明自己实现某个接口，直接实现同名方法即可。
+#. defer语法，只比objective-c的autorelease好用一点点
