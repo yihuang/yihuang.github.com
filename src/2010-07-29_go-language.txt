@@ -2,6 +2,10 @@
 GO 语言要点
 ===========
 
+.. meta::
+    :keyword: go language
+    :description: go language
+
 想到哪，写到哪：
 
 #. 静态类型
