@@ -13,7 +13,7 @@ GO 语言要点
 #. 比c更一致的语法，比如go的for可以替代c语言的for和while
 #. 同样类似c有值类型和指针类型的区别，但指针不能移动
 #. 自动垃圾回收
-#. 内置类似python的字符串，map类型
+#. 内置类似python的字符串，map类型，slice
 #. goroutine。酷似stacklesspython的tasklet，channel。
 #. 针对goroutine的select语法
 #. 可以给任意类型定义方法，任意！
