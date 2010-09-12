@@ -1,0 +1,164 @@
+==========
+go runtime
+==========
+
+.. code-block:: c
+
+    /*
+     * basic types
+     */
+    typedef	signed char		int8;
+    typedef	unsigned char		uint8;
+    typedef	signed short		int16;
+    typedef	unsigned short		uint16;
+    typedef	signed int		int32;
+    typedef	unsigned int		uint32;
+    typedef	signed long long int	int64;
+    typedef	unsigned long long int	uint64;
+    typedef	float			float32;
+    typedef	double			float64;
+
+    #ifdef _64BIT
+    typedef	uint64		uintptr;
+    typedef	int64		intptr;
+    #else
+    typedef	uint32		uintptr;
+    typedef int32		intptr;
+    #endif
+
+.. code-block:: c
+
+    /*
+     * layout of Itab known to compilers
+     */
+    struct Itab
+    {
+        InterfaceType*	inter;
+        Type*	type;
+        Itab*	link;
+        int32	bad;
+        int32	unused;
+        void	(*fun[])(void);
+    };
+
+    struct Iface
+    {
+        Itab*	tab;
+        void*	data;
+    };
+    struct Eface
+    {
+        Type*	type;
+        void*	data;
+    };
+
+.. code-block:: c
+
+    struct String
+    {
+        byte*	str;
+        int32	len;
+    };
+
+    struct	Slice
+    {				// must not move anything
+        byte*	array;		// actual data
+        uint32	len;		// number of elements
+        uint32	cap;		// allocated number of elements
+    };
+
+.. code-block:: c
+
+    struct	Gobuf
+    {
+        // The offsets of these fields are known to (hard-coded in) libmach.
+        byte*	sp;
+        byte*	pc;
+        G*	g;
+    };
+
+    struct	G
+    {
+        byte*	stackguard;	// cannot move - also known to linker, libmach, libcgo
+        byte*	stackbase;	// cannot move - also known to libmach, libcgo
+        Defer*	defer;
+        Panic*	panic;
+        Gobuf	sched;
+        byte*	stack0;
+        byte*	entry;		// initial function
+        G*	alllink;	// on allg
+        void*	param;		// passed parameter on wakeup
+        int16	status;
+        int32	goid;
+        uint32	selgen;		// valid sudog pointer
+        G*	schedlink;
+        bool	readyonstop;
+        bool	ispanic;
+        M*	m;		// for debuggers, but offset not hard-coded
+        M*	lockedm;
+        int32	sig;
+        uintptr	sigcode0;
+        uintptr	sigcode1;
+    };
+
+    struct	M
+    {
+        // The offsets of these fields are known to (hard-coded in) libmach.
+        G*	g0;		// goroutine with scheduling stack
+        void	(*morepc)(void);
+        void*	morefp;	// frame pointer for more stack
+        Gobuf	morebuf;	// gobuf arg to morestack
+
+        // Fields not known to debuggers.
+        uint32	moreframe;	// size arguments to morestack
+        uint32	moreargs;
+        uintptr	cret;		// return value from C
+        uint64	procid;		// for debuggers, but offset not hard-coded
+        G*	gsignal;	// signal-handling G
+        uint32	tls[8];		// thread-local storage (for 386 extern register)
+        Gobuf	sched;	// scheduling stack
+        G*	curg;		// current running goroutine
+        int32	id;
+        int32	mallocing;
+        int32	gcing;
+        int32	locks;
+        int32	nomemprof;
+        int32	waitnextg;
+        Note	havenextg;
+        G*	nextg;
+        M*	alllink;	// on allm
+        M*	schedlink;
+        uint32	machport;	// Return address for Mach IPC (OS X)
+        MCache	*mcache;
+        G*	lockedg;
+        uint64 freg[8];	// Floating point register storage used by ARM software fp routines
+    #ifdef __WINDOWS__
+        void*	return_address;	// saved return address and stack
+        void*	stack_pointer;	// pointer for Windows stdcall
+        void*	os_stack_pointer;
+    #endif
+    };
+
+    /*
+     * deferred subroutine calls
+     */
+    struct Defer
+    {
+        int32	siz;
+        byte*	sp;
+        byte*	pc;
+        byte*	fn;
+        Defer*	link;
+        byte	args[8];	// padded to actual size
+    };
+
+    /*
+     * panics
+     */
+    struct Panic
+    {
+        Eface	arg;		// argument to panic
+        byte*	stackbase;	// g->stackbase in panic
+        Panic*	link;		// link to earlier panic
+        bool	recovered;	// whether this panic is over
+    };
