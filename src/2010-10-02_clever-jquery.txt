@@ -1,0 +1,119 @@
+=============
+聪明的JQuery
+=============
+
+JQuery有不少优点，比如大家都知道的：dom selector，plugin，method chaining，干净的接口设计等。
+
+这里我再记录几个使用JQuery过程中发现的，也许不那么为人熟知的聪明的设计。
+
+.. contents::
+
+stack architecture
+===================
+
+.. code-block:: javascript
+
+    $('body')                       // [body]
+        .find('p')                  // [p, p, p] => [body]
+            .find('a')              // [a, a] => [p, p, p] => [body]
+                .addClass('foo')    // 操作 [a, a]
+            .end()                  // [p, p, p] => [body]
+            .addClass('bar')        // 操作 [p, p, p]
+        .end()                      // [body]
+
+event namespace
+================
+
+.. code-block:: javascript
+
+    $('div')
+        .bind('click', fn)
+        .bind('click.foo', fn)
+        .bind('mouseover.foo', fn);
+
+    // Unbind click.foo event
+    $('div').unbind('click.foo');
+    // Unbind all .foo namespaced events
+    // click.foo, mouseover.fo
+    $('div').unbind('.foo');
+
+通过给时间加命名空间，管理起来比如说 `unbind` 事件的时候可以进行更精确的控制。
+
+live event
+============
+
+.. code-block:: javascript
+    
+    $('.clickable').bind('click', callback)
+    $('<div class="clickable"></div>')
+        .bind('click', callback)
+        .appendTo(document)
+
+传统的 `bind` ，只绑定当前存在的DOM元素，后续动态添加的元素则需要重新绑定事件。
+
+.. code-block:: javascript
+    
+    $('.clickable').live('click', callback)
+    $('<div class="clickable"></div>').appendTo(document)
+
+使用 `live` 绑定事件甚至可以影响动态添加的元素。原理见： http://api.jquery.com/live/#event-delegation
+
+deep extend
+============
+
+.. code-block:: javascript
+
+    > $.extend({'a':{'a-a':1}, 'b':1}, {'a':{'a-b':1}})
+    Object
+        a: Object
+            a-b: 1
+        b: 1
+    > $.extend(true, {'a':{'a-a':1}, 'b':1}, {'a':{'a-b':1}})
+    Object
+        a: Object
+            a-a: 1
+            a-b: 1
+        b: 1
+
+deep extend可以递归对内部的对象进行扩展，而非替换。
+
+$.data
+========
+
+JS开发经常需要把一些信息绑定到某个DOM节点，以方便获取。直接使用DOM属性的话容易导致DOM和JS之间的循环引用，进而导致某些浏览器的内存泄漏。JQuery提供 `data` 方法可以避开这个问题。使用方法很简单：
+
+.. code-block:: javascript
+
+    $('#element').data('name', 'value')
+    $('#element').data({'name1':'value', 'name2':'value'})
+    $('#element').removeData('name')
+
+原理也很简单：首先把JS对象存放在一个全局cache里面，KEY是JQuery维护的自增ID，保证全局唯一，在DOM节点上不直接引用JS对象，而是引用这个ID，这样就避免了DOM和JS之间的直接引用。
+
+.. code-block:: javascript
+
+    > $('#demo').data('key', 'value')
+    > $.expando
+    "jQuery1285955046738"
+    > $('#demo'][0]['jQuery1285955046738']
+    68
+    > $.cache[68].key
+    'value'
+
+$.metadata
+===========
+
+这个不是JQuery Core自带的，而是个第三方的插件，不过也很有意思，尤其在 JQuery UI 中扮演了关键的角色。
+
+.. code-block:: html
+    
+    <div id="demo" class="normalclass {name:'value'}"></div>
+
+.. code-block:: javascript
+
+    > $('#demo').metadata().name
+    value
+
+也就是说我们可以直接在HTML里面给元素绑定一些数据，比如说为JS的处理准备点配置信息，或是包含相关的数据供JS进行操作。
+
+除了把数据写在class里面，它还提供另外两种存放数据的方法，详见 http://plugins.jquery.com/project/metadata
