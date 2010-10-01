@@ -37,7 +37,7 @@ event namespace
     // click.foo, mouseover.fo
     $('div').unbind('.foo');
 
-通过给时间加命名空间，管理起来比如说 `unbind` 事件的时候可以进行更精确的控制。
+通过给事件加命名空间， `unbind` 事件的时候可以进行更精确的控制。
 
 live event
 ============
