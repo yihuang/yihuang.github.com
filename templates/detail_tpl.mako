@@ -4,6 +4,7 @@ ${c.html_prolog%c.encoding}
         ${c.html_head%c.encoding}
         <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
         <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
         <style type="text/css">
             .contents {
@@ -31,7 +32,6 @@ ${c.html_prolog%c.encoding}
         </div>
 	</div>
     </body>
-    <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript">
