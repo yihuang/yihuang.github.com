@@ -8,7 +8,7 @@ from docutils import nodes
 from docutils.parsers.rst import Directive,directives
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name
-from pygments.formatters import HtmlFormatter
+from myformatter import MyHtmlFormatter
 
 class CodeBlock(Directive):
     option_spec = {
@@ -38,7 +38,7 @@ class CodeBlock(Directive):
         formatter_options = {}
         if width:
             formatter_options['cssstyles'] = 'width:'+width
-        parsed = highlight(content, lexer, HtmlFormatter(**formatter_options))
+        parsed = highlight(content, lexer, MyHtmlFormatter(**formatter_options))
         return [nodes.raw('', parsed, format='html')]
 
 directives.register_directive('code-block', CodeBlock)

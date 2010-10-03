@@ -299,3 +299,10 @@ img.align-middle {
     vertical-align: middle }
 .center-figure .caption {
     text-align: center}
+
+td.linenos { background-color: #f0f0f0; padding-right: 10px; }
+span.lineno { background-color: #f0f0f0; padding: 0 5px 0 5px; }
+
+.effects pre { line-height: 150%; background:#333 url('bg.jpg'); text-shadow:white 0px 0px 8px; -webkit-text-stroke:1px white; font-weight:bolder; font-size:30px; color:transparent;}
+.highlight, .effects {position:relative;}
+.apply-effects {position:absolute;right:10px;top:2px;background:white;opacity:0.5;color:black}
