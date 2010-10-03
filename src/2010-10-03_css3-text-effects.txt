@@ -11,3 +11,4 @@ css3中有了几个新的文本相关属性： `text-stroke` ， `text-fill-colo
 .. image:: images/text-effects/Screenshot.png
 .. image:: images/text-effects/Screenshot-1.png
 .. image:: images/text-effects/Screenshot-2.png
+.. image:: images/text-effects/Screenshot-3.png
