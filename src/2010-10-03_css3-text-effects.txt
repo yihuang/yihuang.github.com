@@ -8,7 +8,7 @@ css3中有了几个新的文本相关属性： `text-stroke` ， `text-fill-colo
 
 下面是截图，代码也可以如此漂亮 ;-)
 
+.. image:: images/text-effects/Screenshot-3.png
 .. image:: images/text-effects/Screenshot.png
 .. image:: images/text-effects/Screenshot-1.png
 .. image:: images/text-effects/Screenshot-2.png
-.. image:: images/text-effects/Screenshot-3.png
