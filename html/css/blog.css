@@ -4,7 +4,7 @@ body{font: 85%/1.5 TrebuchetMS,Arial,sans-serif;
 a { color: #0066B3; background: inherit; text-decoration: none;}
 h1 { font: bold 2.1em Arial, Arial, Sans-Serif; color: #036DA7 }
 
-#wrapper{width:800px;}
+#wrapper{width:1000px;}
 
 #header{width:100%;overflow:hidden;background: #BBD9EE;text-align:left; }
 #header h1,div#menu{width:75%;margin:0 auto;}
