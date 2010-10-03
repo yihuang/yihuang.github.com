@@ -7,7 +7,7 @@ SHADOW = '0px 0px 8px'
 html.CSSFILE_TEMPLATE = '''\
 td.linenos { background-color: #f0f0f0; padding-right: 10px; }
 span.lineno { background-color: #f0f0f0; padding: 0 5px 0 5px; }
-pre { line-height: 150%%; background:black url('bg.jpg'); text-shadow:white '''+SHADOW+'''; -webkit-text-stroke:1px white; font-weight:bolder; font-size:24px; color:transparent; }
+pre { line-height: 150%%; background:black url('bg.jpg'); text-shadow:white '''+SHADOW+'''; -webkit-text-stroke:1px white; -moz-text-stroke:1px white;font-weight:bolder; font-size:24px; color:white; text-fill-color:transparent; -webkit-text-fill-color:transparent;-moz-text-fill-color:transparent;}
 %(styledefs)s
 '''
 
@@ -44,9 +44,14 @@ class MyHtmlFormatter(HtmlFormatter):
             name = cp + _get_ttype_class(ttype)
             style = ''
             if ndef['color']:
-                style += 'color: transparent; '
+                style += 'color: #%s; '%ndef['color']
+                style += 'text-fill-color:transparent; '
+                style += '-webkit-text-fill-color:transparent; '
+                style += '-moz-text-fill-color:transparent; '
                 style += 'text-shadow: #%s %s; '%(ndef['color'], SHADOW)
+                style += 'text-stroke: #%s 1px; '%ndef['color']
                 style += '-webkit-text-stroke: #%s 1px; '%ndef['color']
+                style += '-moz-text-stroke: #%s 1px; '%ndef['color']
             if ndef['bold']:
                 style += 'font-weight: bold; '
             if ndef['italic']:

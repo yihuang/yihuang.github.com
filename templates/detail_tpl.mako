@@ -33,16 +33,7 @@ ${c.html_prolog%c.encoding}
     </body>
     <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-    <script type="text/javascript"> 
-      $(function() {
-        var btneffect = $('<a href="#" class="apply-effects">apply effects</a>').click(function() {
-            $(this).parent().toggleClass('highlight effects');
-            return false;
-        })
-        .appendTo($('.highlight'));
-      });
-    </script>
-    <link type="text/css" rel="stylesheet" href="css/pygments-effects.css"/>
+    <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript">
         var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
         document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
