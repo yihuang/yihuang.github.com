@@ -15,13 +15,14 @@ nav_icons = [
     (u'博客', '/blog/', 'images/icons/blog.png', 'main'),
 ]
 link_icons = [
-    (u'Delicious', 'http://www.delicious.com/huangyi', 'images/icons/delicious.ico',''),
-    (u'Google Reader Share', 'http://www.google.com/reader/shared/yi.codeplayer', 'images/icons/greader.ico',''),
-    (u'豆瓣', 'http://www.douban.com/people/huangyi/', 'images/icons/douban.ico',''),
-    (u'9点', 'http://9.douban.com/subject/9361637/', 'images/icons/douban-nine.ico',''),
-    (u'啄木鸟社区', 'http://wiki.woodpecker.org.cn/moin/HuangYi', 'images/icons/woodpecker.ico',''),
-    (u'42区', 'http://42qu.com/-10000020', 'images/icons/42qu.ico',''),
-    (u'KanRss', 'http://kanrss.com/@yihuang', 'images/icons/kanrss.ico',''),
+    (u'Delicious', 'http://www.delicious.com/huangyi', 'images/icons/delicious.png',''),
+    (u'Google Reader Share', 'http://www.google.com/reader/shared/yi.codeplayer', 'images/icons/greader.png',''),
+    (u'Blogger', 'http://codeplayer.blogspot.com/', 'images/icons/blogger.png',''),
+    (u'豆瓣', 'http://www.douban.com/people/huangyi/', 'images/icons/douban.png',''),
+    (u'9点', 'http://9.douban.com/subject/9361637/', 'images/icons/douban-nine.png',''),
+    (u'啄木鸟社区', 'http://wiki.woodpecker.org.cn/moin/HuangYi', 'images/icons/woodpecker.png',''),
+    (u'42区', 'http://42qu.com/-10000020', 'images/icons/42qu.png',''),
+    (u'KanRss', 'http://kanrss.com/@yihuang', 'images/icons/kanrss.png',''),
 ]
 boxes=[
     u'''
