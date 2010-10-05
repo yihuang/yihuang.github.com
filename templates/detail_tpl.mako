@@ -15,7 +15,7 @@ ${c.html_prolog%c.encoding}
     <body>
 	<div id="wrapper">
         <div id="header">
-            <a href="/blog/"><h1 style="display:none">${cfg.blogname}</h1><img alt="${cfg.blogname}" src="images/logo.png"/></a>
+            <a href="/blog/"><h1 style="display:none">${cfg.blogname}</h1><img alt="${cfg.blogname}" src="images/logo.png" class="logo"/></a>
             <div class="nav-icons">
                 <p class="nav">
                     % for name,url,src,class_ in cfg.nav_icons:

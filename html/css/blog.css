@@ -16,7 +16,7 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
     background: #333;
     text-align:left;
 }
-#header img{
+#header img.logo{
     vertical-align:bottom;
     padding-left:10px;
 }
