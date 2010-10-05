@@ -1,13 +1,18 @@
 html,body{margin:0;padding:0}
-body{font: 85%/1.5 TrebuchetMS,Arial,sans-serif;
-    text-align: center;background: #fff;padding-bottom:20px;}
+body{
+    font: 14px;
+    text-align: center;
+    background: #fff;
+    padding-bottom:20px;
+}
+h1,h2,h3 {color:#333;}
 a { color: #0066B3; background: inherit; text-decoration: none;}
 #wrapper{width:768px;margin:0px auto;}
 #header{
     position:relative;
     width:100%;
     overflow:hidden;
-    background: #000;
+    background: #333;
     text-align:left;
 }
 #header h1 {
@@ -15,7 +20,7 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
     font-weight:bolder;
     font-size:100px;
     line-height:100px;
-    margin:0 0 -8px 0;
+    margin:0 0 -9px 0;
     letter-spacing:-14px;
     color: #fff;
     float:left;
@@ -91,8 +96,14 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
 }
 
 .post h2, .box h2 {
-    font: bold 1.1em Arial, Arial, Sans-Serif; padding: 0; margin: 0; 
+    font-size:28px;
+    padding:0;
+    margin:0;
     color:#2D8509;
     border-bottom:1px solid #D8DBBC;
 }
 
+.date {
+    font-size:12px;
+    color:black;
+}
