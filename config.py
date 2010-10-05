@@ -11,8 +11,9 @@ links=[
     u'<a href="http://9.douban.com/subject/9361637/" target="_blank">豆瓣九点</a>',
 ]
 nav_icons = [
-    (u'首页', '/', 'images/icons/home.png', 'main'),
-    (u'博客', '/blog/', 'images/icons/blog.png', 'main'),
+    (u'首页', '/blog/', 'images/icons/home.png', ''),
+    (u'文章列表', '/blog/list.html', 'images/icons/blog.png', ''),
+    (u'关于我', '/blog/about.html', 'images/icons/about.png', ''),
 ]
 link_icons = [
     (u'Delicious', 'http://www.delicious.com/huangyi', 'images/icons/delicious.png',''),

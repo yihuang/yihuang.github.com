@@ -2,6 +2,10 @@
 发光的代码
 =============
 
+.. meta::
+    :description: css3中有了几个新的文本相关属性： `text-stroke` ， `text-fill-color` ， `text-shadow` ，在自己博客上做了下实验 ;-)
+    :keywords: css3 html5 text-stroke text-fill-color text-shadow code prettify
+
 css3中有了几个新的文本相关属性： `text-stroke` ， `text-fill-color` ， `text-shadow` ，在自己博客上做了下实验 ;-)
 
 在博客中所有代码块的左上角都加上了 "toggle effects" 的按钮，点击即可切换CSS3的效果。测试了chrome和firefox的支持情况，firefox不支持 `text-stroke` ，效果稍微差点，chrome中都支持，不过在滚动的时候渲染效果还是有点bug。

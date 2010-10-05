@@ -8,13 +8,14 @@ html/%.html : src/%.txt templates/detail_tpl.mako $(comm_dep)
 	./imgmathhack.py $< | python gen_detail.py $(patsubst %.txt,%.html,$<)
 
 detailpages=$(htmls)
-listpage=html/index.html
+indexpage=html/index.html
+listpage=html/list.html
 
-all : $(listpage) $(detailpages)
+all : $(indexpage) $(detailpages)
 detail : $(detailpages)
-index : $(listpage)
+index : $(indexpage) $(listpage)
 
-$(listpage) : $(texts) templates/index_tpl.mako  $(comm_dep)
+$(indexpage) $(listpage) : $(texts) templates/index_tpl.mako templates/list_tpl.mako $(comm_dep)
 	ls -1r src/*.txt | python gen_list.py
 	ls -1r src/*.txt | python gen_rss.py
 

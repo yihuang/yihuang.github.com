@@ -2,6 +2,10 @@
 go runtime
 ==========
 
+.. meta::
+    :description: go runtime
+    :keywords: go language runtime implementation
+
 .. code-block:: c
 
     /*

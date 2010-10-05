@@ -5,7 +5,7 @@ body{
     background: #fff;
     padding-bottom:20px;
 }
-h1,h2,h3 {color:#333;}
+h1,h2,h3 {color:#333;margin:0;}
 img {border:0;}
 a { color: #0066B3; background: inherit; text-decoration: none;}
 #wrapper{width:768px;margin:0px auto;}
@@ -36,11 +36,14 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
     top:16px;
     right:20px;
 }
-.nav-icons a.main {
+.nav-icons .nav a {
     margin:0 10px 0 0;
 }
-.nav-icons a.main img {
+.nav-icons .nav img {
     height:36px;
+}
+.nav-icons .link a {
+    padding:2px;
 }
 .nav-icons p {
     margin:0;
@@ -114,4 +117,14 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
 .date {
     font-size:12px;
     color:black;
+}
+
+.more {
+    text-align:center;
+}
+.copyright {
+    text-align:center;
+    font-size:12px;
+    margin:0;
+    padding:0;
 }

@@ -2,6 +2,7 @@
 # coding: utf-8
 import functools
 import config
+from itertools import islice
 from article import *
 
 def render(articles):
@@ -20,5 +21,5 @@ src/2010-04-27_blog-claim.txt
     )
     p = init_publisher()    
     articles = map(functools.partial(writedoc, p),
-            trans_doclist(parse_doclist(p, load_articles())))
+            islice(trans_doclist(parse_doclist(p, load_articles())), 5))
     render(articles)

@@ -1,3 +1,11 @@
+====================
+think before coding
+====================
+
+.. meta::
+    :description: think before coding，使用haskell时会比较容易体会到这点，python让人倾向于快速编写可以工作的代码。而haskell倾向于编码之前先建立函数式的模型，然后转换到代码，最后加上与外部有状态世界打交道的代码。
+    :keywords: thinking haskell python typing system static dynamic
+
 think before coding，使用haskell时会比较容易体会到这点，python让人倾向于快速编写可以工作的代码。
 而haskell倾向于编码之前先建立函数式的模型，然后转换到代码，最后加上与外部有状态世界打交道的代码。
 

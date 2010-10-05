@@ -1,4 +1,12 @@
-haskell 中， 所谓 point free style ，就是将这样的函数：
+================
+point free style
+================
+
+.. meta::
+    :description: haskell 中，所谓 point free style，就是直接描述函数本身之间的组合，而忽略掉在其中传递的参数。
+    :keywords: haskell point-free-style
+
+haskell中，所谓 point free style ，就是将这样的函数：
 
 .. code-block:: haskell
 

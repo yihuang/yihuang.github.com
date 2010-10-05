@@ -1,1 +1,9 @@
+====
+笔法
+====
+
+.. meta::
+    :description: 笔法 数字 画图
+    :keywords: 笔法 数字 画图
+
 .. image:: images/bifa/bifa.png

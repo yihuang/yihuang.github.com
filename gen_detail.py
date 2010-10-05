@@ -20,7 +20,7 @@ import os
 import sys
 from mako.lookup import TemplateLookup
 import config
-loader = TemplateLookup(directories=['./templates'], output_encoding='utf-8')
+loader = TemplateLookup(directories=['./templates'], output_encoding='utf-8', input_encoding='utf-8')
 listtpl = loader.get_template('detail_tpl.mako')
 #indextpl = loader.get_template('index_tpl.mako')
 

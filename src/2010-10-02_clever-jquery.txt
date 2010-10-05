@@ -2,6 +2,10 @@
 聪明的JQuery
 =============
 
+.. meta::
+    :description: JQuery有不少优点，比如大家都知道的：dom selector，plugin，method chaining，干净的接口设计等。这里我再记录几个使用JQuery过程中发现的，也许不那么为人熟知的聪明的设计。
+    :keywords: jquery javascript features event
+
 JQuery有不少优点，比如大家都知道的：dom selector，plugin，method chaining，干净的接口设计等。
 
 这里我再记录几个使用JQuery过程中发现的，也许不那么为人熟知的聪明的设计。

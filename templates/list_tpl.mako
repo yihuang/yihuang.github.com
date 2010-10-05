@@ -1,32 +1,33 @@
 <!DOCTYPE html>
 <html>
     <head>
-        ${c.html_head%c.encoding}
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="viewport" contect="width=device-width"></meta>
+        <meta name="KEYWords" contect="黃毅 yihuang codeplayer python haskell web"></meta>
         <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
-        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
         <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
-        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
-        <style type="text/css">
-            .contents {
-            margin-top:0;
-            }
-        </style>
     </head>
     <body>
 	<div id="wrapper">
         <%include file="header.mako"/>
         <div id="middle">
-            ${c.html_title}
-            ${c.fragment}
-            ${c.footer}
+            <h1>博客文章列表</h1>
+            <dl>
+            % for d, l in date_group:
+            <dt>
+            ${d.date()}
+            </dt>
+            % for article in l:
+            <dd><a href="${article.filename_noext}.html">${article.title}</a></dd>
+            % endfor
+            % endfor
+            </dl>
+            <hr>
             <%include file="footer.mako"/>
         </div>
 	</div>
     </body>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-    <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript">
         var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
         document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
