@@ -45,6 +45,9 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
 .nav-icons p.link {
     background:#666;
 }
+.nav-icons p.nav {
+    padding-left:0;
+}
 #header .description {color:gray;padding-left:12%;width:40%}
 
 #nav,#nav li{list-style-type:none;margin:0;padding:0}
