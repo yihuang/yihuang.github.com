@@ -16,6 +16,10 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
     background: #333;
     text-align:left;
 }
+#header img{
+    vertical-align:bottom;
+    padding-left:10px;
+}
 #header h1 {
     padding:0px 20px 0 10px;
     font-weight:bolder;
