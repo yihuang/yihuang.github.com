@@ -1,0 +1,1 @@
+.. image:: images/bifa/bifa.png

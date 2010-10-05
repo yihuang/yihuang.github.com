@@ -2,13 +2,26 @@
 from utils import *
 domain = 'yi-programmer.com'
 blogurl = 'http://%s/blog/'%domain
-blogname=u'白菜 - 精确编程'
-description=u'&nbsp;&nbsp;'
+blogname=u'精确编程'
+description=u''
 links=[
     u'<a href="/">Home</a>',
     u'<a href="/blog/">Blog</a>',
     u'<a href="https://groups.google.com/group/yi-programmer-comment" target="_blank">Comments</a>',
     u'<a href="http://9.douban.com/subject/9361637/" target="_blank">豆瓣九点</a>',
+]
+nav_icons = [
+    (u'首页', '/', 'images/icons/home.png', 'main'),
+    (u'博客', '/blog/', 'images/icons/blog.png', 'main'),
+]
+link_icons = [
+    (u'Delicious', 'http://www.delicious.com/huangyi', 'http://www.delicious.com/favicon.ico',''),
+    (u'Google Reader Share', 'http://www.google.com/reader/shared/yi.codeplayer', 'http://www.google.com/reader/ui/favicon.ico',''),
+    (u'豆瓣', 'http://www.douban.com/people/huangyi/', 'http://img3.douban.com/favicon.ico',''),
+    (u'9点', 'http://9.douban.com/subject/9361637/', 'http://9.douban.com/pics/newnine/9.ico',''),
+    (u'啄木鸟社区', 'http://wiki.woodpecker.org.cn/moin/HuangYi', 'http://wiki.woodpecker.org.cn/favicon.ico',''),
+    (u'42区', 'http://42qu.com/-10000020', 'http://42qu.com/favicon.ico',''),
+    (u'KanRss', 'http://kanrss.com/@yihuang', 'http://kanrss.com/favicon.ico',''),
 ]
 boxes=[
     u'''

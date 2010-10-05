@@ -93,7 +93,7 @@ def trans_doclist(article_list):
             else:
                 resultlist = rootlist[1:idx+1]
         else:
-            article.title = u'碎片'
+            article.title = u'无题'
             resultlist = rootlist[:]
 
         ndoc.children = resultlist

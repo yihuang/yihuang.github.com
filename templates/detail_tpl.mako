@@ -15,14 +15,26 @@ ${c.html_prolog%c.encoding}
     <body>
 	<div id="wrapper">
         <div id="header">
-            <h1><a href="/blog/">${cfg.blogname}</a></h1>
-            <div class="description">${cfg.description}</div>
-            <div id="menu">
-                <ul id="nav">
-                    % for link in cfg.links:
-                    <li>${link}</li>
+            <a href="/blog/"><h1>${cfg.blogname}</h1></a>
+            <div class="nav-icons">
+                <p class="nav">
+                    % for name,url,src,class_ in cfg.nav_icons:
+                    % if name=='break':
+                    <br/>
+                    % else:
+                    <a title="${name}" href="${url}" class="${class_}"><img src="${src}" alt="${name}"/></a>
+                    % endif
                     % endfor
-                </ul>
+                </p>
+                <p class="link">
+                    % for name,url,src,class_ in cfg.link_icons:
+                    % if name=='break':
+                    <br/>
+                    % else:
+                    <a title="${name}" href="${url}" class="${class_}"><img src="${src}" alt="${name}"/></a>
+                    % endif
+                    % endfor
+                </p>
             </div>
         </div>
         <div id="middle">

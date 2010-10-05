@@ -15,29 +15,34 @@
     <body>
 	<div id="wrapper">
 	<div id="header">
-            <h1><a href="/blog/">${cfg.blogname}</a></h1>
-            <div class="description">${cfg.description}</div>
-            <div id="menu">
-                <ul id="nav">
-                    % for link in cfg.links:
-                    <li>${link}</li>
+            <a href="/blog/"><h1>${cfg.blogname}</h1></a>
+            <div class="nav-icons">
+                <p class="nav">
+                    % for name,url,src,class_ in cfg.nav_icons:
+                    % if name=='break':
+                    <br/>
+                    % else:
+                    <a title="${name}" href="${url}" class="${class_}"><img src="${src}" alt="${name}"/></a>
+                    % endif
                     % endfor
-                </ul>
+                </p>
+                <p class="link">
+                    % for name,url,src,class_ in cfg.link_icons:
+                    % if name=='break':
+                    <br/>
+                    % else:
+                    <a title="${name}" href="${url}" class="${class_}"><img src="${src}" alt="${name}"/></a>
+                    % endif
+                    % endfor
+                </p>
             </div>
         </div>
         <div id="content">
             <div id="right">
                 % for article in articles:
                 <div class="post">
-                    <h2><a href="${article.filename_noext}.html">${article.title and article.title+' - ' or ''}${article.date.date()}</a></h2>
+                    <a href="${article.filename_noext}.html"><h2>${article.title} <span class="date">${article.date.date()}</span></h2></a>
                     ${article.content}
-                </div>
-                % endfor
-            </div>
-            <div id="left">
-                % for box in cfg.boxes:
-                <div class="box">
-                    ${box}
                 </div>
                 % endfor
             </div>
