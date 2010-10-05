@@ -6,6 +6,7 @@ body{
     padding-bottom:20px;
 }
 h1,h2,h3 {color:#333;}
+img {border:0;}
 a { color: #0066B3; background: inherit; text-decoration: none;}
 #wrapper{width:768px;margin:0px auto;}
 #header{
