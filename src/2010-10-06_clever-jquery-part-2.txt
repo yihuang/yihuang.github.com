@@ -1,0 +1,52 @@
+=================
+聪明的JQuery [2]
+=================
+
+.. meta::
+    :description: JQuery有不少优点，比如大家都知道的：dom selector，plugin，method chaining，干净的接口设计等。这里我再记录几个使用JQuery过程中发现的，也许不那么为人熟知的聪明的设计。
+    :keywords: jquery javascript features negative indexing jquery proxy
+
+接上篇： `聪明的JQuery [1] <2010-10-02_clever-jquery.html>`_
+
+.. 目录::
+
+jquery proxy
+============
+
+其实为了解决所谓回调函数“this漂移“的问题，其他框架老早就带了类似的函数了。对于那些通过模拟 `class` 来达到“面向对象”的框架来说，缺乏这个机制简直是寸步难行。
+
+但实际上我们很多javascript对象都是跟DOM相关的，大部分时候我们只需要把js对象和DOM元素关联起来即可圆满解决问题，这是JQuery之道。
+
+.. code-block:: javascript
+
+    function Person(name) {
+        this.name = name;
+    }
+    Person.prototype.say_hello = function() {
+        console.log('hello', this.name);
+    }
+    var person = new Person('world');
+
+    // this 漂移，回调 say_hello 时，已经是物是this非了。
+    $('#hellobtn').click(person.say_hello)
+
+    // 传统做法
+    $('#hellobtn').click($.proxy(person.say_hello, person))
+
+    // 但更多时候其实应该是这样的：
+    $('.hellobtn').data('person', function(){
+        return new Person($(this).metadata().personname);
+    }).click(function() {
+        $(this).data('person').say_hello();
+    }).hover(function() {
+        $(this).data('person').foo();
+    }, function() {
+        $(this).data('person').bar();
+    });
+
+当然，万事无绝对，现在JQuery提供了这个接口需要的时候还是用得上的。
+
+negative indexing
+=================
+
+正如python的 `list` ，  `.eq` 和 `.get` 也可以接受负数参数，含义与python一致，从列表的末尾倒数。比如 `.get(-1)` 取最后一个元素， `.get(-2)` 取倒数第二个元素。
