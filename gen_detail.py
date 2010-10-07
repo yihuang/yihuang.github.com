@@ -16,10 +16,9 @@ from docutils.core import publish_parts, default_description
 import pygments_support
 
 # Call the docutils publisher to render the input as html::
-import os
-import sys
-from mako.lookup import TemplateLookup
+import os, sys, re
 import config
+from mako.lookup import TemplateLookup
 loader = TemplateLookup(directories=['./templates'], output_encoding='utf-8', input_encoding='utf-8')
 listtpl = loader.get_template('detail_tpl.mako')
 #indextpl = loader.get_template('index_tpl.mako')
@@ -29,7 +28,13 @@ fullpath = sys.argv[1]
 basename = os.path.splitext(os.path.basename(fullpath))[0]
 source_url = 'src/%s.txt'%basename
 parts = dict2obj(publish_parts(source=sys.stdin.read(), writer_name='html', settings_overrides={'source_url':source_url}))
-content = listtpl.render(c=parts, cfg=config)
+
+datestr = ''
+m = re.match(r'^(\d+-\d+-\d+)', basename)
+if m:
+    datestr = m.group(1)
+
+content = listtpl.render(c=parts, cfg=config, date=datestr)
 
 destname = os.path.join('./html/',basename+'.html')
 open(destname, 'w').write(content)

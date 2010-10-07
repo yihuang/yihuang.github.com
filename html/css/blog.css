@@ -74,7 +74,7 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
 
 #middle {
     margin: 0 auto;
-    padding: 15px;
+    padding: 15px 0;
     text-align: left;
 }
 
@@ -127,4 +127,12 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
     font-size:12px;
     margin:0;
     padding:0;
+}
+.author {
+    text-align:center;
+    font-size:12px;
+}
+.postdetail {
+    padding:15px 10px;
+    background:#eee;
 }

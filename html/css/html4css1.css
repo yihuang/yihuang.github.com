@@ -33,9 +33,12 @@ cite {
 .hidden {
   display: none }
 
+a.external {
+    background: transparent url(../images/link_external.png) no-repeat 99% 40%;
+    padding-right: 16px;
+}
 a.toc-backref {
-  text-decoration: none ;
-  color: black }
+  text-decoration: none ;}
 
 blockquote.epigraph {
   margin: 2em 5em ; }
@@ -52,7 +55,6 @@ div.abstract {
   margin: 2em 5em }
 
 div.abstract p.topic-title {
-  font-weight: bold ;
   text-align: center }
 
 div.admonition, div.attention, div.caution, div.danger, div.error,
@@ -89,7 +91,6 @@ div.dedication {
   font-style: italic }
 
 div.dedication p.topic-title {
-  font-weight: bold ;
   font-style: normal }
 
 div.figure {
@@ -226,7 +227,8 @@ p.sidebar-subtitle {
   font-weight: bold }
 
 p.topic-title {
-  font-weight: bold }
+  font-weight: bold
+}
 
 pre.address {
   margin-bottom: 0 ;
@@ -324,4 +326,8 @@ span.lineno { background-color: #f0f0f0; padding: 0 5px 0 5px; }
     background:white;
     opacity:0.5;
     color:black
+}
+p.topic-title, a.toc-backref {
+  /*text-shadow: #333 0px 1px 0px;*/
+  color: #666;
 }

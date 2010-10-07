@@ -18,8 +18,13 @@
 	<div id="wrapper">
         <%include file="header.mako"/>
         <div id="middle">
-            ${c.html_title}
-            ${c.fragment}
+            <div class="postdetail">
+                ${c.html_title}
+                % if date:
+                <p class="author">${date} 黄毅</p>
+                % endif
+                ${c.fragment}
+            </div>
             ${c.footer}
             <%include file="footer.mako"/>
         </div>

@@ -1,0 +1,52 @@
+======================
+使用Python编写GIMP插件
+======================
+
+.. meta::
+    :description: 几乎耗了一天时间在GIMP上面。编写了一个 插件_ 用于实现 `这个效果 <http://mrdoob.com/projects/harmony/#shaded>`_ ，使用这个 插件_ 后就可以对任意的路径应用这个效果。GIMP方面的文档还是比较缺的，简单总结一下，也算是今天一大收获了。
+    :keywords: gimp python plugin shaded
+
+.. image:: images/gimp-plugin/demo.png
+    :align: center
+
+几乎耗了一天时间在 GIMP_ 上面。编写了一个 插件_ 用于实现 `这个效果 <http://mrdoob.com/projects/harmony/#shaded>`_ ，使用这个插件可以对任意的路径应用这个效果。
+
+GIMP_ 方面的文档还是比较缺的，简单总结一下，也算是今天一大收获了。
+
+.. 目录::
+
+GIMP的插件在哪里
+================
+
+* 编辑-》首选项-》文件夹-》插件，其中有一个目录列表，就是GIMP查找插件的地方。
+
+* GIMP_ 支持 schema_ 和 python_ 两种语言编写插件。 schema_ 的支持是内置的， python_ 好像不是这样，linux上的 GIMP_ 当然没问题，windows上的版本貌似默认就不支持，需要自行安装python相关的包，这一点没有验证。
+
+* 滤镜-》Python-Fu-》Console 是一个python的交互环境，在里面可以用Python操作GIMP的接口，实时看到效果，是个练兵的好去处。
+
+* 上面提到的系统插件目录里面有大量插件可以研究学习，GIMP网站也有一个插件库 http://registry.gimp.org/
+
+使用PDB(Procedure DataBase)
+============================
+
+* 这个 PDB_ 不是python那个调试器，它的全称是Procedure DataBase，是GIMP中心的函数接口注册点，GIMP把核心功能接口注册到这里供脚本调用，脚本也把自己的功能接口注册到这里供GIMP或其他脚本调用。要做到多语言脚本之间的交互，这个机制是必须的。
+
+* 帮助-》过程浏览器，通过这个对话框可以查看所有PDB接口的文档。
+
+* python插件通过gimpfu.pdb模块对PDB接口进行调用，比如 `pdb.gimp_edit_fill(...)` ，如果在GIMP的python-fu console里面的话可直接引用这个模块。
+
+通过调用pdb接口，我们就可以把一些常用操作序列写成脚本批量处理。
+
+GIMP-Python提供的其他接口
+=========================
+
+除了直接使用pdb接口， GIMP-python_ 还做了一些封装，方便使用。
+
+需要看例子的话，也可以看看我刚写的这个 插件_ ，有注释 ;-)
+
+.. _插件: http://github.com/yihuang/harmony-gimp-plugin
+.. _GIMP-Python: http://www.gimp.org/docs/python/index.html
+.. _GIMP: http://www.gimp.org/
+.. _schema: http://www.gimp.org/docs/scheme_plugin/
+.. _python: http://www.gimp.org/docs/python/index.html
+.. _pdb: http://authors.phptr.com/essential/gimp/appE/index.html
