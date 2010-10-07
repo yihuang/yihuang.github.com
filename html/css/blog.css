@@ -142,3 +142,13 @@ p.topic-title, a.toc-backref {
 p.topic-title, a.toc-backref, h1, h2 {
   text-shadow: white 1px 1px 0px;
 }
+.announce, .share-icons {
+    text-align:center;
+    font-size:14px;
+    margin:0px;
+    padding-top:5px;
+}
+.announce {
+    color:black;
+    border-top:1px dashed #999;
+}

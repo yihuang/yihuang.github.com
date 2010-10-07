@@ -24,6 +24,20 @@
                 <p class="author">${date} 黄毅</p>
                 % endif
                 ${c.fragment}
+                <p class="announce">转载请注明出处，分享到：</p>
+                <p class="share-icons">
+                    <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=${url}&title=${c.title}"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                    <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=${url}&title=${c.title}"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                    <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=${c.title}&uri=${url}&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                    <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=${url}&title=${c.title}"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                    <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=${url}&it=${c.title}&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                    <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=${url}&title=${c.title}&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                    <a target="_blank" title="分享到人人" href="http://share.renren.com/share/buttonshare.do?link=${url}&title=${c.title}"><img src="images/icons/renren.gif" alt="分享到人人"/></a>
+                    <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=${c.title}&rurl=${url}&rcontent=${url}"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                    <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=${url}"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                    <a target="_blank" title="分享到人民围脖" href="http://t.people.com.cn/wbxcpost.action?source=HZHB003&code=UTF-8&wbcontent=${c.title}&url=${url}"><img src="images/icons/people.jpg" alt="分享到人民围脖"/></a>
+                    <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=${url}&t=${c.title}"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                </p>
             </div>
             ${c.footer}
             <%include file="footer.mako"/>

@@ -33,7 +33,7 @@ GIMP的插件在哪里
 
 * 帮助-》过程浏览器，通过这个对话框可以查看所有PDB接口的文档。
 
-* python插件通过gimpfu.pdb模块对PDB接口进行调用，比如 `pdb.gimp_edit_fill(...)` ，如果在GIMP的python-fu console里面的话可直接引用这个模块。
+* python插件通过 `gimpfu.pdb` 模块对PDB接口进行调用，比如 `pdb.gimp_edit_fill(...)` ，如果在GIMP的python-fu console里面的话可直接引用这个模块。
 
 通过调用pdb接口，我们就可以把一些常用操作序列写成脚本批量处理。
 
