@@ -135,3 +135,9 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
     text-align:center;
     font-size:12px;
 }
+p.topic-title, a.toc-backref {
+  color: #666;
+}
+p.topic-title, a.toc-backref, h1, h2 {
+  text-shadow: white 1px 1px 0px;
+}
