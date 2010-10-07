@@ -64,7 +64,7 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
 #nav a:hover{background:#fff;color: #000;}
 #nav .activelink a,#nav .activelink a:hover{background: #FFF;color: #003}
 
-#content {
+#content, .postdetail {
     font: 95%/1.5 TrebuchetMS,Arial,sans-serif;
     margin: 10px auto;
     background: #fff;
@@ -86,7 +86,10 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
 	width: 21%;
 	margin: 0 0 10px 0;
 }
-
+.postdetail {
+    padding:15px 10px;
+    background:#eee;
+}
 .post {
 	background: #eee;
 	margin-bottom: 10px;
@@ -131,8 +134,4 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
 .author {
     text-align:center;
     font-size:12px;
-}
-.postdetail {
-    padding:15px 10px;
-    background:#eee;
 }
