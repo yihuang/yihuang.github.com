@@ -328,6 +328,6 @@ span.lineno { background-color: #f0f0f0; padding: 0 5px 0 5px; }
     color:black
 }
 p.topic-title, a.toc-backref {
-  /*text-shadow: #333 0px 1px 0px;*/
+  text-shadow: white 1px 1px 0px;
   color: #666;
 }
