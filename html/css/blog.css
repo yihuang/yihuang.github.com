@@ -134,6 +134,7 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
 .author {
     text-align:center;
     font-size:12px;
+    margin:0px 0px 2em;
 }
 p.topic-title, a.toc-backref {
   color: #666;
