@@ -2,9 +2,13 @@
 jQuery编码规范
 ==============
 
+.. meta::
+    :description: jQuery核心模块的编码规范，用在自己的javascript项目里也不错，就是有几点和python的编码规范不一致，比如鼓励用tab缩进，也许是担心js空格太多增大文件大小。
+    :keywords: jquery javascript coding style guideline
+
 原文： http://docs.jquery.com/JQuery_Core_Style_Guidelines
 
-jQuery核心模块的编码规范，用在自己的js项目里也不错，就是有几点和python的编码规范不一致，比如鼓励用tab缩进，也许是担心js空格太多增大文件大小。
+jQuery核心模块的编码规范，用在自己的javascript项目里也不错，就是有几点和python的编码规范不一致，比如鼓励用tab缩进，也许是担心js空格太多增大文件大小。
 
 .. 目录::
 
@@ -130,6 +134,11 @@ jQuery核心模块的编码规范，用在自己的js项目里也不错，就是
    foo({   });
 
 * 空函数调用不需要加空格：
+
+  .. code-block:: javascript
+
+    foo();
+
 * 逗号和冒号后面一定要跟空格
 
 数组和对象
@@ -182,6 +191,6 @@ jQuery核心模块的编码规范，用在自己的js项目里也不错，就是
 节点
 ====
 
-* 使用 `.nodeName` 而非　`.tagName`
+* 使用 `.nodeName` 而非 `.tagName`
 * 使用 `.nodeType` 来判断节点的类型（不要用 `.nodeName` ）
 * 不要手动往节点上挂自定义的属性，一定要使用 `.data()` 。
