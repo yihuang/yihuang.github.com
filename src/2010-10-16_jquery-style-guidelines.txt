@@ -1,0 +1,187 @@
+==============
+jQuery编码规范
+==============
+
+原文： http://docs.jquery.com/JQuery_Core_Style_Guidelines
+
+jQuery核心模块的编码规范，用在自己的js项目里也不错，就是有几点和python的编码规范不一致，比如鼓励用tab缩进，也许是担心js空格太多增大文件大小。
+
+.. 目录::
+
+空格
+====
+
+* 使用tab进行缩进
+* 代码中多用点空格
+
+  .. code-block:: javascript
+
+     // 错:
+     if(blah==="foo"){
+       foo("bar","baz",{zoo:1});
+     }
+
+     // 对:
+     if ( blah === "foo" ) {
+       foo( "bar", "baz", {zoo: 1} );
+     }
+
+* 左花括号前面一定要有空格
+* 行内不要使用tab
+
+  .. code-block:: javascript
+
+     var a = true,
+       c = false, // yay
+       b   = false; // grrr
+
+* 空行不要有空格
+* 行尾不要有空格
+
+等价判断
+========
+
+尽量使用严格的等价判断符 `===` ，尽量不用 `==` 。
+
+代码块
+======
+
+* `if/else/for/while/try` 要使用花括号，且要换行。
+* 代码块一定要用花括号括起来：
+
+  .. code-block:: javascript
+
+   // 错:
+   if ( true )
+      blah();
+
+   // 对:
+   if ( true ) {
+      blah();
+   }
+
+不要把语句和判断条件放在同一行：
+
+  .. code-block:: javascript
+
+   // 错:
+   if ( true ) return;
+   if ( true ) blah();
+
+   // 对:
+   if ( true ) {
+      return;
+   }
+
+   if ( true ) {
+      blah();
+   }
+
+* `else/else if/catch` 要和花括号在同一行：
+
+  .. code-block:: javascript
+
+   if ( blah ) {
+      baz();
+   } else {
+      baz2();
+   }
+
+  例外： `else if` 的情况， `else` 就不要加花括号了：
+
+  .. code-block:: javascript
+
+   } else if ( test ) {
+     blah();
+   }
+
+   // 没必要：
+   } else {
+     if ( test ) {
+       blah();
+     }
+   }
+
+* 不要使用三元操作符取代 `if/else` 语句。
+* 不要使用 `object && object.method()` 取代 `if/else` 语句，除非在条件判断中。
+
+函数调用
+========
+
+* 参数两边要加一个空格
+
+  .. code-block:: javascript
+
+   foo( true );
+   foo( "blah" );
+
+  例外：如果已经在函数调用中的话，里面的函数调用可以不加空格：
+
+  .. code-block:: javascript
+
+   foo( bar(true) );
+
+  例外：函数，对象，数组字面量，如果是唯一参数的话，可以紧贴括号：
+
+  .. code-block:: javascript
+
+   foo(function() { });
+   foo([   ]);
+   foo({   });
+
+* 空函数调用不需要加空格：
+* 逗号和冒号后面一定要跟空格
+
+数组和对象
+==========
+
+* 空对象和数组不需要填入空格：
+
+  .. code-block:: javascript
+
+     []
+     {}
+
+* 逗号和冒号后面一定要跟空格
+
+赋值
+====
+
+* 赋值语句一定要跟分号。
+* 分号后面一定要换行。
+
+类型检查
+========
+
+* String: `typeof object === "string"`
+* Number: `typeof object === "number"`
+* Boolean: `typeof object === "boolean"`
+* Object: `typeof object === "object"`
+* Plain Object: `jQuery.isPlainObject(object) <http://api.jquery.com/jQuery.isPlainObject/>`_
+* Function: `jQuery.isFunction(object) <http://api.jquery.com/jQuery.isFunction/>`_
+* Array: `jQuery.isArray(object) <http://api.jquery.com/jQuery.isArray/>`_
+* Element: `object.nodeType`
+* null: `object === null`
+* null or undefined: `object == null`
+* undefined:
+
+ - Global Variables: `typeof variable === "undefined"`
+ - Local Variables: `variable === undefined`
+ - Properties: `object.prop === undefined`
+
+正则表达式
+==========
+
+只准用 `.test()` 和 `.exec()` 。不准用 `"string".match()` 。
+
+字符串
+======
+
+字符串一定要用双引号，不能用单引号。
+
+节点
+====
+
+* 使用 `.nodeName` 而非　`.tagName`
+* 使用 `.nodeType` 来判断节点的类型（不要用 `.nodeName` ）
+* 不要手动往节点上挂自定义的属性，一定要使用 `.data()` 。

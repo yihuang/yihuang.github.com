@@ -1,0 +1,41 @@
+================
+jQuery 1.4.3发布
+================
+
+`jQuery 1.4.3 <http://api.jquery.com/category/version/1.4.3/>`_ 发布，这里记录一下几个重要的增强和变更。
+
+* 使用 `JSLint <http://www.jslint.com/>`_ 控制代码风格， `jQuery Core Style Guidelines <http://docs.jquery.com/JQuery_Core_Style_Guidelines>`_
+
+* 降低内部模块之间耦合性，方便单独使用内部模块。
+
+* CSS模块重构，提升性能和可扩展性，具体图表见原文， `.css()` 扩展实例： `jQuery Rotate <http://github.com/lrbabe/jquery.rotate.js>`_
+
+* `.data()` 支持 `HTML 5 data- attributes <http://ejohn.org/blog/html-5-data-attributes/>`_ ，这个以前是 metadata 插件的特性，现在移到内核了。这个html5 data属性的规范虽然是新的规范，但是不需要浏览器提供任何支持，所以直接就可以开始使用了。示例：
+
+  .. code-block:: html
+
+    <div data-role="page" data-hidden="true" data-options='{"name":"John"}'></div>
+
+  .. code-block:: javascript
+
+    $("div").data("role") === "page";
+    $("div").data("hidden") === true;
+    $("div").data("options").name === "John";
+
+* `.data(obj)` 现在不是替换原对象，而是 extend 原对象，因为jQuery本身和其他插件也会在元素上存储一些数据，直接替换 data 对象的话容易出问题。
+
+* 新增 `changeData` 事件，使用 `.data()` 修改数据的时候触发， `jQuery Data Linking <http://github.com/jquery/jquery-datalink>`_ 插件大量使用该特性，自动保持对象属性和form字段之间的同步。
+
+* 新增 `jQuery.type`
+
+  .. code-block:: javascript
+
+    jQuery.type(true) === "boolean"
+    jQuery.type(3) === "number"
+    jQuery.type("test") === "string"
+    jQuery.type(function(){}) === "function"
+    jQuery.type([]) === "array"
+    jQuery.type(new Date()) === "date"
+    jQuery.type(/test/) === "regexp"
+
+* 还有其他大量小修改，参考： http://api.jquery.com/category/version/1.4.3/

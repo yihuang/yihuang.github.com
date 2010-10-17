@@ -18,7 +18,7 @@
             <div id="right">
                 % for article in articles:
                 <div class="post">
-                    <a href="${article.filename_noext}.html"><h2>${article.title} <span class="date">${article.date.date()}</span></h2></a>
+                    <a href="${article.filename_noext}.html"><h1>${article.title} <span class="date">${article.date.date()}</span></h1></a>
                     ${article.content}
                 </div>
                 % endfor
