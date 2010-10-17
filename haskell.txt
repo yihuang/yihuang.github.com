@@ -1,0 +1,79 @@
+\x -> a (b x)
+==>
+a . b
+
+f = \x -> g x
+==>
+f = g
+
+------------------------
+
+instance Monoid (DiffList a) where  
+    mempty = DiffList (\xs -> [] ++ xs)  
+    (DiffList f) `mappend` (DiffList g) = DiffList (\xs -> f (g xs)) 
+
+化简
+
+instance Monoid (DiffList a) where  
+    mempty = DiffList ([]++)
+    (DiffList f) `mappend` (DiffList g) = DiffList (f . g)
+
+---------------------
+
+class Functor f where  
+    fmap :: (a -> b) -> f a -> f b
+
+instance Functor ((->) r) where  
+    fmap f g = (\x -> f (g x))
+
+更好理解的版本
+
+newtype Fn a = (->) r a
+OR
+newtype Fn a = r -> a
+
+instance Functor Fn where  
+    // g::Fn a::r->a  f::a->b  f.g::r->b::Fn b
+    fmap f g = f . g
+
+------------------------
+
+class (Functor f) => Applicative f where  
+    pure :: a -> f a  
+    (<*>) :: f (a -> b) -> f a -> f b
+
+// f::Fn (a -> b) = r -> a -> b
+// g::Fn a = r -> a
+instance Applicative Fn where
+    pure a = \_ -> a
+    f (<*>) g = \r -> f r (g r)
+
+------------------
+
+instance Monad ((->) r) where  
+    return x = \_ -> x  
+    h >>= f = \w -> f (h w) w
+
+instance Monad Fn where  
+    // return :: x -> Fn x :: x -> (r -> x)
+    return x = \_ -> x
+    // >>= :: Fn a -> (a -> Fn b) -> Fn b
+    // :: (r -> a) -> (a -> r -> b) -> r -> b
+    h >>= f = \r -> f (h r) r = f (h r) = f . h
+
+-------------------
+
+addStuff :: Int -> Int  
+addStuff = do  
+    a <- (*2)  
+    b <- (+10)  
+    return (a+b) 
+
+addStuff = 
+    (*2) >>= \a -> ( (+10) >>= \b -> return (a+b) )
+    (\a -> ( (+10) >>= \b -> return (a+b) ) ) . (*2)
+    (\a -> ( \b -> return (a+b) . (+10) ) ) . (*2)
+    \x -> (\a -> ( \b -> return (a+b) . (+10) ) ) . (*2) x
+       -> (\a -> ( \b -> return (a+b) . (+10) ) ) (x*2)
+       -> \b -> return ((x*2)+b) . (+10)
+       -> 
