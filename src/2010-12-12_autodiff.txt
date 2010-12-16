@@ -1,0 +1,15 @@
+========
+自动微分
+========
+
+.. image:: images/autodiff.png
+    :align: center
+
+今天学到一招，利用所谓的 `dual number <http://en.wikipedia.org/wiki/Dual_number>`_ ，自动微分的实现竟然可以如此简单。
+
+原理： http://blog.sigfpe.com/2005/07/automatic-differentiation.html
+
+python实现：
+
+.. code-block:: python
+    :filename: code/autodiff.py
