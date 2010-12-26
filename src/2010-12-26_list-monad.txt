@@ -2,6 +2,10 @@
 List Monad
 ==========
 
+.. meta::
+    :keywords: haskell list monad
+    :description: 之前看得比较多的是IO Monad，在那里，Monad主要是用来保证IO操作的顺序执行。但实际上Monad本身只是一个形式，除了表达代码的顺序执行，我们可以赋予它任何我们想要的含义。当我们考察 List Monad 的时候就能看到使用 Monad 这种形式可以表达的另一种含义。
+
 之前看得比较多的是IO Monad，在那里，Monad主要是用来保证IO操作的顺序执行。但实际上Monad本身只是一个形式，除了表达代码的顺序执行，我们可以赋予它任何我们想要的含义。当我们考察 List Monad 的时候就能看到使用 Monad 这种形式可以表达的另一种含义。
 
 .. 目录::
