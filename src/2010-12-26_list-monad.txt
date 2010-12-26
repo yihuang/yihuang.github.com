@@ -1,0 +1,99 @@
+==========
+List Monad
+==========
+
+之前看得比较多的是IO Monad，在那里，Monad主要是用来保证IO操作的顺序执行。但实际上Monad本身只是一个形式，除了表达代码的顺序执行，我们可以赋予它任何我们想要的含义。当我们考察 List Monad 的时候就能看到使用 Monad 这种形式可以表达的另一种含义。
+
+.. 目录::
+
+newtype L
+=========
+
+为了说明问题，我们不妨实现一个自己的 List Monad，为了不和内置的list类型冲突，我们定义一个类似的类型 L ：
+
+.. code-block::haskell
+
+    newtype L a = L [a]
+
+instance Monad
+==============
+
+我们先模仿一下内置的List Monad的实现：
+
+.. code-block:: haskell
+
+    instance Monad L where
+        L xs >>= f = concatMap f xs
+        return x = L [x]
+        fail s = L []
+
+如果您是像我一样的初学者，应该对concatMap也不太熟悉，其定义是：
+
+.. code-block:: haskell
+
+    concatMap f = concat . map f
+
+就是对列表每个元素执行些操作，再把结果组合起来，形成一个新的list。
+
+了解了List Monad的含义以后，我们可以在ghci中把玩一下：
+
+.. code-block:: haskell
+
+    Prelude> [1,2,3]>>=(\x->[x*2])
+    [2,4,6]
+    Prelude> [1,2,3] >>= (\x-> ['a','b','c'] >>= (\y->[(x,y)]) )
+    [(1,'a'),(1,'b'),(1,'c'),(2,'a'),(2,'b'),(2,'c'),(3,'a'),(3,'b'),(3,'c')]
+
+一个单层循环，一个两层循环。
+
+Do-notation and List comprehension
+==================================
+
+我们把这两个循环用 do-notation 改写后会变成这样：
+
+.. code-block:: haskell
+
+    do
+        x<-[1,2,3]
+        return x*2
+
+    do
+        x<-[1,2,3]
+        y<-['a','b','c']
+        return (x,y)
+
+有意思的是，这个形式看起来和 list comprehension 多么类似：
+
+.. code-block:: haskell
+
+    [ x*2 | x<-[1,2,3] ]
+    [ (x,y) | x<-[1,2,3], y<-['a','b','c'] ]
+
+可以看出两种语法是存在同构关系的，据说老版本的haskell也曾经让 list comprehension 的语法支持任意的 Monad 实例，现在也还有一个 `ticket <http://hackage.haskell.org/trac/ghc/ticket/4370>`_ 在要求这个东西，把它叫做“Monad Comprehension”。如果是这样的话，意味着我们的L类型或者IO类型都可以写这样的代码：
+
+.. code-block:: haskell
+
+    [ x*2 | x<-L [1,2,3] ]
+    [ length x | x<-getContents ]
+
+自定义Monad语义
+===============
+
+前面说了，Monad只是一种形式，具体语义由实现定义，自带的List Monad的语义我们当然修改不了，不过我们自己的L类型的语义，我们还是可以改来玩玩的。
+
+那么一个简单的改法就是不做循环，只取第一个元素进行操作：
+
+.. code-block:: haskell
+
+    instance Monad L where
+        L [] >>= f = L []
+        L x >>= f = f (head x)
+        return x = L [x]
+        fail s = L []
+
+    do x <- L [1..10]
+       y <- L ['a', 'b', 'c']
+       return (x,y)
+    -- L [(1, 'a')]
+
+当然，这个改法比较无聊，不过正好用来结束这无聊的一天了。
