@@ -11,6 +11,9 @@ h1 {
     color:#2D8509;
     border-bottom: 1px solid #D8DBBC;
 }
+h2 {
+    margin: 1em 0px .5em 0px;
+}
 h2,h3 {color:#777;}
 img {border:0;}
 a { color: #0066B3; background: inherit; text-decoration: none;}

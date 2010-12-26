@@ -23,6 +23,10 @@ cite {
     font-family:monospace;
     font-style:normal; }
 
+p {
+    margin: 0.5em 0px;
+}
+
 .first {
   /* Override more specific margin styles with "! important". */
   margin-top: 0 ! important }
