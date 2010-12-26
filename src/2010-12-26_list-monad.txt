@@ -13,7 +13,7 @@ List Monad
 newtype L
 =========
 
-为了说明问题，我们不妨实现一个自己的 List Monad，为了不和内置的list类型冲突，我们定义一个类似的类型 L ：
+为了说明问题，我们不妨实现一个自己的 List Monad，为了不和内置的list类型冲突，我们定义一个类似的类型 `L` ：
 
 .. code-block:: haskell
 
@@ -26,18 +26,21 @@ instance Monad
 
 .. code-block:: haskell
 
+    concatMapL::(a -> L b) -> L a -> L b
+    concatMapL f (L xs) = L $ concatMap (\x->let L l = f x in l) xs
+
     instance Monad L where
-        L xs >>= f = concatMap f xs
+        l >>= f = concatMapL f l
         return x = L [x]
         fail s = L []
 
-如果您是像我一样的初学者，应该对concatMap也不太熟悉，其定义是：
+如果您是像我一样的初学者，应该对 `concatMap` 也不太熟悉，其定义是：
 
 .. code-block:: haskell
 
     concatMap f = concat . map f
 
-就是对列表每个元素执行些操作，再把结果组合起来，形成一个新的list。
+就是对列表每个元素执行些操作，再把结果组合起来，形成一个新的list。 `concatMapL` 为了 `L` 类型简单对其包装了一下。
 
 了解了List Monad的含义以后，我们可以在ghci中把玩一下：
 
