@@ -15,7 +15,7 @@ newtype L
 
 为了说明问题，我们不妨实现一个自己的 List Monad，为了不和内置的list类型冲突，我们定义一个类似的类型 L ：
 
-.. code-block::haskell
+.. code-block:: haskell
 
     newtype L a = L [a]
 
