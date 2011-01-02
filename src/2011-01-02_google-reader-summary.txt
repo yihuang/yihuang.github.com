@@ -1,0 +1,47 @@
+============
+python 工具
+============
+
+.. meta::
+    :keywords: python haskell google reader
+    :description: google reader中haskell目录下面的东西看得人心情抑郁，因为看不懂，就算看懂了也不知道能干嘛，有啥好处。python目录就不一样了，随便喵喵也能收获一堆实用的好东东。汇总几个今天看到的。
+
+google reader中haskell目录下面的东西看得人心情抑郁，因为看不懂，就算看懂了也不知道能干嘛，有啥好处。python目录下就不一样，随便喵喵也能收获一堆实用的东东。汇总两个，凑出2011第一篇文章。
+
+.. 目录::
+
+virtualenvwrapper
+=================
+
+首先， `virtualenv <http://pypi.python.org/pypi/virtualenv>`_ 是用来建立一个python的隔离环境的。 `virtualenvwrapper <http://www.doughellmann.com/docs/virtualenvwrapper/>`_ 顾名思义，就是在 `virtualenv`_ 的基础上扩展了几个方便的命令。管理一堆 `virtualenv`_ 环境的时候挺有用。 ::
+
+    > easy_install virtualenvwrapper 
+    安装...
+    > mkdir $HOME/env
+    > export WORKON_HOME=$HOME/env
+    > source virtualenvwrapper.sh
+    后面两句可以加入 .bashrc ，WORKON_HOME 默认为 $HOME/.virtualenvs
+    > mkvirtualenv test1
+    (test1)> mkvirtualenv test2
+    (test2)> workon
+    test1
+    test2
+    (test2)> workon test1
+    (test1)> $ lssitepackages 
+    easy-install.pth     setuptools-0.6c11-py2.5.egg
+    pip-0.8.1-py2.5.egg  setuptools.pth
+
+python -me
+==========
+
+不知您是否也像我一样经常干这样的事情：想把python当计算器用，却直接执行 `python -c "1+1"` ，发现不对时才记得加上个 `print` ；又或是想看看当前环境使用的 `django <http://www.djangoproject.com>`_ 是哪个，进入python shell，输入 `import django;print django.__file__` 。
+
+至少我是经常干这样的事情，惭愧的是从来没想过把它自动化一下，不过现在有人帮我做了 ;-) 就是这个叫 `e <http://pypi.python.org/pypi/e>`_ 的库。看起来，利用 `python -m` 参数，还是能做挺多有意思的事情的。 ::
+
+    $ python -me 1+1 2+2
+    2
+    4
+    $ python -me os
+    /home/yihuang/.virtualenvs/test/lib/python2.5/os.py
+    $ python -me sys.path
+    [......]
