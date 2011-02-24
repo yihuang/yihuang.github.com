@@ -2,6 +2,10 @@
 fold
 =====
 
+.. meta::
+    :keywords: haskell fold functional programming
+    :description: fold 是个常见的高阶函数，在python中叫做reduce，给它一个函数和一个结构，它能将这个结构中的元素组合起来。
+
 本来以为很简单的概念，看完 `wiki <http://en.wikipedia.org/wiki/Fold_(higher-order_function)>`_ 后又糊涂了，下面文字是笔记和翻译的合体。
 
 fold 是个常见的高阶函数，在python中叫做reduce，给它一个函数和一个结构，它能将这个结构中的元素组合起来。
