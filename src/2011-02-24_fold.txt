@@ -1,0 +1,64 @@
+=====
+fold
+=====
+
+本来以为很简单的概念，看完 `wiki <http://en.wikipedia.org/wiki/Fold_(higher-order_function)>`_ 后又糊涂了，下面文字是读后感和翻译合体。
+
+fold 是个常见的高阶函数，在python中叫做reduce，给它一个函数和一个结构，它能将这个结构中的元素组合起来。
+
+举了python列表的例子就很清楚： ``reduce(lambda a, b:a+b, [1,2,3,4,5])`` 就等价于 ``1+2+3+4+5`` 。
+
+不过更精确地说是上面表达式是等价于 ``((((1+2)+3)+4)+5)`` ，只不过因为 ``+`` 操作满足结合律，所以括号就无关紧要了。但是对于不满足结合律的操作来说，括号的不同括法就要导出不同的结果了，所以根据求值的顺序， ``fold`` 可分为 ``foldl`` 和 ``foldr`` 两种。他们的区别我想用haskell代码来解释：
+
+* ``foldl (+) 0 [1,2,3,4,5]`` 等价于 ``((((1+2)+3)+4)+5)``
+* ``foldr (+) 0 [1,2,3,4,5]`` 等价于 ``(1+(2+(3+(4+5))))``
+
+在函数式语言中，列表这个结构是通过空列表 ``nil` 和操作符 ``cons`` 进行定义的，haskell中对应有 `[]` 和 `(:)` 的语法糖。所以 ``[1,2,3,4,5]`` 实际上是 ``1:[2:[3:[4:[5:[]]]]]`` ，这样一来，我们可以从一个新的视角看待 ``fold`` 操作， ``foldr (+) []`` 操作其实就是将操作符 ``(:)`` 替换为 ``(+)`` ：
+
+.. image:: images/fold/foldr-transformation.png
+.. image:: images/fold/foldl-transformation.png
+
+做个小练习，尝试搞清楚下面两个等式，有助于理解 ``fold`` ，这种练习也有助于理解其他函数式风格的程序：
+
+.. code-block:: haskell
+
+    reverse = foldl (flip (:)) []
+    map f = foldr ((:) . f) []
+
+下面再给个 ``foldr`` 和 ``foldl`` 的实现：
+
+.. code-block:: haskell
+
+    foldr f z []     = z
+    foldr f z (x:xs) = f x (foldr f z xs)
+
+    foldl f z []     = z
+    foldl f z (x:xs) = foldl f (f z x) xs
+
+可以看出，在惰性求值的情况下， ``foldr`` 中的 ``f`` 可以决定是否需要对第二个参数求值，如果 ``f`` 在满足一定条件后不需要第二个参数可以马上返回的话， ``foldr f z`` 就可以直接处理无限列表而不会陷入无限递归。另外也容易看出 ``foldl`` 是尾递归的，所以也是尾递归的；但是给它无限列表的话，必然要陷入无限循环。
+
+而且上面看过 ``reverse`` 可以通过 ``foldl`` 实现，所以也是尾递归的，同时我们又发现， ``foldr`` 也可以通过先翻转列表然后执行 ``foldl`` 来实现，这样我们就可以得到 ``foldr`` 的一个尾递归的实现：
+
+.. code-block:: haskell
+
+    foldr f z l = foldl f z (reverse l)
+    -- 化简可得：
+    foldr f z = (foldl (flip f) z) . reverse
+
+下面有个小技巧可以直观展示出 ``foldr`` ``foldl`` 对结构的变换过程：
+
+.. code-block:: haskell
+
+    Prelude> let t = (\x y -> concat ["(f ",x," ",y,")"])
+    Prelude> foldr t "z" (map show [1..5])
+    "(f 1 (f 2 (f 3 (f 4 (f 5 z)))))"
+    Prelude> foldl t "z" (map show [1..5])
+    "(f (f (f (f (f z 1) 2) 3) 4) 5)"
+
+也可验证一下我们上面给出的第二个 ``foldr`` 实现的正确与否：
+
+.. code-block:: haskell
+
+    Prelude> let myfoldr f z = (foldl (flip f) z) . reverse
+    Prelude> myfoldr t "z" (map show [1..5])
+    "(f 1 (f 2 (f 3 (f 4 (f 5 z)))))"
