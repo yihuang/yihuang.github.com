@@ -62,3 +62,24 @@ fold 是个常见的高阶函数，在python中叫做reduce，给它一个函数
     Prelude> let myfoldr f z = (foldl (flip f) z) . reverse
     Prelude> myfoldr t "z" (map show [1..5])
     "(f 1 (f 2 (f 3 (f 4 (f 5 z)))))"
+
+最后，将针对列表的 ``fold`` 概念扩展至任意的代数结构后成为一个叫 `Catamorphism <http://en.wikipedia.org/wiki/Catamorphism>`_ 的东西，可以看一个针对二叉树的例子：
+
+.. code-block:: haskell
+
+    data Tree a = Leaf a
+                | Branch (Tree a) (Tree a)
+
+    type TreeAlgebra a r = (a -> r, r -> r -> r)
+
+    foldTree :: TreeAlgebra a r -> Tree a -> r
+    foldTree (f, g) (Leaf x)     = f x
+    foldTree (f, g) (Branch l r) = g (foldTree (f, g) l) (foldTree (f, g) r)
+
+    treeDepth :: TreeAlgebra a Integer
+    treeDepth = (const 1, \l r -> 1 + max l r)
+
+    sumTree :: (Num a) => TreeAlgebra a a
+    sumTree = (id, (+))
+
+中心思想和 ``foldr`` 类似，就是通过替换代数数据类型的构造函数，对结构进行变换。
