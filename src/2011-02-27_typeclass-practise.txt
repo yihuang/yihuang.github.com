@@ -1,0 +1,19 @@
+========================
+type class 练习(part 1)
+========================
+
+.. meta:
+    :keywords: haskell type class monad functor applicative
+    :description: `Monad Reader 13期 <http://www.haskell.org/wikiupload/8/85/TMR-Issue13.pdf>`_ 有一篇挺好的文章，简单介绍 haskell 中基础的type class及其关系。本文记录我阅读过程中练习的实现代码。
+
+.. figure:: images/typeclass-relation.png
+    :align: center
+
+    基本type class关系图
+
+`Monad Reader 13期 <http://www.haskell.org/wikiupload/8/85/TMR-Issue13.pdf>`_ 有一篇挺好的文章，介绍了许多 haskell 中基本的type class及其联系。本文记录我阅读过程中做为笔记的代码。
+
+    "good intuition comes from hard work, not from learning the right metaphor."
+
+.. code-block:: haskell
+    :filename: code/typeclass.hs
