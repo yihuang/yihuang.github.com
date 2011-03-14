@@ -29,7 +29,7 @@ Nginx
 
 因为我们有一些页面确实很大（超过1m），甚至考虑过直接把页面gzip后的内容写入 `redis`_ ， `nginx`_ 取到内容后设置下相应的header直接转给浏览器，这样既可节省不少 `redis`_ 的体积，也可省下不少 `nginx`_ 与 `redis`_ 之间传输以及压缩的开销。不过这个方案暂未实验成功，不知道有没有同学有成功经验可以分享一下。
 
-我们有一个叫 `基金账本 <http://my.jjmmw.com/fundbook/>`_ 的项目涉及到关系结构比较复杂的数据以及大量计算，说结构复杂主要还是针对关系数据库来说的，但当我们开始考虑采用 `mongodb <http://www.mongodb.org/>`_ 来实现之后，一切都变得自然而然水到渠成了。这一节的收获就是，选到正确的工具，太重要了。
+我们有一个项目涉及到关系结构比较复杂的数据以及大量计算，说结构复杂主要还是针对关系数据库来说的，但当我们开始考虑采用 `mongodb <http://www.mongodb.org/>`_ 来实现之后，一切都变得自然而然水到渠成了。这一节的收获就是，选到正确的工具，太重要了。
 
 前端
 ====
@@ -125,9 +125,8 @@ static/css/aristo/SConstruct :
     env = Environment(ENV=os.environ)
     env.Command('all.css', [
         'jquery-ui-1.8.4.custom.css', 
-        'jjmmw.css',
         'jquery.tablesorter.css',
-        'jjmmw.custom.css',
+        'main.css',
     ], yuicss if ARGUMENTS.get('mode')!='dev' else concat)
 
 sconsutils.py :
