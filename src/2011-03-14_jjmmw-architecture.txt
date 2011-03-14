@@ -1,0 +1,197 @@
+=============
+网站架构总结
+=============
+
+.. meta:
+    :keywords: web architecture munin django git jquery 
+    :description: 网站架构分享
+
+俺们不是什么很大的网站，用的也都是些很常见的技术，不过毕竟也是辛辛苦苦重构了大量旧代码才终于梳理出一套比较完整的体系，趁着它雏形初具的时候，赶紧整理分享一下。也许能帮谁省掉不少走弯路的时间，如果有幸收到一些建议，那就赚到了。
+
+.. 目录::
+
+后端
+====
+
+Django
+-------
+
+使用 `python <http://www.python.org/>`_ + `django <http://www.djangoproject.com/>`_ 框架，虽说 `django`_ 确实有种种不尽如人意的地方， `模板 <http://docs.djangoproject.com/en/dev/topics/templates/>`_ 不如 `mako <http://www.makotemplates.org/>`_ ， `orm <http://docs.djangoproject.com/en/dev/topics/db/models/>`_ 也比不上 `sqlalchemy <http://www.sqlalchemy.org>`_ ，不过这些不爽都还敌不过它带来的便利。它自带的 `管理后台 <http://docs.djangoproject.com/en/dev/ref/contrib/admin/>`_ 以及各种内置的或是第三方的app绝对是能延年益寿的好东西。自带的管理后台通过一些简单的定制完全能满足我们后台管理的需求。
+
+Nginx
+------
+
+架构上也是很常见的 `nginx <http://wiki.nginx.org/Main>`_ 接入加上后端的 `apache <http://httpd.apache.org/>`_ + `mod_wsgi <http://code.google.com/p/modwsgi/>`_ (`daemon模式 <http://code.google.com/p/modwsgi/wiki/ConfigurationDirectives#WSGIDaemonProcess>`_)，目前来看 `mod_wsgi`_ 进程还是很耗内存的，也在考虑采用 `uwsgi <http://projects.unbit.it/uwsgi/>`_ 。
+
+网站有较大一部分都是以提供内容为主的，对这一部分可以采用大粒度的缓存措施：全页面缓存，少量个性化内容通过ajax加载。也考虑过在 `nginx`_ 这一层做 `ssi <http://wiki.nginx.org/HttpSsiModule>`_ ，不过目前来看ajax的效果还不错。
+
+具体做法是采用 `nginx`_ 的 `HttpRedis <http://wiki.nginx.org/HttpRedis>`_ 扩展，用 `redis <http://redis.io/>`_ 做缓存（放弃 `memcache <http://memcached.org/>`_ 的原因是我们有页面大小超过了1m...），url当key， `nginx`_ 从 `redis`_ 中取出页面直接返回。后端写了一个 `django`_ 的 `middleware <http://docs.djangoproject.com/en/dev/topics/http/middleware/>`_ ，负责根据一定的策略将页面内容写入 `redis`_ 并设置适当的超时时间。
+
+因为我们有一些页面确实很大（超过1m），甚至考虑过直接把页面gzip后的内容写入 `redis`_ ， `nginx`_ 取到内容后设置下相应的header直接转给浏览器，这样既可节省不少 `redis`_ 的体积，也可省下不少 `nginx`_ 与 `redis`_ 之间传输以及压缩的开销。不过这个方案暂未实验成功，不知道有没有同学有成功经验可以分享一下。
+
+我们有一个叫 `基金账本 <http://my.jjmmw.com/fundbook/>`_ 的项目涉及到关系比较复杂的数据结构以及大量计算，说数据关系复杂主要还是针对关系数据库来说的，但当我们开始考虑采用 `mongodb <http://www.mongodb.org/>`_ 来实现之后，一切都变得自然而然水到渠成了。这一节的收获就是，选到正确的工具，太重要了。
+
+前端
+====
+
+在大量使用前端js搭建的项目中，有一条经验就是，尽量让首屏的内容不依赖js，这样一方面所有js都能异步加载，让页面以最快的速度率先展现出来，也可以在js不可用的情况展现只读的内容，也能做到一点 `progressive enhancement <http://en.wikipedia.org/wiki/Progressive_enhancement>`_ 。
+
+LAB
+----
+
+js异步加载使用的是 `LAB <http://labjs.com/>`_ ，喜欢它的小体积，我们用一个django模板的 `自定义tag <http://docs.djangoproject.com/en/dev/howto/custom-template-tags/>`_ ，把压缩后的LAB.js直接嵌入页面，这样当浏览器渲染首屏页面的过程中，只需等待唯一一个css文件加载完即可，并且异步加载js的代码还可以放在header里面，能在第一时间进行加载。
+
+JQuery
+-------
+
+JS采用 `JQuery <http://jquery.com/>`_ 框架，DOM事件在js初始化时统一绑定上去，通过使用class和data属性，这一步可以做得非常简便。另外这个项目里面涉及不少表格， `JQuery`_ 的 `live事件 <http://api.jquery.com/live/>`_ 可以派上大用场。
+
+相关代码大致如下：
+
+.. code-block:: javascript
+
+    # 绑定所有按钮和链接的点击事件
+    # <a href="#" data-click="refresh" class="action">刷新</a>
+    $('a .action, button.action').each(function() {
+        var action = $(this).data('click')
+        if( action && g_actions[action] ) {
+            $(this).click( g_actions[action] );
+        }
+    });
+
+    # 绑定表格里面所有事件
+    $('.liveaction', $('#tab-fundlist')[0]).live('click', function(ev) {
+        var action = $(this).data('click');
+        get_action(action).call(this, ev);
+        ev.preventDefault();
+    });
+
+UI采用的 `JQueryUI <http://jqueryui.com/>`_ 框架。大量jquery惯用法的采用，使用 `JQueryUI`_ 的代码实现得非常干净，定制和扩展起来也很顺手。唯一的问题是ie6下面的性能明显要差，尤其是 `autocomplete <http://jqueryui.com/demos/autocomplete/>`_ 在菜单项比较多的时候，很慢。原因是里面存在大量琐碎的dom操作，改用innerHTML优化一下之后好多了，只是代码也丑多了。
+
+SCons
+------
+
+在管理js css自动合并压缩的问题上，曾经考虑过Makefile，最终放弃，因为我们希望在开发模式和部署模式下面进行不同的操作，用Makefile干这个太麻烦了。于是采用了同为python门下的 `SCons <http://www.scons.org/>`_ ，结论是非常好用。
+
+大概流程如下：切换到 static 目录下面；开发过程中可以执行 `scons MODE=dev` ，将进入开发模式，只简单地把js和css文件concat到一起；准备部署时执行 `scons` ，将进入部署模式，对js和css进行合并压缩。
+
+static/SConstruct :
+
+.. code-block:: python
+
+    SConscript([
+        'js/SConstruct',
+        'css/aristo/SConstruct',
+    ])
+
+static/js/SConstruct :
+
+.. code-block:: python
+
+    import os
+    from sconsutils import closurec, concat
+
+    deps = {
+        'LAB.js': [
+            'src/LAB.js',
+        ],
+        'jquery.js': [
+            'src/jquery-1.4.4.js',
+            # jquery 相关插件...
+        ],
+        'jquery.ui.js': [
+            'src/ui/jquery.ui.core.js',
+            # jquery ui 相关文件...
+        ],
+        'fundbook.js': [
+            'src/fundbook.main.js',
+            # 项目本身的js...
+        ],
+    }
+
+    env = Environment(ENV=os.environ)
+    for target in deps:
+        env.Command(target, deps[target], closurec if ARGUMENTS.get('mode')!='dev' else concat)
+
+static/css/aristo/SConstruct :
+
+.. code-block:: python
+
+    import os
+    from sconsutils import yuicss, concat
+
+    env = Environment(ENV=os.environ)
+    env.Command('all.css', [
+        'jquery-ui-1.8.4.custom.css', 
+        'jjmmw.css',
+        'jquery.tablesorter.css',
+        'jjmmw.custom.css',
+    ], yuicss if ARGUMENTS.get('mode')!='dev' else concat)
+
+sconsutils.py :
+
+.. code-block:: python
+
+    import SCons
+
+    def yuicss(target, source, env, for_signature=None):
+        source = ' '.join(map(str, source))
+        cmd = 'cat %s | yui-compressor --type css -o %s' % (source, target[0].path)
+        return cmd
+    yuicss = SCons.Action.CommandGeneratorAction(yuicss, {})
+
+    def closurec(target, source, env, for_signature=None):
+        source = ' '.join(map(lambda s:'--js='+str(s), source))
+        cmd = 'closurec %s --js_output_file=%s' % (source, target[0].path)
+        return cmd
+    closurec = SCons.Action.CommandGeneratorAction(closurec, {})
+
+    def concat(target, source, env, for_signature=None):
+        source = ' '.join(map(str, source))
+        cmd = "cat %s > %s" % (source, target[0].path)
+        return cmd
+    concat = SCons.Action.CommandGeneratorAction(concat, {})
+
+监控
+====
+
+Munin
+------
+
+向所有和我一样被 `snmp协议 <http://en.wikipedia.org/wiki/Simple_Network_Management_Protocol>`_ 搞晕了的同学诚挚推荐 `Munin <http://munin-monitoring.org/>`_ 。
+
+开发流程
+========
+
+Git
+----
+
+在最初为了赶时髦从 `svn <http://subversion.tigris.org/>`_ 切换到 `git <http://git-scm.com/>`_ 时，确实产生了一点混乱。不过当我们拿 `git`_ 当 `svn`_ 用过一段时间后，也逐渐看清了针对 `git`_ 来说正确的代码管理流程。
+
+第一，在团队成员的代码库之间建立只读共享，linux机器跑一个 `git-daemon <http://www.kernel.org/pub/software/scm/git/docs/git-daemon.html>`_ 即可，windows机器跑这个有点麻烦，我们的解决方案是直接建立samba共享。这样一来，成员之间就可以互相pull代码了；第二，由leader单独管理master分支，应该保持跟运营中的代码一致，成员完成一个需求后向leader发一个pull request，leader fetch该成员的代码，做必要的review和测试之后，merge进master分支，然后发布。
+
+另外，为了保持版本历史的干净，我们倾向于 `rebase <http://www.kernel.org/pub/software/scm/git/docs/git-rebase.html>`_ 而非 `merge <http://www.kernel.org/pub/software/scm/git/docs/git-merge.html>`_ 。
+
+这个过程具体涉及到的命令如下：
+
+member1 : ::
+
+    git commit -m "finish a feature"
+    # 自测OK
+    git pull --rebase leader/master
+    # 解决 rebase 可能导致的冲突
+    # member1 向 leader 发起 pull request
+
+leader : ::
+
+    git fetch member1
+    # review and test ...
+    git merge member1/master --ff-only
+    # 如果 fast-forward 失败，则通知member1重新进行pull --rebase
+    # 测试OK后发布
+
+如果feature较大，leader也可以选择建立一个 testing 的分支进行review和test，这些细节leader可以灵活控制。
+
+每个开发人员本地的代码管理， `git flow <https://github.com/nvie/gitflow>`_ 是一个相当好的范例，直接使用即可。
+
+对于我们来说， `git`_ 这样的流程，简直是完美。
