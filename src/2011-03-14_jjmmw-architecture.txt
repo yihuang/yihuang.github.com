@@ -6,7 +6,7 @@
     :keywords: web architecture munin django git jquery 
     :description: 网站架构分享
 
-俺们不是什么很大的网站，用的也都是些很常见的技术，不过毕竟也是辛辛苦苦重构了大量旧代码才终于梳理出一套比较完整的体系，趁着它雏形初具的时候，赶紧整理分享一下。也许能帮谁省掉不少走弯路的时间，如果有幸收到一些建议，那就赚到了。
+俺们不是什么很大的网站，用的也都是些很常见的技术，不过毕竟也是辛辛苦苦重构了大量旧代码才终于梳理出一套比较完整的体系，趁着它雏形初具的时候，赶紧整理分享一下。也许能帮谁省掉一些走弯路的时间，如果有幸收到一些建议，那就赚到了。
 
 .. 目录::
 
@@ -29,7 +29,7 @@ Nginx
 
 因为我们有一些页面确实很大（超过1m），甚至考虑过直接把页面gzip后的内容写入 `redis`_ ， `nginx`_ 取到内容后设置下相应的header直接转给浏览器，这样既可节省不少 `redis`_ 的体积，也可省下不少 `nginx`_ 与 `redis`_ 之间传输以及压缩的开销。不过这个方案暂未实验成功，不知道有没有同学有成功经验可以分享一下。
 
-我们有一个叫 `基金账本 <http://my.jjmmw.com/fundbook/>`_ 的项目涉及到关系比较复杂的数据结构以及大量计算，说数据关系复杂主要还是针对关系数据库来说的，但当我们开始考虑采用 `mongodb <http://www.mongodb.org/>`_ 来实现之后，一切都变得自然而然水到渠成了。这一节的收获就是，选到正确的工具，太重要了。
+我们有一个叫 `基金账本 <http://my.jjmmw.com/fundbook/>`_ 的项目涉及到关系结构比较复杂的数据以及大量计算，说结构复杂主要还是针对关系数据库来说的，但当我们开始考虑采用 `mongodb <http://www.mongodb.org/>`_ 来实现之后，一切都变得自然而然水到渠成了。这一节的收获就是，选到正确的工具，太重要了。
 
 前端
 ====
@@ -50,8 +50,8 @@ JS采用 `JQuery <http://jquery.com/>`_ 框架，DOM事件在js初始化时统�
 
 .. code-block:: javascript
 
-    # 绑定所有按钮和链接的点击事件
-    # <a href="#" data-click="refresh" class="action">刷新</a>
+    // 绑定所有按钮和链接的点击事件
+    // <a href="#" data-click="refresh" class="action">刷新</a>
     $('a .action, button.action').each(function() {
         var action = $(this).data('click')
         if( action && g_actions[action] ) {
@@ -59,19 +59,21 @@ JS采用 `JQuery <http://jquery.com/>`_ 框架，DOM事件在js初始化时统�
         }
     });
 
-    # 绑定表格里面所有事件
+    // 绑定表格里面所有事件
     $('.liveaction', $('#tab-fundlist')[0]).live('click', function(ev) {
         var action = $(this).data('click');
         get_action(action).call(this, ev);
         ev.preventDefault();
     });
 
-UI采用的 `JQueryUI <http://jqueryui.com/>`_ 框架。大量jquery惯用法的采用，使用 `JQueryUI`_ 的代码实现得非常干净，定制和扩展起来也很顺手。唯一的问题是ie6下面的性能明显要差，尤其是 `autocomplete <http://jqueryui.com/demos/autocomplete/>`_ 在菜单项比较多的时候，很慢。原因是里面存在大量琐碎的dom操作，改用innerHTML优化一下之后好多了，只是代码也丑多了。
+UI采用的 `JQueryUI <http://jqueryui.com/>`_ 框架。大量jquery惯用法的使用，使用 `JQueryUI`_ 的代码实现得非常干净，定制和扩展起来也很容易。唯一的问题是ie6下面的性能明显要差，尤其是 `autocomplete <http://jqueryui.com/demos/autocomplete/>`_ 在菜单项比较多的时候，很慢。原因是里面存在大量琐碎的dom操作，改用innerHTML优化一下之后好多了，只是代码也丑多了。
 
 SCons
 ------
 
-在管理js css自动合并压缩的问题上，曾经考虑过Makefile，最终放弃，因为我们希望在开发模式和部署模式下面进行不同的操作，用Makefile干这个太麻烦了。于是采用了同为python门下的 `SCons <http://www.scons.org/>`_ ，结论是非常好用。
+我们使用 `closurec <http://code.google.com/closure/compiler/>`_ 打包压缩js，使用 `yui-compressor <http://developer.yahoo.com/yui/compressor/>`_ 打包压缩css。
+
+在自动化js css合并压缩的问题上，曾经考虑过Makefile，最终放弃，因为我们希望在开发模式和部署模式下面进行不同的操作，用Makefile干这个太麻烦了。于是采用了同为python门下的 `SCons <http://www.scons.org/>`_ ，结论是相当好用。
 
 大概流程如下：切换到 static 目录下面；开发过程中可以执行 `scons MODE=dev` ，将进入开发模式，只简单地把js和css文件concat到一起；准备部署时执行 `scons` ，将进入部署模式，对js和css进行合并压缩。
 
@@ -174,20 +176,20 @@ Git
 
 这个过程具体涉及到的命令如下：
 
-member1 : ::
+member : ::
 
     git commit -m "finish a feature"
     # 自测OK
     git pull --rebase leader/master
     # 解决 rebase 可能导致的冲突
-    # member1 向 leader 发起 pull request
+    # member 向 leader 发起 pull request
 
 leader : ::
 
-    git fetch member1
+    git fetch member
     # review and test ...
-    git merge member1/master --ff-only
-    # 如果 fast-forward 失败，则通知member1重新进行pull --rebase
+    git merge member/master --ff-only
+    # 如果 fast-forward 失败，则通知member重新进行pull --rebase
     # 测试OK后发布
 
 如果feature较大，leader也可以选择建立一个 testing 的分支进行review和test，这些细节leader可以灵活控制。
