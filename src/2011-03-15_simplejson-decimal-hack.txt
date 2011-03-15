@@ -1,0 +1,25 @@
+==================================
+simplejson编码Decimal类型解决方案
+==================================
+
+前段时间用到大量 `Decimal <http://docs.python.org/library/decimal.html>`_ 做一些对精度要求严格的计算，但是用 `simplejson <http://code.google.com/p/simplejson/>`_ 编码成 `json <http://json.org>`_ 的时候却遇到问题： `simplejson`_ 不认 `Decimal` 类型。最开始用了一个笨方法解决，将 `Decimal`_ 对象转换成字符串，JS那边再 `parseFloat` 。不过最近还是找到一个比较完美的解决方案。
+
+.. code-block:: python
+
+    '''
+    >>> simplejson.dumps({'value': decimal.Decimal('1000.001')}, default=default)
+    '{"value": 1000.001}'
+    '''
+    import decimal
+    class DecimalHack(float):
+        def __init__(self, a):
+            self.a=a
+        def __repr__(self):
+            return str(self.a)
+
+    def default(o):
+        if isinstance(o, decimal.Decimal):
+            return DecimalHack(o)
+        else:
+            raise TypeError(repr(o) + ' is not JSON serializable')
+
