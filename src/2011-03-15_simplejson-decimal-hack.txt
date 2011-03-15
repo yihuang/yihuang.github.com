@@ -2,7 +2,11 @@
 simplejson编码Decimal类型解决方案
 ==================================
 
-前段时间用到大量 `Decimal <http://docs.python.org/library/decimal.html>`_ 做一些对精度要求严格的计算，但是用 `simplejson <http://code.google.com/p/simplejson/>`_ 编码成 `json <http://json.org>`_ 的时候却遇到问题： `simplejson`_ 不认 `Decimal` 类型。最开始用了一个笨方法解决，将 `Decimal`_ 对象转换成字符串，JS那边再 `parseFloat` 。不过最近还是找到一个比较完美的解决方案。
+.. meta::
+    :keywords: python Decimal json simplejson 
+    :description: 把python Decimal类型编码成json
+
+前段时间用到大量 `Decimal <http://docs.python.org/library/decimal.html>`_ 做一些对精度要求严格的计算，但是用 `simplejson <http://code.google.com/p/simplejson/>`_ 编码成 `json <http://json.org>`_ 的时候却遇到问题： `simplejson`_ 不认 `Decimal`_ 类型。最开始用了一个笨方法解决，将 `Decimal`_ 对象转换成字符串，JS那边再 `parseFloat` 。不过最近还是找到一个做法猥琐但结果完美的方案。
 
 .. code-block:: python
 
