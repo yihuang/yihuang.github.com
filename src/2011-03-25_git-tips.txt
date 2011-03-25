@@ -1,0 +1,21 @@
+========
+GIT备忘
+========
+
+.. meta::
+    :description: 总结git使用技巧
+    :keywords: git tips
+
+不同分支之间切换干活时保存临时性变更
+------------------------------------
+
+当然， `git stash <http://www.kernel.org/pub/software/scm/git/docs/git-stash.html>`_ 本意是用来干这个的，把临时变更放到垃圾箱里。但是离开一个分支太久了，回来的时候会不记得之前stash过了有木有！最终还是感觉创建一个临时的commit比较有安全感。给它起个名字叫 temp，切换回来的时候看到有叫 temp 的 commit 就 `reset HEAD^ <http://www.kernel.org/pub/software/scm/git/docs/git-reset.html>`_ 一次，回退一个版本，继续开发即可。
+
+保持线性的版本历史
+------------------
+
+我还是倾向于保持master线性的版本历史，这样回顾的时候舒服一些。当然过程中可以有n个分支并行开发，只是最后merge到master的时候保证线性历史即可。要实现这个需要做到这么两点：
+
+* feature分支要获得master上最新变化时坚持使用 `rebase <http://www.kernel.org/pub/software/scm/git/docs/git-rebase.html>`_ ，本地就是 `git rebase master <http://www.kernel.org/pub/software/scm/git/docs/git-rebase.html>`_ ，远程则是 `git pull --rebase remote master <http://www.kernel.org/pub/software/scm/git/docs/git-pull.html>`_ 。
+
+* leader准备把完成的feature分支合并到master时，记得加上 `--ff-only` 选项，比如 `git merge feature --ff-only` ，这样git只会尝试 `fast-forward <http://www.kernel.org/pub/software/scm/git/docs/user-manual.html#fast-forwards>`_ 操作，如果不成功则报错，如报错，叫你的成员重新 `rebase master` 一次即可。让负责写的代码的负责解决冲突，让后checkin的负责解决冲突。
