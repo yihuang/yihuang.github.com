@@ -1,0 +1,14 @@
+=========================
+珠三角技术沙龙haskell介绍
+=========================
+
+.. meta::
+    :description: haskell介绍ppt
+    :keywords: haskell ppt presentation
+
+3月26号，珠三角技术沙龙在深圳举行。有幸给大家介绍了一把 `Haskell <http://www.haskell.org/>`_ 。
+罗列了太多虚的理论，效果不太好。吸取教训，下次有机会的话，直接上点实用的。
+
+`观看ppt </slide/haskell-intro/>`_
+
+PS: 这个ppt使用 `reST+S5 <http://docutils.sourceforge.net/docs/user/slide-shows.html>`_ 再加上 `pygments <http://pygments.org/>`_ 语法高亮搞定，非常方便。
