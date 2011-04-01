@@ -1,0 +1,838 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
+<meta name="version" content="S5 1.1" />
+<title>Haskell介绍</title>
+<meta name="authors" content="黄毅 &lt;yi.codeplayer&#64;gmail.com&gt;" />
+<meta name="date" content="2011年 03月 25日" />
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 5951 2009-05-18 18:03:10Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left{
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: left }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+<!-- configuration parameters -->
+<meta name="defaultView" content="slideshow" />
+<meta name="controlVis" content="hidden" />
+<!-- style sheet links -->
+<script src="ui/default/slides.js" type="text/javascript"></script>
+<link rel="stylesheet" href="ui/default/slides.css"
+      type="text/css" media="projection" id="slideProj" />
+<link rel="stylesheet" href="ui/default/outline.css"
+      type="text/css" media="screen" id="outlineStyle" />
+<link rel="stylesheet" href="ui/default/print.css"
+      type="text/css" media="print" id="slidePrint" />
+<link rel="stylesheet" href="ui/default/opera.css"
+      type="text/css" media="projection" id="operaFix" />
+
+<style type="text/css">
+#currentSlide {display: none;}
+</style>
+</head>
+<body>
+<div class="layout">
+<div id="controls"></div>
+<div id="currentSlide"></div>
+<div id="header">
+
+</div>
+<div id="footer">
+<h1>Haskell介绍</h1>
+
+</div>
+</div>
+<div class="presentation">
+<div class="slide" id="slide0">
+<h1 class="title">Haskell介绍</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Authors:</th>
+<td>黄毅 &lt;yi.codeplayer&#64;gmail.com&gt;</td></tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>2011年 03月 25日</td></tr>
+</tbody>
+</table>
+<!-- Definitions of interpreted text roles (classes) for S5/HTML data. -->
+<!-- This data file has been placed in the public domain. -->
+<!-- Colours
+======= -->
+<!-- Text Sizes
+========== -->
+<!-- Display in Slides (Presentation Mode) Only
+========================================== -->
+<!-- Display in Outline Mode Only
+============================ -->
+<!-- Display in Print Only
+===================== -->
+<!-- Display in Handout Mode Only
+============================ -->
+<!-- Incremental Display
+=================== -->
+
+</div>
+<div class="slide" id="id1">
+<h1>特点</h1>
+<ul class="incremental big simple">
+<li>Functinal</li>
+<li>Pure</li>
+<li>Lazy</li>
+<li>Type system</li>
+<li>Type inference</li>
+</ul>
+</div>
+<div class="slide" id="id2">
+<h1>最简单的语言 λ</h1>
+<p class="big">语法：</p>
+<blockquote>
+<ol class="arabic simple">
+<li>表达式 ::= 标识符</li>
+<li>表达式 ::= λ标识符.表达式</li>
+</ol>
+</blockquote>
+</div>
+<div class="slide" id="id3">
+<h1>最简单的语言 λ</h1>
+<p class="big">规则：</p>
+<blockquote>
+<ul>
+<li><dl class="first docutils">
+<dt>α-变换 (形参命名) ::</dt>
+<dd><p class="first last">λx.axb == λy.ayb</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>β-归约 (函数调用) ::</dt>
+<dd><p class="first last">(λx.axb) y == ayb</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>η-变换 (函数化简 Pointfree Style) ::</dt>
+<dd><p class="first last">λx .f x == f</p>
+</dd>
+</dl>
+</li>
+</ul>
+</blockquote>
+</div>
+<div class="slide" id="in-haskell">
+<h1>λ in Haskell</h1>
+<ul class="incremental code-list big">
+<li><div class="first"><div class="highlight"><pre><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="n">x</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="nf">add</span> <span class="ow">=</span> <span class="nf">\</span><span class="n">x</span> <span class="n">y</span> <span class="ow">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="kt">:</span><span class="n">ghci</span><span class="o">&gt;</span> <span class="n">add</span> <span class="mi">1</span> <span class="mi">2</span>
+<span class="mi">3</span>
+</pre></div>
+</div></li>
+</ul>
+</div>
+<div class="slide" id="id4">
+<h1>声明式语法</h1>
+<ul class="incremental code-list big">
+<li><div class="first"><div class="highlight"><pre><span class="nf">add</span> <span class="n">x</span> <span class="n">y</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="nf">elem</span> <span class="n">x</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">False</span>
+<span class="nf">elem</span> <span class="n">x</span> <span class="p">(</span><span class="n">y</span><span class="kt">:</span><span class="n">ys</span><span class="p">)</span> <span class="ow">=</span> <span class="n">x</span><span class="o">==</span><span class="n">y</span> <span class="o">||</span>
+                <span class="p">(</span><span class="n">elem</span> <span class="n">x</span> <span class="n">ys</span><span class="p">)</span>
+</pre></div>
+</div></li>
+</ul>
+</div>
+<div class="slide" id="id5">
+<h1>数据抽象</h1>
+<ul class="incremental code-list">
+<li><div class="first"><div class="highlight"><pre><span class="kr">data</span> <span class="kt">Customer</span> <span class="ow">=</span> <span class="kt">Customer</span> <span class="p">{</span>
+      <span class="n">customerID</span>      <span class="ow">::</span> <span class="kt">Int</span>
+    <span class="p">,</span> <span class="n">customerName</span>    <span class="ow">::</span> <span class="kt">String</span>
+    <span class="p">,</span> <span class="n">customerAddress</span> <span class="ow">::</span> <span class="kt">String</span>
+    <span class="p">}</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="kt">:</span><span class="n">t</span> <span class="kt">Customer</span>
+<span class="kt">Customer</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">String</span> <span class="ow">-&gt;</span>
+              <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">Customer</span>
+<span class="kt">:</span><span class="n">t</span> <span class="n">customerID</span>
+<span class="nf">customerID</span> <span class="ow">::</span> <span class="kt">Customer</span> <span class="ow">-&gt;</span> <span class="kt">Int</span>
+</pre></div>
+</div></li>
+</ul>
+</div>
+<div class="slide" id="id6">
+<h1>参数化类型</h1>
+<ul class="incremental code-list big">
+<li><div class="first"><div class="highlight"><pre><span class="kr">data</span> <span class="kt">Maybe</span> <span class="n">a</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="n">a</span>
+             <span class="o">|</span> <span class="kt">Nothing</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="kt">:</span><span class="n">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="kt">Nothing</span>
+<span class="kt">Nothing</span> <span class="ow">::</span> <span class="kt">Maybe</span> <span class="n">a</span>
+<span class="kt">:</span><span class="n">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="kt">Just</span>
+<span class="kt">Just</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="n">a</span>
+</pre></div>
+</div></li>
+</ul>
+</div>
+<div class="slide" id="pattern-match-and-guard">
+<h1>Pattern match and Guard</h1>
+<div class="highlight"><pre><span class="nf">find</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Customer</span><span class="p">]</span> <span class="ow">-&gt;</span>
+             <span class="kt">Maybe</span> <span class="kt">Customer</span>
+<span class="nf">find</span> <span class="kr">_</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">Nothing</span>
+<span class="nf">find</span> <span class="n">id</span> <span class="p">(</span><span class="n">x</span><span class="o">@</span><span class="p">(</span><span class="kt">Customer</span> <span class="n">cid</span> <span class="kr">_</span> <span class="kr">_</span><span class="p">)</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span>
+    <span class="o">|</span> <span class="n">cid</span><span class="o">==</span><span class="n">id</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="n">x</span>
+    <span class="o">|</span> <span class="n">otherwise</span> <span class="ow">=</span> <span class="n">find</span> <span class="n">id</span> <span class="n">xs</span>
+</pre></div>
+</div>
+<div class="slide" id="prefix-or-infix">
+<h1>Prefix or Infix</h1>
+<ul class="incremental code-list big">
+<li><div class="first"><div class="highlight"><pre><span class="nf">add</span> <span class="n">x</span> <span class="n">y</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="nf">add</span> <span class="n">x</span> <span class="n">y</span> <span class="ow">=</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="n">x</span> <span class="n">y</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="nf">add</span> <span class="ow">=</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="nf">x</span> <span class="p">`</span><span class="n">elem</span><span class="p">`</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">False</span>
+<span class="nf">x</span> <span class="p">`</span><span class="n">elem</span><span class="p">`</span> <span class="p">(</span><span class="n">y</span><span class="kt">:</span><span class="n">ys</span><span class="p">)</span> <span class="ow">=</span> <span class="n">x</span><span class="o">==</span><span class="n">y</span> <span class="o">||</span>
+         <span class="p">(</span><span class="n">x</span> <span class="p">`</span><span class="n">elem</span><span class="p">`</span> <span class="n">ys</span><span class="p">)</span>
+</pre></div>
+</div></li>
+</ul>
+</div>
+<div class="slide" id="currying">
+<h1>Currying</h1>
+<ul class="incremental code-list big">
+<li><div class="first"><div class="highlight"><pre><span class="kt">:</span><span class="n">ghci</span><span class="o">&gt;</span> <span class="n">add</span> <span class="mi">1</span> <span class="mi">2</span>
+<span class="mi">3</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="kt">:</span><span class="n">ghci</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">add</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">2</span>
+<span class="mi">3</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="kt">:</span><span class="n">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">add</span> <span class="mi">1</span>
+<span class="nf">add</span> <span class="mi">1</span> <span class="ow">::</span> <span class="kt">Integer</span> <span class="ow">-&gt;</span> <span class="kt">Integer</span>
+</pre></div>
+</div></li>
+</ul>
+</div>
+<div class="slide" id="eval-strategy">
+<h1>Eval strategy</h1>
+<ul class="big simple">
+<li>call by value</li>
+<li>call by name</li>
+<li>call by need</li>
+</ul>
+</div>
+<div class="slide" id="call-by-value">
+<h1>Call by value</h1>
+<ul class="incremental code-list big simple">
+<li>(λx.x*x) (λx.x+x 1)</li>
+<li>(λx.x*x) (1+1)</li>
+<li>(λx.x*x) 2</li>
+<li>2*2</li>
+<li>4</li>
+</ul>
+</div>
+<div class="slide" id="call-by-name">
+<h1>Call by name</h1>
+<ul class="incremental code-list big simple">
+<li>(λx.x*x) (λx.x+x 1)</li>
+<li>(λx.x+x 1)*(λx.x+x 1)</li>
+<li>(1+1)*(1+1)</li>
+<li>2*2</li>
+<li>4</li>
+</ul>
+</div>
+<div class="slide" id="graph-reduction-lazy-eval">
+<h1>Graph reduction (lazy eval)</h1>
+<ul class="incremental code-list big">
+<li><p class="first">(λx.x*x) (λx.x+x 1)</p>
+</li>
+<li><div align="center" class="align-center"><img alt="media/call-by-need-1.png" class="first align-center" src="media/call-by-need-1.png" /></div>
+</li>
+</ul>
+</div>
+<div class="slide" id="id7">
+<h1>Graph reduction (lazy eval)</h1>
+<ul class="incremental code-list big">
+<li><p class="first">(λx.x+x 1)*(λx.x+x 1)</p>
+</li>
+<li><div align="center" class="align-center"><img alt="media/call-by-need-2.png" class="first align-center" src="media/call-by-need-2.png" /></div>
+</li>
+</ul>
+</div>
+<div class="slide" id="infinit-data-structure">
+<h1>Infinit data structure</h1>
+<div class="big"><div class="highlight"><pre><span class="kt">:</span><span class="n">ghci</span><span class="o">&gt;</span> <span class="n">take</span> <span class="mi">5</span> <span class="o">$</span>
+        <span class="n">filter</span> <span class="n">even</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="o">..</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div></div>
+<div class="slide" id="purity">
+<h1>Purity</h1>
+<ul class="big simple">
+<li>Immutable data</li>
+<li>No side effects</li>
+<li>Referential transparency</li>
+</ul>
+</div>
+<div class="slide" id="welcome-to-the-real-world">
+<h1>Welcome to the real world</h1>
+<ul class="incremental code-list big">
+<li><div class="first"><div class="highlight"><pre><span class="c">#!/usr/bin/python</span>
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">&#39;&gt;&gt;&#39;</span><span class="p">,</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="nb">raw_input</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&#39;Welcome&#39;</span><span class="p">,</span> <span class="n">name</span>
+</pre></div>
+</div></li>
+<li><pre class="first literal-block">
+&gt;&gt; huangyi
+Welcome huangyi
+&gt;&gt;
+</pre>
+</li>
+</ul>
+</div>
+<div class="slide" id="io">
+<h1>IO</h1>
+<ul class="incremental code-list">
+<li><div class="first"><div class="highlight"><pre><span class="nf">raw_input</span> <span class="ow">::</span> <span class="kt">RealWorld</span> <span class="ow">-&gt;</span>
+             <span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">RealWorld</span><span class="p">)</span>
+<span class="nf">print</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span>
+         <span class="kt">RealWorld</span> <span class="ow">-&gt;</span>
+         <span class="kt">RealWorld</span>
+</pre></div>
+</div></li>
+<li><p class="first">伪码：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="kr">_</span><span class="p">,</span> <span class="n">w2</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">print</span> <span class="s">&quot;&gt;&gt;&quot;</span><span class="p">)</span> <span class="n">w1</span>
+<span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">w3</span><span class="p">)</span> <span class="ow">=</span> <span class="n">raw_input</span> <span class="n">w2</span>
+<span class="p">(</span><span class="kr">_</span><span class="p">,</span> <span class="n">w4</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">print</span> <span class="s">&quot;Welcome &quot;</span><span class="o">++</span><span class="n">name</span><span class="p">)</span> <span class="n">w3</span>
+</pre></div>
+</li>
+</ul>
+</div>
+<div class="slide" id="id8">
+<h1>IO</h1>
+<ul class="incremental code-list big">
+<li><div class="first"><div class="highlight"><pre><span class="kr">type</span> <span class="kt">IO</span> <span class="n">a</span> <span class="ow">=</span> <span class="kt">RealWorld</span> <span class="ow">-&gt;</span>
+            <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="kt">RealWorld</span><span class="p">)</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="nf">raw_input</span> <span class="ow">::</span> <span class="kt">IO</span> <span class="kt">String</span>
+<span class="nf">print</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="nb">()</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="o">&gt;&gt;=</span> <span class="ow">::</span> <span class="kt">IO</span> <span class="n">a</span> <span class="ow">-&gt;</span>
+       <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span>
+       <span class="kt">IO</span> <span class="n">b</span>
+</pre></div>
+</div></li>
+</ul>
+</div>
+<div class="slide" id="io-monad">
+<h1>IO Monad</h1>
+<ul class="incremental code-list big">
+<li><div class="first"><div class="highlight"><pre><span class="p">(</span><span class="n">print</span> <span class="s">&quot;&gt;&gt;&quot;</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="nf">\</span><span class="kr">_</span> <span class="ow">-&gt;</span>
+<span class="nf">raw_input</span> <span class="o">&gt;&gt;=</span> <span class="nf">\</span><span class="n">name</span> <span class="ow">-&gt;</span>
+<span class="nf">print</span> <span class="s">&quot;&gt;&gt;&quot;</span><span class="o">++</span><span class="n">name</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="kr">do</span>
+  <span class="n">print</span> <span class="s">&quot;&gt;&gt;&quot;</span>
+  <span class="n">name</span> <span class="ow">&lt;-</span> <span class="n">raw_input</span>
+  <span class="n">print</span> <span class="s">&quot;Welcome &quot;</span><span class="o">++</span><span class="n">name</span>
+</pre></div>
+</div></li>
+</ul>
+</div>
+<div class="slide" id="id9">
+<h1>IO Monad</h1>
+<div class="big"><div class="highlight"><pre><span class="kr">class</span> <span class="kt">Monad</span> <span class="n">m</span> <span class="kr">where</span>
+    <span class="o">&gt;&gt;=</span> <span class="ow">::</span> <span class="n">m</span> <span class="n">a</span> <span class="ow">-&gt;</span>
+           <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span>
+           <span class="n">m</span> <span class="n">b</span>
+    <span class="o">&gt;&gt;</span> <span class="ow">::</span> <span class="n">m</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span>
+    <span class="n">ma</span> <span class="o">&gt;&gt;</span> <span class="n">mb</span> <span class="ow">=</span> <span class="n">ma</span> <span class="o">&gt;&gt;=</span> <span class="nf">\</span><span class="kr">_</span><span class="ow">-&gt;</span><span class="n">mb</span>
+
+    <span class="n">return</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">a</span>
+</pre></div>
+</div></div>
+<div class="slide" id="type-system">
+<h1>Type system</h1>
+<ul class="incremental big simple">
+<li>第三次数学危机</li>
+<li>Simply Typed λ</li>
+<li>Curry–Howard correspondence</li>
+<li>Polymorphism</li>
+<li>Dependent type</li>
+</ul>
+</div>
+<div class="slide" id="id10">
+<h1>作用</h1>
+<ul class="big simple">
+<li>程序正确性证明</li>
+<li>阻止坏程序</li>
+<li>允许好程序</li>
+</ul>
+</div>
+<div class="slide" id="id11">
+<h1>坏程序</h1>
+<ul class="simple">
+<li>整数和字符串相加</li>
+<li>长度和重量相加</li>
+<li>整数加法溢出</li>
+<li>数组访问越界</li>
+<li>排序算法返回结果无序</li>
+</ul>
+</div>
+<div class="slide" id="simply-typed">
+<h1>Simply Typed λ</h1>
+<p>定义：</p>
+<blockquote>
+<p>如果a和b是类型，那么(a-&gt;b)也是类型。</p>
+<p>e::a 表示表达式e的类型是a。</p>
+</blockquote>
+<p>规则：</p>
+<blockquote>
+<ol class="arabic simple">
+<li>函数类型：当 e1::a 且 e2::b，那么 (λe1.e2)::a-&gt;b</li>
+<li>调用规则：当 e1::a-&gt;b 且 e2::a，那么 (e1 e2)::b</li>
+</ol>
+</blockquote>
+</div>
+<div class="slide" id="curryhoward-correspondence">
+<h1>Curry–Howard correspondence</h1>
+<div class="big"><div class="highlight"><pre><span class="p">(</span><span class="kt">A</span> <span class="err">∧</span> <span class="kt">B</span><span class="p">)</span> <span class="err">≡</span> <span class="p">(</span><span class="kt">A</span><span class="p">,</span> <span class="kt">B</span><span class="p">)</span>
+
+<span class="p">(</span><span class="kt">A</span> <span class="err">∨</span> <span class="kt">B</span><span class="p">)</span> <span class="err">≡</span> <span class="kt">Either</span> <span class="kt">A</span> <span class="kt">B</span>
+
+<span class="kt">A</span> <span class="err">⇒</span> <span class="kt">B</span> <span class="err">≡</span> <span class="kt">A</span> <span class="ow">-&gt;</span> <span class="kt">B</span>
+
+<span class="err">¬</span><span class="kt">A</span> <span class="err">≡</span> <span class="kt">A</span><span class="ow">-&gt;</span><span class="n">undefined</span>
+</pre></div>
+</div></div>
+<div class="slide" id="id12">
+<h1>Curry–Howard correspondence</h1>
+<div class="highlight"><pre><span class="kt">A</span> <span class="err">⇒</span> <span class="kt">A</span> <span class="err">∨</span> <span class="kt">B</span>
+<span class="kt">Left</span> <span class="ow">::</span> <span class="kt">A</span> <span class="ow">-&gt;</span> <span class="kt">Either</span> <span class="kt">A</span> <span class="kt">B</span>
+
+<span class="kt">A</span> <span class="err">∧</span> <span class="kt">B</span> <span class="err">⇒</span> <span class="kt">A</span>
+<span class="nf">fst</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">A</span><span class="p">,</span> <span class="kt">B</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">A</span>
+
+<span class="p">(</span><span class="kt">A</span> <span class="err">⇒</span> <span class="p">(</span><span class="kt">B</span> <span class="err">⇒</span> <span class="kt">C</span><span class="p">))</span> <span class="err">⇒</span> <span class="p">((</span><span class="kt">A</span> <span class="err">∧</span> <span class="kt">B</span><span class="p">)</span> <span class="err">⇒</span> <span class="kt">C</span><span class="p">)</span>
+<span class="nf">proof</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">A</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="kt">B</span> <span class="ow">-&gt;</span> <span class="kt">C</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="kt">A</span><span class="p">,</span> <span class="kt">B</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">C</span>
+<span class="nf">proof</span> <span class="n">f</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">f</span> <span class="n">a</span><span class="p">)</span> <span class="n">b</span>
+</pre></div>
+</div>
+<div class="slide" id="polymorphism">
+<h1>Polymorphism</h1>
+<ul class="big simple">
+<li>Subtyping polymorphism (class继承)</li>
+<li>Ad-hoc polymorphism (函数重载)</li>
+<li>Parametric polymorphism (泛型)</li>
+</ul>
+</div>
+<div class="slide" id="typeclass-ad-hoc-poly">
+<h1>Typeclass - Ad-hoc poly</h1>
+<ul class="incremental code-list">
+<li><div class="first"><div class="highlight"><pre><span class="kr">class</span> <span class="kt">Eq</span> <span class="n">a</span> <span class="kr">where</span>
+    <span class="p">(</span><span class="o">==</span><span class="p">)</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="kr">instance</span> <span class="kt">Eq</span> <span class="kt">Int</span> <span class="kr">where</span>
+    <span class="p">(</span><span class="o">==</span><span class="p">)</span> <span class="ow">=</span> <span class="n">eqInt</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="kr">instance</span> <span class="p">(</span><span class="kt">Eq</span> <span class="n">a</span><span class="p">,</span> <span class="kt">Eq</span> <span class="n">b</span><span class="p">)</span> <span class="ow">=&gt;</span>
+         <span class="kt">Eq</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="kr">where</span>
+    <span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">b1</span><span class="p">)</span><span class="o">==</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="n">b2</span><span class="p">)</span> <span class="ow">=</span>
+        <span class="p">(</span><span class="n">a1</span><span class="o">==</span><span class="n">a2</span> <span class="o">&amp;&amp;</span> <span class="n">b1</span><span class="o">==</span><span class="n">b2</span><span class="p">)</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="kt">:</span><span class="n">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="p">(</span><span class="o">==</span><span class="p">)</span>
+<span class="p">(</span><span class="o">==</span><span class="p">)</span> <span class="ow">::</span> <span class="kt">Eq</span> <span class="n">a</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+</pre></div>
+</div></li>
+</ul>
+</div>
+<div class="slide" id="parametric-polymorphism">
+<h1>Parametric polymorphism</h1>
+<ul class="incremental code-list big">
+<li><div class="first"><div class="highlight"><pre><span class="nf">head</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">x</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="nf">map</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span><span class="ow">-&gt;</span><span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span>
+<span class="nf">map</span> <span class="kr">_</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">map</span> <span class="n">f</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">)</span><span class="kt">:</span><span class="p">(</span><span class="n">map</span> <span class="n">f</span> <span class="n">xs</span><span class="p">)</span>
+</pre></div>
+</div></li>
+</ul>
+</div>
+<div class="slide" id="type-inference">
+<h1>Type inference</h1>
+<ul class="incremental code-list">
+<li><div class="first"><div class="highlight"><pre><span class="kt">:</span><span class="n">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">x</span><span class="p">)</span> <span class="ow">::</span> <span class="n">t</span> <span class="ow">-&gt;</span> <span class="n">t</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="kt">:</span><span class="n">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">x</span><span class="o">+</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">x</span><span class="o">+</span><span class="n">x</span><span class="p">)</span> <span class="ow">::</span> <span class="kt">Num</span> <span class="n">a</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="kt">:</span><span class="n">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="mi">1</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="mi">1</span> <span class="ow">::</span> <span class="kt">Num</span> <span class="n">a</span> <span class="ow">=&gt;</span> <span class="n">a</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="kt">:</span><span class="n">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">head</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="nf">head</span> <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+</pre></div>
+</div></li>
+</ul>
+</div>
+<div class="slide" id="id13">
+<h1>Type inference</h1>
+<ul class="incremental code-list">
+<li><div class="first"><div class="highlight"><pre><span class="kt">:</span><span class="n">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">head</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">head</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="ow">::</span> <span class="kt">Num</span> <span class="n">a</span> <span class="ow">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="kt">:</span><span class="n">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">map</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="nf">map</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="kt">:</span><span class="n">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="p">(</span><span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="p">(</span><span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">::</span> <span class="kt">Num</span> <span class="n">a</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="kt">:</span><span class="n">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">map</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="nf">map</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="ow">::</span> <span class="kt">Num</span> <span class="n">b</span> <span class="ow">=&gt;</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span>
+</pre></div>
+</div></li>
+</ul>
+</div>
+</div>
+</body>
+</html>

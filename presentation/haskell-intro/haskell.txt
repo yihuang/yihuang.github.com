@@ -1,0 +1,593 @@
+.. include:: <s5defs.txt>
+
+===========
+Haskell介绍
+===========
+
+:Authors: 黄毅 <yi.codeplayer@gmail.com>
+:Date: $Date: 2011年 03月 25日 $
+
+特点
+====
+
+.. class:: incremental
+.. class:: big
+
+* Functinal
+
+* Pure
+
+* Lazy
+
+* Type system
+
+* Type inference
+
+最简单的语言 λ
+===============
+
+.. class:: big
+
+语法：
+
+    #. 表达式 ::= 标识符
+    #. 表达式 ::= λ标识符.表达式
+
+最简单的语言 λ
+===============
+
+.. class:: big
+
+规则：
+
+    * α-变换 (形参命名) ::
+        λx.axb == λy.ayb
+
+    * β-归约 (函数调用) ::
+        (λx.axb) y == ayb
+
+    * η-变换 (函数化简 Pointfree Style) ::
+        λx .f x == f
+
+λ in Haskell
+============
+
+.. class:: incremental
+.. class:: code-list big
+
+* .. code-block:: haskell
+
+    \x -> x + x
+
+* .. code-block:: haskell
+
+    add = \x y -> x + y
+
+* .. code-block:: haskell
+
+    :ghci> add 1 2
+    3
+
+声明式语法
+==========
+
+.. class:: incremental
+.. class:: code-list big
+
+* .. code-block:: haskell
+
+    add x y = x + y
+
+* .. code-block:: haskell
+
+    elem x [] = False
+    elem x (y:ys) = x==y ||
+                    (elem x ys)
+
+数据抽象
+========
+
+.. class:: incremental
+.. class:: code-list
+
+* .. code-block:: haskell
+
+    data Customer = Customer {
+          customerID      :: Int
+        , customerName    :: String
+        , customerAddress :: String
+        }
+
+* .. code-block:: haskell
+
+    :t Customer
+    Customer :: Int -> String ->
+                  String -> Customer
+    :t customerID
+    customerID :: Customer -> Int
+
+参数化类型
+==========
+
+.. class:: incremental
+.. class:: code-list big
+
+* .. code-block:: haskell
+
+    data Maybe a = Just a
+                 | Nothing
+
+* .. code-block:: haskell
+
+    :ghci> :t Nothing
+    Nothing :: Maybe a
+    :ghci> :t Just
+    Just :: a -> Maybe a
+
+Pattern match and Guard
+=======================
+
+.. code-block:: haskell
+
+    find :: Int -> [Customer] ->
+                 Maybe Customer
+    find _ [] = Nothing
+    find id (x@(Customer cid _ _):xs)
+        | cid==id = Just x
+        | otherwise = find id xs
+
+Prefix or Infix
+===============
+
+.. class:: incremental
+.. class:: code-list big
+
+* .. code-block:: haskell
+
+    add x y = x + y
+
+* .. code-block:: haskell
+
+    add x y = (+) x y
+
+* .. code-block:: haskell
+
+    add = (+)
+
+* .. code-block:: haskell
+
+    x `elem` [] = False
+    x `elem` (y:ys) = x==y ||
+             (x `elem` ys)
+
+Currying
+========
+
+.. class:: incremental
+.. class:: code-list big
+
+* .. code-block:: haskell
+
+    :ghci> add 1 2
+    3
+
+* .. code-block:: haskell
+
+    :ghci> (add 1) 2
+    3
+
+* .. code-block:: haskell
+
+    :ghci> :t add 1
+    add 1 :: Integer -> Integer
+
+Eval strategy
+=============
+
+.. class:: big
+
+* call by value
+
+* call by name
+
+* call by need
+
+Call by value
+=============
+
+.. class:: incremental
+.. class:: code-list big
+
+* (λx.x*x) (λx.x+x 1)
+
+* (λx.x*x) (1+1)
+
+* (λx.x*x) 2
+
+* 2*2
+
+* 4
+
+Call by name
+============
+
+.. class:: incremental
+.. class:: code-list big
+
+* (λx.x*x) (λx.x+x 1)
+
+* (λx.x+x 1)*(λx.x+x 1)
+
+* (1+1)*(1+1)
+
+* 2*2
+
+* 4
+
+Graph reduction (lazy eval)
+===========================
+
+.. class:: incremental
+.. class:: code-list big
+
+* (λx.x*x) (λx.x+x 1)
+
+* .. dotgraph:: call-by-need-1
+    :align: center
+
+    digraph {
+        node [fontsize=30 color="#6666ff" fontcolor="#ffff66" style="filled"];
+        "(λx.x+x)" -> "*" ;
+        "(λx.x+x)" -> "*" ;
+    }
+
+Graph reduction (lazy eval)
+===========================
+
+.. class:: incremental
+.. class:: code-list big
+
+* (λx.x+x 1)*(λx.x+x 1)
+
+* .. dotgraph:: call-by-need-2
+    :align: center
+
+    digraph {
+        node [fontsize=30 color="#6666ff" fontcolor="#ffff66" style="filled"];
+        "1" -> "+";
+        "1" -> "+";
+        "+" -> "*";
+        "+" -> "*";
+    }
+
+Infinit data structure
+======================
+
+.. class:: big
+.. code-block:: haskell
+
+    :ghci> take 5 $
+            filter even
+                [1,2..]
+    [2,4,6,8,10]
+
+Purity
+======
+
+.. class:: big
+
+* Immutable data
+
+* No side effects
+
+* Referential transparency
+
+Welcome to the real world
+==========================
+
+.. class:: incremental
+.. class:: code-list big
+
+* .. code-block:: python
+
+    #!/usr/bin/python
+    while True:
+        print '>>',
+        name = raw_input()
+        print 'Welcome', name
+
+* ::
+
+    >> huangyi
+    Welcome huangyi
+    >>
+
+IO
+==
+
+.. class:: incremental
+.. class:: code-list
+
+* .. code-block:: haskell
+
+    raw_input :: RealWorld ->
+                 (String, RealWorld)
+    print :: String ->
+             RealWorld ->
+             RealWorld
+
+* 伪码： 
+
+  .. code-block:: haskell
+
+    (_, w2) = (print ">>") w1
+    (name, w3) = raw_input w2
+    (_, w4) = (print "Welcome "++name) w3
+
+IO
+==
+
+.. class:: incremental
+.. class:: code-list big
+
+* .. code-block:: haskell
+
+    type IO a = RealWorld ->
+                (a, RealWorld)
+
+* .. code-block:: haskell
+
+    raw_input :: IO String
+    print :: String -> IO ()
+
+* .. code-block:: haskell
+
+    >>= :: IO a ->
+           (a -> IO b) ->
+           IO b
+
+IO Monad
+========
+
+.. class:: incremental
+.. class:: code-list big
+
+* .. code-block:: haskell
+
+    (print ">>") >>= \_ ->
+    raw_input >>= \name ->
+    print ">>"++name
+
+* .. code-block:: haskell
+
+    do
+      print ">>"
+      name <- raw_input
+      print "Welcome "++name
+
+IO Monad
+========
+
+.. class:: big
+.. code-block:: haskell
+
+    class Monad m where
+        >>= :: m a ->
+               (a -> m b) ->
+               m b
+        >> :: m a -> m b -> m b
+        ma >> mb = ma >>= \_->mb
+
+        return :: a -> m a
+
+Type system
+===========
+
+.. class:: incremental
+.. class:: big
+
+* 第三次数学危机
+
+* Simply Typed λ
+
+* Curry–Howard correspondence
+
+* Polymorphism
+
+* Dependent type
+
+作用
+====
+
+.. class:: big
+
+* 程序正确性证明
+
+* 阻止坏程序
+
+* 允许好程序
+
+坏程序
+======
+
+* 整数和字符串相加
+* 长度和重量相加
+* 整数加法溢出
+* 数组访问越界
+* 排序算法返回结果无序
+
+Simply Typed λ
+==============
+
+定义：
+
+  如果a和b是类型，那么(a->b)也是类型。
+
+  e::a 表示表达式e的类型是a。
+
+规则：
+
+  #. 函数类型：当 e1::a 且 e2::b，那么 (λe1.e2)::a->b
+
+  #. 调用规则：当 e1::a->b 且 e2::a，那么 (e1 e2)::b
+
+Curry–Howard correspondence
+============================
+
+.. class:: big
+.. code-block:: haskell
+
+    (A ∧ B) ≡ (A, B)
+
+    (A ∨ B) ≡ Either A B  
+
+    A ⇒ B ≡ A -> B
+
+    ¬A ≡ A->undefined
+
+Curry–Howard correspondence
+============================
+
+.. code-block:: haskell
+
+    A ⇒ A ∨ B
+    Left :: A -> Either A B
+
+    A ∧ B ⇒ A
+    fst :: (A, B) -> A
+
+    (A ⇒ (B ⇒ C)) ⇒ ((A ∧ B) ⇒ C)
+    proof :: (A -> (B -> C)) -> (A, B) -> C
+    proof f (a, b) = (f a) b
+
+Polymorphism
+============
+
+.. class:: big
+
+* Subtyping polymorphism (class继承)
+
+* Ad-hoc polymorphism (函数重载)
+
+* Parametric polymorphism (泛型)
+
+Typeclass - Ad-hoc poly
+=======================
+
+.. class:: incremental
+.. class:: code-list
+
+* .. code-block:: haskell
+
+    class Eq a where
+        (==) :: a -> a -> Bool
+
+* .. code-block:: haskell
+
+    instance Eq Int where
+        (==) = eqInt
+
+* .. code-block:: haskell
+
+    instance (Eq a, Eq b) =>
+             Eq (a, b) where
+        (a1, b1)==(a2, b2) =
+            (a1==a2 && b1==b2)
+
+* .. code-block:: haskell
+
+    :ghci> :t (==)
+    (==) :: Eq a => a -> a -> Bool
+
+Parametric polymorphism
+=======================
+
+.. class:: incremental
+.. class:: code-list big
+
+* .. code-block:: haskell
+
+    head (x:xs) = x
+
+* .. code-block:: haskell
+
+    map :: (a->b) -> [a] -> [b]
+    map _ [] = []
+    map f (x:xs) = (f x):(map f xs)
+
+Type inference
+==============
+
+.. class:: incremental
+.. class:: code-list
+
+* .. code-block:: haskell
+
+    :ghci> :t (\x -> x)
+
+* .. code-block:: haskell
+
+    (\x -> x) :: t -> t
+
+* .. code-block:: haskell
+
+    :ghci> :t (\x -> x+x)
+
+* .. code-block:: haskell
+
+    (\x -> x+x) :: Num a => a -> a
+
+* .. code-block:: haskell
+
+    :ghci> :t 1
+
+* .. code-block:: haskell
+
+    1 :: Num a => a
+
+* .. code-block:: haskell
+
+    :ghci> :t head
+
+* .. code-block:: haskell
+
+    head :: [a] -> a
+
+Type inference
+==============
+
+.. class:: incremental
+.. class:: code-list
+
+* .. code-block:: haskell
+
+    :ghci> :t \x -> (head x) + 1
+
+* .. code-block:: haskell
+
+    \x -> (head x) + 1 :: Num a => [a] -> a
+
+* .. code-block:: haskell
+
+    :ghci> :t map
+
+* .. code-block:: haskell
+
+    map :: (a -> b) -> [a] -> [b]
+
+
+* .. code-block:: haskell
+
+    :ghci> :t (+ 1)
+
+* .. code-block:: haskell
+
+    (+ 1) :: Num a => a -> a
+
+* .. code-block:: haskell
+
+    :ghci> :t map (+1)
+
+* .. code-block:: haskell
+
+    map (+1) :: Num b => [b] -> [b]
