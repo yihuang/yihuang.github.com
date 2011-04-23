@@ -1,0 +1,85 @@
+================
+惰性求值和尾递归
+================
+
+.. meta::
+    :keywords: 尾递归 haskell lazy tail recursion
+    :description: 解释惰性求值对尾递归的影响
+
+参考： `HaskellWiki: Stack overflow <http://www.haskell.org/haskellwiki/Stack_overflow>`_
+
+有时候我们需要尾递归
+====================
+
+.. code-block:: haskell
+
+    sum :: [Int] -> Int
+    sum [] = 0
+    sum (x:xs) = x + sum xs
+
+模拟求值： ::
+
+    sum [1..10]
+    1 + sum [2..10]
+    1 + (2 + sum [3..10])
+    1 + (2 + (3 + sum [4..10]))
+    ...
+    1 + (2 + (3 + 49))
+    1 + (2 + 52)
+    1 + 54
+    55
+
+可以看出在上面这个实现中，需要占用O(n)的空间，如果是堆栈的话，就容易溢出了。
+
+解决方案第一步就是改为尾递归形式。因为尾递归形式中，递归调用是函数体的最后一步，所以进入递归调用时可以放心地把当前栈帧丢弃，所以不会有堆栈溢出的问题:
+
+.. code-block:: haskell
+
+    sum' accu [] = accu
+    sum' accu (x:xs) = sum' (x+accu) xs
+    sum = sum' 0
+
+对于严格求值的语言，这样就够了；但是对于惰性求值的语言，还存在另一个问题，模拟求值一下就可以看得出来： ::
+
+    sum' 0 [1..10]
+    sum' (1+0) [2..10]
+    sum' (2+(1+0)) [3..10]
+    sum' (3+(2+(1+0))) [4..10]
+    ...
+    sum' (10+(9+36)) []
+    sum' (10+45) []
+    sum' 55 []
+    55
+
+因为 `sum'` 的第二个参数是惰性求值的，所以计算过程中还是会把这个 `thunk <http://www.haskell.org/haskellwiki/Thunk>`_ 留着，不到万不得已不会对它求值，于是依然导致O(n)的空间占用。
+
+解决这个问题也好办，给 `accu` 参数加一个 `严格求值的标记 <http://hackage.haskell.org/trac/haskell-prime/wiki/BangPatterns>`_ 就好了：
+
+.. code-block:: haskell
+
+    sum' !accu [] = accu
+    sum' !accu (x:xs) = sum' (x+accu) xs
+    sum = sum' 0
+
+这下 sum 函数就跑得飞快了。
+
+前一个版本的 `sum` 是 `foldr (+) 0` ，后一个版本是 `foldl' (+) 0` 。
+
+有时候我们不需要尾递归
+======================
+
+.. code-block:: haskell
+
+    concat :: [[a]] -> [a]
+    concat (x:xs) = x ++ concat xs
+
+模拟求值： ::
+
+    concat [[1], [2], [3], ...]
+    (1:[]) ++ concat [[2], [3], ...]
+    1 : ([] ++ concat [[2], [3], ...])
+
+求值完毕了。为什么？因为 (++) 的第二个参数是惰性求值的，只有当我们需要后面的元素时才会触发后续的求值。
+所以 concat 不会栈溢出，常数级空间占用，并且还有一个好处，可以处理无穷列表。
+
+另外： `concat = foldr (++) []`
