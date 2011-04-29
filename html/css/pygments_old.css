@@ -1,0 +1,124 @@
+.highlight .hll { background-color: #ffffcc }
+.highlight  { background: #f8f8f8; }
+.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
+.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #808080 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0040D0 } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+.effects .hll { background-color: #ffffcc }
+.effects  { background: #f8f8f8; }
+.effects .c { color: #408080; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #408080 0px 0px 8px; text-stroke: #408080 1px; -webkit-text-stroke: #408080 1px; -moz-text-stroke: #408080 1px; font-style: italic } /* Comment */
+.effects .err { border: 1px solid #FF0000 } /* Error */
+.effects .k { color: #008000; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #008000 0px 0px 8px; text-stroke: #008000 1px; -webkit-text-stroke: #008000 1px; -moz-text-stroke: #008000 1px; font-weight: bold } /* Keyword */
+.effects .o { color: #666666; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #666666 0px 0px 8px; text-stroke: #666666 1px; -webkit-text-stroke: #666666 1px; -moz-text-stroke: #666666 1px } /* Operator */
+.effects .cm { color: #408080; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #408080 0px 0px 8px; text-stroke: #408080 1px; -webkit-text-stroke: #408080 1px; -moz-text-stroke: #408080 1px; font-style: italic } /* Comment.Multiline */
+.effects .cp { color: #BC7A00; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #BC7A00 0px 0px 8px; text-stroke: #BC7A00 1px; -webkit-text-stroke: #BC7A00 1px; -moz-text-stroke: #BC7A00 1px } /* Comment.Preproc */
+.effects .c1 { color: #408080; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #408080 0px 0px 8px; text-stroke: #408080 1px; -webkit-text-stroke: #408080 1px; -moz-text-stroke: #408080 1px; font-style: italic } /* Comment.Single */
+.effects .cs { color: #408080; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #408080 0px 0px 8px; text-stroke: #408080 1px; -webkit-text-stroke: #408080 1px; -moz-text-stroke: #408080 1px; font-style: italic } /* Comment.Special */
+.effects .gd { color: #A00000; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #A00000 0px 0px 8px; text-stroke: #A00000 1px; -webkit-text-stroke: #A00000 1px; -moz-text-stroke: #A00000 1px } /* Generic.Deleted */
+.effects .ge { font-style: italic } /* Generic.Emph */
+.effects .gr { color: #FF0000; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #FF0000 0px 0px 8px; text-stroke: #FF0000 1px; -webkit-text-stroke: #FF0000 1px; -moz-text-stroke: #FF0000 1px } /* Generic.Error */
+.effects .gh { color: #000080; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #000080 0px 0px 8px; text-stroke: #000080 1px; -webkit-text-stroke: #000080 1px; -moz-text-stroke: #000080 1px; font-weight: bold } /* Generic.Heading */
+.effects .gi { color: #00A000; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #00A000 0px 0px 8px; text-stroke: #00A000 1px; -webkit-text-stroke: #00A000 1px; -moz-text-stroke: #00A000 1px } /* Generic.Inserted */
+.effects .go { color: #808080; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #808080 0px 0px 8px; text-stroke: #808080 1px; -webkit-text-stroke: #808080 1px; -moz-text-stroke: #808080 1px } /* Generic.Output */
+.effects .gp { color: #000080; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #000080 0px 0px 8px; text-stroke: #000080 1px; -webkit-text-stroke: #000080 1px; -moz-text-stroke: #000080 1px; font-weight: bold } /* Generic.Prompt */
+.effects .gs { font-weight: bold } /* Generic.Strong */
+.effects .gu { color: #800080; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #800080 0px 0px 8px; text-stroke: #800080 1px; -webkit-text-stroke: #800080 1px; -moz-text-stroke: #800080 1px; font-weight: bold } /* Generic.Subheading */
+.effects .gt { color: #0040D0; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #0040D0 0px 0px 8px; text-stroke: #0040D0 1px; -webkit-text-stroke: #0040D0 1px; -moz-text-stroke: #0040D0 1px } /* Generic.Traceback */
+.effects .kc { color: #008000; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #008000 0px 0px 8px; text-stroke: #008000 1px; -webkit-text-stroke: #008000 1px; -moz-text-stroke: #008000 1px; font-weight: bold } /* Keyword.Constant */
+.effects .kd { color: #008000; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #008000 0px 0px 8px; text-stroke: #008000 1px; -webkit-text-stroke: #008000 1px; -moz-text-stroke: #008000 1px; font-weight: bold } /* Keyword.Declaration */
+.effects .kn { color: #008000; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #008000 0px 0px 8px; text-stroke: #008000 1px; -webkit-text-stroke: #008000 1px; -moz-text-stroke: #008000 1px; font-weight: bold } /* Keyword.Namespace */
+.effects .kp { color: #008000; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #008000 0px 0px 8px; text-stroke: #008000 1px; -webkit-text-stroke: #008000 1px; -moz-text-stroke: #008000 1px } /* Keyword.Pseudo */
+.effects .kr { color: #008000; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #008000 0px 0px 8px; text-stroke: #008000 1px; -webkit-text-stroke: #008000 1px; -moz-text-stroke: #008000 1px; font-weight: bold } /* Keyword.Reserved */
+.effects .kt { color: #B00040; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #B00040 0px 0px 8px; text-stroke: #B00040 1px; -webkit-text-stroke: #B00040 1px; -moz-text-stroke: #B00040 1px } /* Keyword.Type */
+.effects .m { color: #666666; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #666666 0px 0px 8px; text-stroke: #666666 1px; -webkit-text-stroke: #666666 1px; -moz-text-stroke: #666666 1px } /* Literal.Number */
+.effects .s { color: #BA2121; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #BA2121 0px 0px 8px; text-stroke: #BA2121 1px; -webkit-text-stroke: #BA2121 1px; -moz-text-stroke: #BA2121 1px } /* Literal.String */
+.effects .na { color: #7D9029; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #7D9029 0px 0px 8px; text-stroke: #7D9029 1px; -webkit-text-stroke: #7D9029 1px; -moz-text-stroke: #7D9029 1px } /* Name.Attribute */
+.effects .nb { color: #008000; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #008000 0px 0px 8px; text-stroke: #008000 1px; -webkit-text-stroke: #008000 1px; -moz-text-stroke: #008000 1px } /* Name.Builtin */
+.effects .nc { color: #0000FF; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #0000FF 0px 0px 8px; text-stroke: #0000FF 1px; -webkit-text-stroke: #0000FF 1px; -moz-text-stroke: #0000FF 1px; font-weight: bold } /* Name.Class */
+.effects .no { color: #880000; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #880000 0px 0px 8px; text-stroke: #880000 1px; -webkit-text-stroke: #880000 1px; -moz-text-stroke: #880000 1px } /* Name.Constant */
+.effects .nd { color: #AA22FF; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #AA22FF 0px 0px 8px; text-stroke: #AA22FF 1px; -webkit-text-stroke: #AA22FF 1px; -moz-text-stroke: #AA22FF 1px } /* Name.Decorator */
+.effects .ni { color: #999999; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #999999 0px 0px 8px; text-stroke: #999999 1px; -webkit-text-stroke: #999999 1px; -moz-text-stroke: #999999 1px; font-weight: bold } /* Name.Entity */
+.effects .ne { color: #D2413A; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #D2413A 0px 0px 8px; text-stroke: #D2413A 1px; -webkit-text-stroke: #D2413A 1px; -moz-text-stroke: #D2413A 1px; font-weight: bold } /* Name.Exception */
+.effects .nf { color: #0000FF; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #0000FF 0px 0px 8px; text-stroke: #0000FF 1px; -webkit-text-stroke: #0000FF 1px; -moz-text-stroke: #0000FF 1px } /* Name.Function */
+.effects .nl { color: #A0A000; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #A0A000 0px 0px 8px; text-stroke: #A0A000 1px; -webkit-text-stroke: #A0A000 1px; -moz-text-stroke: #A0A000 1px } /* Name.Label */
+.effects .nn { color: #0000FF; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #0000FF 0px 0px 8px; text-stroke: #0000FF 1px; -webkit-text-stroke: #0000FF 1px; -moz-text-stroke: #0000FF 1px; font-weight: bold } /* Name.Namespace */
+.effects .nt { color: #008000; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #008000 0px 0px 8px; text-stroke: #008000 1px; -webkit-text-stroke: #008000 1px; -moz-text-stroke: #008000 1px; font-weight: bold } /* Name.Tag */
+.effects .nv { color: #19177C; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #19177C 0px 0px 8px; text-stroke: #19177C 1px; -webkit-text-stroke: #19177C 1px; -moz-text-stroke: #19177C 1px } /* Name.Variable */
+.effects .ow { color: #AA22FF; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #AA22FF 0px 0px 8px; text-stroke: #AA22FF 1px; -webkit-text-stroke: #AA22FF 1px; -moz-text-stroke: #AA22FF 1px; font-weight: bold } /* Operator.Word */
+.effects .w { color: #bbbbbb; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #bbbbbb 0px 0px 8px; text-stroke: #bbbbbb 1px; -webkit-text-stroke: #bbbbbb 1px; -moz-text-stroke: #bbbbbb 1px } /* Text.Whitespace */
+.effects .mf { color: #666666; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #666666 0px 0px 8px; text-stroke: #666666 1px; -webkit-text-stroke: #666666 1px; -moz-text-stroke: #666666 1px } /* Literal.Number.Float */
+.effects .mh { color: #666666; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #666666 0px 0px 8px; text-stroke: #666666 1px; -webkit-text-stroke: #666666 1px; -moz-text-stroke: #666666 1px } /* Literal.Number.Hex */
+.effects .mi { color: #666666; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #666666 0px 0px 8px; text-stroke: #666666 1px; -webkit-text-stroke: #666666 1px; -moz-text-stroke: #666666 1px } /* Literal.Number.Integer */
+.effects .mo { color: #666666; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #666666 0px 0px 8px; text-stroke: #666666 1px; -webkit-text-stroke: #666666 1px; -moz-text-stroke: #666666 1px } /* Literal.Number.Oct */
+.effects .sb { color: #BA2121; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #BA2121 0px 0px 8px; text-stroke: #BA2121 1px; -webkit-text-stroke: #BA2121 1px; -moz-text-stroke: #BA2121 1px } /* Literal.String.Backtick */
+.effects .sc { color: #BA2121; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #BA2121 0px 0px 8px; text-stroke: #BA2121 1px; -webkit-text-stroke: #BA2121 1px; -moz-text-stroke: #BA2121 1px } /* Literal.String.Char */
+.effects .sd { color: #BA2121; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #BA2121 0px 0px 8px; text-stroke: #BA2121 1px; -webkit-text-stroke: #BA2121 1px; -moz-text-stroke: #BA2121 1px; font-style: italic } /* Literal.String.Doc */
+.effects .s2 { color: #BA2121; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #BA2121 0px 0px 8px; text-stroke: #BA2121 1px; -webkit-text-stroke: #BA2121 1px; -moz-text-stroke: #BA2121 1px } /* Literal.String.Double */
+.effects .se { color: #BB6622; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #BB6622 0px 0px 8px; text-stroke: #BB6622 1px; -webkit-text-stroke: #BB6622 1px; -moz-text-stroke: #BB6622 1px; font-weight: bold } /* Literal.String.Escape */
+.effects .sh { color: #BA2121; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #BA2121 0px 0px 8px; text-stroke: #BA2121 1px; -webkit-text-stroke: #BA2121 1px; -moz-text-stroke: #BA2121 1px } /* Literal.String.Heredoc */
+.effects .si { color: #BB6688; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #BB6688 0px 0px 8px; text-stroke: #BB6688 1px; -webkit-text-stroke: #BB6688 1px; -moz-text-stroke: #BB6688 1px; font-weight: bold } /* Literal.String.Interpol */
+.effects .sx { color: #008000; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #008000 0px 0px 8px; text-stroke: #008000 1px; -webkit-text-stroke: #008000 1px; -moz-text-stroke: #008000 1px } /* Literal.String.Other */
+.effects .sr { color: #BB6688; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #BB6688 0px 0px 8px; text-stroke: #BB6688 1px; -webkit-text-stroke: #BB6688 1px; -moz-text-stroke: #BB6688 1px } /* Literal.String.Regex */
+.effects .s1 { color: #BA2121; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #BA2121 0px 0px 8px; text-stroke: #BA2121 1px; -webkit-text-stroke: #BA2121 1px; -moz-text-stroke: #BA2121 1px } /* Literal.String.Single */
+.effects .ss { color: #19177C; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #19177C 0px 0px 8px; text-stroke: #19177C 1px; -webkit-text-stroke: #19177C 1px; -moz-text-stroke: #19177C 1px } /* Literal.String.Symbol */
+.effects .bp { color: #008000; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #008000 0px 0px 8px; text-stroke: #008000 1px; -webkit-text-stroke: #008000 1px; -moz-text-stroke: #008000 1px } /* Name.Builtin.Pseudo */
+.effects .vc { color: #19177C; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #19177C 0px 0px 8px; text-stroke: #19177C 1px; -webkit-text-stroke: #19177C 1px; -moz-text-stroke: #19177C 1px } /* Name.Variable.Class */
+.effects .vg { color: #19177C; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #19177C 0px 0px 8px; text-stroke: #19177C 1px; -webkit-text-stroke: #19177C 1px; -moz-text-stroke: #19177C 1px } /* Name.Variable.Global */
+.effects .vi { color: #19177C; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #19177C 0px 0px 8px; text-stroke: #19177C 1px; -webkit-text-stroke: #19177C 1px; -moz-text-stroke: #19177C 1px } /* Name.Variable.Instance */
+.effects .il { color: #666666; text-fill-color:transparent; -webkit-text-fill-color:transparent; -moz-text-fill-color:transparent; text-shadow: #666666 0px 0px 8px; text-stroke: #666666 1px; -webkit-text-stroke: #666666 1px; -moz-text-stroke: #666666 1px } /* Literal.Number.Integer.Long */

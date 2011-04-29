@@ -35,7 +35,7 @@ class CodeBlock(Directive):
             content = u'\n'.join(self.content)
 
         width = options.get('width')
-        formatter_options = {}
+        formatter_options = {'linediv': True}
         if width:
             formatter_options['cssstyles'] = 'width:'+width
         parsed = highlight(content, lexer, MyHtmlFormatter(**formatter_options))

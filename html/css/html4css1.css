@@ -310,6 +310,22 @@ img.align-middle {
 td.linenos { background-color: #f0f0f0; padding-right: 10px; }
 span.lineno { background-color: #f0f0f0; padding: 0 5px 0 5px; }
 
+pre {
+    font-family: 'Bitstream Vera Sans Mono','Courier New',monospace;
+    font-size: 18px;
+}
+
+pre .line {
+    border-bottom: 1px dashed #ddd;
+    line-height: 200%;
+    padding-left: 1em;
+}
+
+pre span {
+    vertical-align: bottom;
+    line-height: 1.4em;
+}
+
 .effects pre {
     line-height: 150%;
     background:#333 url('../images/code-bg.jpg');

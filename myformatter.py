@@ -1,3 +1,4 @@
+from pygments.util import get_bool_opt
 from pygments.formatters import html
 from pygments.formatters.html import HtmlFormatter, _get_ttype_class
 from pygments.token import Token, Text, STANDARD_TYPES
@@ -36,6 +37,10 @@ class MyHtmlFormatter(HtmlFormatter):
     aliases = ['myhtml']
     filenames = ['*.html', '*.htm']
 
+    def __init__(self, **options):
+        super(MyHtmlFormatter, self).__init__(**options)
+        self.linediv = get_bool_opt(options, 'linediv', False)
+
     def _create_stylesheet(self):
         t2c = self.ttype2class = {Token: ''}
         c2s = self.class2style = {}
@@ -67,3 +72,27 @@ class MyHtmlFormatter(HtmlFormatter):
                 # save len(ttype) to enable ordering the styles by
                 # hierarchy (necessary for CSS cascading rules!)
                 c2s[name] = (style[:-2], ttype, len(ttype))
+
+    def _wrap_linediv(self, inner):
+        for t, line in inner:
+            yield t, '<div class="line" id="LC%d">%s</div>'%(t, line)
+
+    def format_unencoded(self, tokensource, outfile):
+        source = self._format_lines(tokensource)
+        if self.hl_lines:
+            source = self._highlight_lines(source)
+        if not self.nowrap:
+            if self.linenos == 2:
+                source = self._wrap_inlinelinenos(source)
+            if self.lineanchors:
+                source = self._wrap_lineanchors(source)
+            if self.linediv:
+                source = self._wrap_linediv(source)
+            source = self.wrap(source, outfile)
+            if self.linenos == 1:
+                source = self._wrap_tablelinenos(source)
+            if self.full:
+                source = self._wrap_full(source, outfile)
+
+        for t, piece in source:
+            outfile.write(piece)

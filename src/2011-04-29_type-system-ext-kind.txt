@@ -10,7 +10,9 @@ Haskell类型系统扩展之Kind
 
 `Kind`_ 的规则很简单，常规类型的 `Kind`_ 是 `*` ，类型构造器的 `Kind`_ 是 `P -> Q` ，其中 `P` 和 `Q` 都是 `Kind`_ 。所以 `Haskell98`_ 中，所有的 `Kind`_ 皆如： `*`, `* -> *`, `* -> * -> *` 等等。GHC引入了一个新的 `Kind`_ 叫做 `#` ，用于表示 `unboxed types <http://www.haskell.org/haskellwiki/Unboxed_type>`_ 。
 
-`Haskell98 <http://www.haskell.org/onlinereport/>`_ 中， `Kind`_ 只在编译器 `Kind推导过程 <http://www.haskell.org/onlinereport/decls.html#kindinference>`_ 中使用，对程序员来说是不存在的。GHC引入了一个 `扩展 <http://www.haskell.org/ghc/docs/7.0.3/html/users_guide/other-type-extensions.html#kinding>`_ ，可以显示指定类型的 `Kind`_ ，比如： ::
+`Haskell98 <http://www.haskell.org/onlinereport/>`_ 中， `Kind`_ 只在编译器 `Kind推导过程 <http://www.haskell.org/onlinereport/decls.html#kindinference>`_ 中使用，对程序员来说是不存在的。GHC引入了一个 `扩展 <http://www.haskell.org/ghc/docs/7.0.3/html/users_guide/other-type-extensions.html#kinding>`_ ，可以显示指定类型的 `Kind`_ ，比如：
+
+.. code-block:: haskell
 
     Int :: *
     Maybe :: * -> *
