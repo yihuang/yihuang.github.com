@@ -348,3 +348,21 @@ pre span {
     opacity:0.5;
     color:black
 }
+
+.remark-point { display: none; position: relative; background: #e1e1e1; padding: 0 6px; margin-left: 6px; font-size: 12px; cursor: pointer; border: 1px solid #e1e1e1; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px }
+
+.remark-point span { display: inline-block; zoom: 1; *display: inline; width: 5px }
+
+.remark-point em { position: absolute; height: 0; width: 0; overflow: hidden; font-size: 0; line-height: 0; border-color: #e1e1e1 transparent transparent transparent; border-style:solid dashed dashed dashed; border-width: 5px 6px 0 0; top: 15px; left: 4px; _top: 17px; _left: 10px }
+
+span.remark-active { display: inline }
+
+span.remark-popwin { background: #79c075; color: #fff; border: 1px solid #79c075 }
+
+span.remark-popwin em { border-color: #79c075 transparent transparent transparent }
+
+.remark-wrap { display: inline-block; zoom: 1; *display: inline; position: absolute; width: 4em; left: 570px; bottom: 0 }
+
+.remark-tip { position: absolute; width: 550px; background: #fff; border: 1px solid #ddd; padding: 13px 13px 10px; word-wrap: break-word; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; -moz-box-shadow: 2px 2px 2px #999; -webkit-box-shadow: 2px 2px 2px #999; box-shadow: 2px 2px 2px #999; z-index: 100 }
+
+.tip-arrow { position: absolute; width: 9px; height: 6px; top: 0; left: 15px; margin-top: -6px; background: url('/pics/arrow_top.gif') no-repeat }
