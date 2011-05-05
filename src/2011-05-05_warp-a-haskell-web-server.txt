@@ -1,0 +1,138 @@
+================================
+一个叫 Warp 的 haskell web服务器
+================================
+
+.. meta::
+    :description: 
+    :keywords: warp haskell web server
+
+`原文：http://steve.vinoski.net/pdf/IC-Warp_a_Haskell_Web_Server.pdf <http://steve.vinoski.net/pdf/IC-Warp_a_Haskell_Web_Server.pdf>`_
+
+大概两年前，我开始编写 `Yesod <http://www.yesodweb.com/>`_ web框架。最初选择的部署方式是 FastCGI ，不过我还是写了一个简单的HTTP服务器用来测试，我给它起了个相当创造性的名字：SimpleServer 。因为 Yesod 是基于 Web Application Interface (`WAI <https://github.com/snoyberg/wai>`_) 开发的，这是 Haskell web服务器和应用程序之间的标准接口，所以很容易针对测试和部署使用不同的后端。
+
+很快就有人请求给 SimpleServer 加特性了，于是诸如分块传输编码(chunked transfer encoding)和基于 `sendfile <http://linux.die.net/man/2/sendfile>`_ 的静态文件处理等特性就陆陆续续地加了进来。有一天，来自 Soft Mechanic 的 Matt Brown 为 SimpleServer 稍微做了点调优，然后惊喜地发现它已然是Haskell世界最快的web服务器了（见图1）。之后我们俩又做了些中规中矩的改进，就发布了，起名叫 `Warp <https://github.com/snoyberg/warp>`_ 。
+
+.. figure:: images/warp/benchmark.png
+    :align: center
+
+    图1. Pong benchmark. Requests/second (越高越好).
+
+`Warp`_ 本身针对性能的代码不多。因为大部分功能都是建立在巨人的肩膀上——通过使用一些表现极好的库， `Warp`_ 得以500行代码的规模就提供大量的特性。
+
+.. 目录::
+
+Glasgow Haskell Compiler
+========================
+
+第一个库其实不是库：Glasgow Haskell Compiler (`GHC <http://www.haskell.org/ghc/>`_) 是Haskell编译器的事实标准。它提供各种工业级的优化手段，比如循环展开，大规模内联，unboxing 和 循环融合（fusion）。甚至你还可以通过规则重写(`rule rewrite <http://www.haskell.org/ghc/docs/7.0.3/html/users_guide/rewrite-rules.html>`_)指定你自己的优化策略。另外，它还提供先进的多线程运行环境。这个运行环境最牛逼的特性就是微线程。正因为有了微线程，Warp才可以为每一个请求分配单独的线程去处理，不需要操心微线程运行环境的各种复杂性。
+
+GHC的微线程抽象能将同步的Haskell I/O调用转换成异步的系统调用。 `Warp`_ 只需要简单地调用诸如recv和send之类的函数，后面的复杂性都留给 GHC 去处理。
+
+直到GHC6.12，运行环境都还基于select系统调用。对于很多任务来说这已经足够了，但还不能满足web服务器所需要的扩展性。GHC7的发布带来了全新的IO管理器，它由谷歌的Johan Tibell和Serpentinede的Bryan O’Sullivan共同开发完成。这个新的运行环境针对不同操作系统使用不同的系统调用（epoll，kqueue等等）。另外，Tibell和O’Sullivan对IO管理器使用的数据结构也做了大量的改进：它现在使用基数排序树(`radix trie <http://en.wikipedia.org/wiki/Radix_tree>`)存放回调，使用优先搜索队列管理超时。
+
+于是，Haskell程序轻松就可以处理上千的并发连接。而且程序员只需使用很简单的接口编程：使用 `forkIO <http://www.haskell.org/ghc/docs/7.0.1/html/libraries/base/Control-Concurrent.html#v:forkIO>` 创建微线程，然后在微线程里面可以直接调用阻塞函数。
+
+Enumerator
+==========
+
+Haskell社区最近的一个动作就是吸收了 `enumerator模式 <http://www.haskell.org/haskellwiki/Enumerator_and_iteratee>`_ 。该模式能以确定性的方式处理流式的数据。这一点对于web服务器来说尤其重要，因为web服务器需要能快速释放像文件描述符这样的系统稀缺资源。
+
+`WAI`_ 和 `Warp`_ 使用的 `enumerator library <http://hackage.haskell.org/package/enumerator>`_ 是由 John Millikin 开发的，该库的核心数据类型叫 `Iteratee <http://hackage.haskell.org/packages/archive/enumerator/0.4.10/doc/html/Data-Enumerator.html#t:Iteratee>`_ 。 `Iteratee` 是数据消费者，接收一些数据块然后对其进行处理。 `Iteratee` 是 `Monad <http://www.haskell.org/haskellwiki/Monad>`_ 的实例，所以可以很容易地组合多个 `Iteratee` 以构造复杂的行为。（简单介绍一下， `Monad` 是用来封装计算的副作用的容器。Haskell程序员可以轻松组合多个 `Monad` 值以构造更强大的计算）
+
+`Iteratee` 的另一面就是 `Enumerator <http://hackage.haskell.org/packages/archive/enumerator/0.4.10/doc/html/Data-Enumerator.html#t:Enumerator>`_ ，即数据生产者。 `Enumerator` 陆续地把数据丢给 `Iteratee` 去处理，一直到数据耗尽或者 `Iteratee` 叫停为止。一个简单的例子是文件输入输出： `enumFile <http://hackage.haskell.org/packages/archive/enumerator/0.4.4/doc/html/Data-Enumerator-IO.html#v:enumFile>`_ 这个 `Enumerator` 不断从输入文件中读取数据并传给 `Iteratee` ，然后 `iterHandle <http://hackage.haskell.org/packages/archive/enumerator/0.4.4/doc/html/Data-Enumerator-IO.html#v:iterHandle>`_ 这个 `Iteratee` 则接收字节流数据块然后发送给另一个句柄。
+
+第三个数据类型 `Enumeratee <http://hackage.haskell.org/packages/archive/enumerator/0.4.4/doc/html/Data-Enumerator.html#t:Enumeratee>`_ 是 `Enumerator`_ 和 `Iteratee`_ 的合体：它既能从 `Enumerator`_ 接收数据，也能把处理后的数据继续传给 `Iteratee`_ 。
+
+`Warp` 整个I/O系统建立在 `Enumerator` 类型之上。当 `Warp`_ 建立完一个连接并启动了处理线程之后，就会基于客户socket构造一个 `Enumerator`_ ，它负责把数据“流”给 `Iteratee`_ 。对请求的解析就在这个 `Iteratee`_ 中进行。
+
+`Enumerator` 内置的数据分块行为也正好符合 `Warp`_ 的需要。 `Enumerator`_ 负责选择合适的缓冲块大小，目前是4096字节。消费者 `Iteratee`_ 则完全不依赖这些选择。给它多少数据它就处理多少数据，如果当前传过来的数据块不足以完成操作（比如不完整的HTTP头），控制流会被交回给 `Enumerator`_ 以提供更多的数据。如果提供的数据超过所需，多余的数据会交还给 `Enumerator`_ ，后者可选择继续传递给下一个处理器。比如可以作为请求body的传递给应用程序，或者当作下一个请求的一部分。
+
+`Enumeratee` 在 `Warp`_ 里同样扮演着重要的角色。它们保证应用程序在处理下一个请求之前一定已经耗尽前一个请求body。它们还负责将构造器形式(见下节)的响应body转换成分块传输编码的字节流形式。
+
+Blaze-Builder
+=============
+
+Haskell中表达一个字符串最简单的方式就是一个Unicode字符的列表。然而这有两大性能问题：往列表append数据复杂度O(n)，而且列表本身的结构也需要许多开销。历史上还存在两个方案，分别解决这两个问题中的一个：
+
+* 在数据构造阶段使用 `difference list <http://en.wikipedia.org/wiki/Difference_list>`_ ，只在最后阶段才转换成常规列表。因为 `difference list`_ 的append操作时间复杂度是 O(1)。
+
+* 直接使用更紧致的数据类型，比如 `Bytestring <http://hackage.haskell.org/package/bytestring>`_ 或者更新的 `Text <http://hackage.haskell.org/package/text>`_ 类型。
+
+由Ghent大学的Jasper Van der Jeugt和ETH Zurich的Simon Meier开发的 `blaze-html <https://github.com/jaspervdj/blaze-html>`_ 库，针对HTML构建过程中的这两个问题提供了解决方案。它的中心概念是 `Builder` ，值本身就了解如何填充缓冲区。 `Builder` 内部就是一个由缓冲区填充行为组成的difference list。结合这两点，我们就得到了既紧致又有高效的append操作的数据结构，同样重要的是，我们能保证缓冲区的数据正好只被拷贝一次。
+
+很快我们发现 `Builder` 抽象不光可以用来生成 HTML 。 `Yesod`_ web 框架还用它来生成CSS,Javascript和JSON。Meier 把 `Builder` 数据类型和相关的函数拆分开来形成了单独的 `blaze-builder`_ 库。
+
+`WAI`_ 和 `Warp`_ 依赖 `blaze-builder`_ 构建response。应用程序总是以 `Builder` 的形式把response body发送给服务器。然后 `Warp`_ 就可以高效得把response body添加到response header后面，所以，对于常见的response， `Warp`_ 只需要使用一块内存缓冲区和一个系统调用即可。
+
+`blaze-builder`_ 还提供一个帮助函数，能够自动在每个HTTP response数据块前面加上长度。这个函数还能将多个 `Builder` 合并到一个合适的大小，并把块大小加到响应头中。这个函数可以被所有Haskell HTTP服务器使用。
+
+Blaze-Builder-Enumerator
+========================
+
+我工作中曾需要写个修改XML文件的程序，因为只需要修改一些属性，倒正好是流式算法的应用场合， `Enumerator` 就能派上用场了。Millikin已经写了一个包装c语言libxml库的解析库，但是没有提供构造输出的方法。
+
+简单的做法就是把每个XML事件转换成 `ByteString` 。但是这就需要创建大量小缓冲区。更好的方法是使用Builder，但是接收整个 Builder 流，对它们进行合并然后写到文件中去，这个过程需要把整个body保留在内存里面，而我正想避免这一点。
+
+最终，我写了一个 `Enumeratee` ，它接收Builder流，用它们填充好缓冲区。当一块缓冲区填满后，再把它包装成 `ByteString` 发送给 `Iteratee` 。这样，它可以选择合适的 `ByteString` 缓冲区大小，以节约缓冲区拷贝操作，并保持常数级内存占用。后来Meier对这个代码做了一些改进，之后发布出来，叫做 `blaze-builder-enumerator <https://github.com/meiersi/blaze-builder-enumerator>`_ 。
+
+后来写web服务器的时候，我又遇到了相同的需求。应用程序交给服务器的数据块大小是任意的，服务器需要将数据块合并成合适大小的缓冲区以降低系统调用的次数，并且处理多个缓冲区拷贝的时候还要避免太大的内存消耗。
+
+在 `Warp`_ 里面，当应用程序返回 `ResponseEnumerator` 时，控制流就会在服务器和 `Enumerator` 之间转过来转过去。 `Enumerator` 不断传递一些Builder块给服务器。服务器使用这些Builder填充一块缓冲区。当该缓冲区填满后，服务器就会把内容发给socket然后释放缓冲区。这意味着数据只被拷贝一次到缓冲区，并且服务器也只需要申请一块缓冲区，保证了常数级的内存占用。
+
+Web Application Interface
+=========================
+
+`WAI`_ 是处于web应用程序和后端之间的底层接口。它既能支持 `Warp`_ 这样的独立服务器也支持CGI，FastCGI和开发服务器，后者能在开发阶段自动打断代码执行。 `Warp`_ 是 `WAI`_ 的主要后端。
+
+`WAI`_ 的概念很简单，应用程序就是一个函数，接受一个request参数并返回response。 `Request` 数据类型包含了request path, query string, request headers, remote host/port 等信息。值得注意的是这里面没有 request body。为什么？要理解这一点，我们来看看下面这个类型签名： ::
+
+    type Application = Request -> Iteratee ByteString IO Response
+
+`Application` 返回的是包装在 `Iteratee` 里面的 `Response` ，所以其实是由 `Iteratee` 负责接收request body的。前面也提到过， `Warp`_ 的全部操作都是在 `Iteratee monad` 里面进行；调用Application也是这其中的一步。 `Enumerator` 方法的美妙之处就在于可以如此轻松地把这所有action组合在一起。
+
+存在三种类型的response, 分别由三个数据构造器表达。 `ResponseFile` 包含状态码，response header的列表，和文件路径。这使得像 `Warp`_ 这样的后端可以使用高效的 `sendfile`_ 系统调用将文件内容发送给客户端。
+
+`ResponseBuilder` 包含状态码，response header 列表，和一个Builder值。这是最常用的响应类型。大部分编程语言都需要将整个响应存放在内存中。而Haskell默认使用惰性求值，意味着值是按需计算的。所以我们可以把巨大的响应编码成这单个值，应用程序只会按需消耗必要的内存。
+
+最有意思的响应类型是 `ResponseEnumerator` ，它可以使得响应的产生和其他不纯的action交错进行。比如流式输出一个巨大的数据库响应到客户端。虽然我们也可以使用 `ResponseBuilder` ，但是需要将整个数据库的内容读到内存然后发送出去。而使用 `ResponseEnumerator` 的话，控制流会在应用程序和后端之间来回传递。一旦 `Warp`_ 填满一个缓冲区，它就立刻把数据发送给客户端并释放这块内存。
+
+Request Parsing
+===============
+
+感谢Haskell高质量的 `ByteString` 库（来自Galois的Don Stewart，牛津大学的Duncan Coutts，Oregon State大学的David Roundy）， `Warp`_ 团队才能实现一个清晰，容易理解，安全且高效的请求解析器。这个库为C语言字节数组提供了一个高级的接口，表达力强劲且高效。我们可以像链表一样使用 `ByteString` ，这样一来大量函数式程序员所熟悉的惯用法可以直接派上用场。同时可以直接利用标准C的I/O设施，无需任何转换。接口函数默认提供边界检查，同时也提供不检查的版本。Warp在几个可以确保安全的场合会使用不做检查的版本。
+
+HTTP协议由一个请求行开始，后面跟着多条header行。用一个空行标记header的结束。行之间由回车符和换行符分隔，header本身是由冒号分隔的key-value对。寻找换行和冒号可以由 `memchr` 高效完成。然后请求解析器使用零拷贝的 `substring` 函数即可把数据解析出来。
+
+虽然协议语法如此简单，也还是存在一些小麻烦。单个数据块可能包含多行，一行也可能包含在多个数据块中。同时我们还要处理一些异常情况：客户端可能花费过长的时间发送数据，或者在发送标记结束的空行之前就关闭了连接。我们还要防止攻击者通过发送无限长的头来耗尽我们的内存。
+
+GHC的异常机制和微线程机制让我们可以把超时和异常文件结束的情况封装成单独的阻塞函数调用。这样解析器就只负责保证header的大小在允许的范围。
+
+解析器实现为一个递归的 `Iteratee` ，有四个参数：当前header大小，两个difference list（一个用于当前header行的分段，一个用于解析好的header行），当前的输入缓冲区。使用difference list除了能提供O(1)的append操作外，还能利用尾递归优化。
+
+每一次递归调用都会处理一块数据，把它添加到当前行，并增加header的大小。如果解析器遇到行结束符并且当前行非空，就把它加到header列表，然后为下一行建立个空的difference list，然后继续递归调用。如果当前行是空行，就说明我们到了header的结尾，把输入缓冲区剩下的内容交回给 `Enumeratee` ，然后函数就返回了。
+
+Timeout Handling
+================
+
+最近一个针对web服务器的攻击方法叫slowloris攻击：攻击者会建立尽可能多的连接，然后发送trickles数据，试图耗尽服务器的连接池。这种攻击方法特别好用，因为它对攻击者所需的资源要求不高，标准的应对方法就是引入超时控制：如果一个客户端超过一定时间没有发送任何数据那就关闭该socket。
+
+第一版Warp直接使用了GHC中的超时控制代码。很遗憾不是很合用；扩展性不好，更糟的是还会产生死锁。（GHC已经修复的这个bug，但大部分用户还是运行着有问题的版本）所以，Warp需要更优雅的方案。
+
+这又是一个Haskell web开发社区可以发威的绝好机会：谷歌的Gregory Collins和See­Reason Partners的Jeremy Shaw （他们分别开发了 `Snap <http://snapframework.com/>`_ 和 `Happstack <http://happstack.com/>`_ 框架）已经协同开发了更高效的超时代码。他们开了个好头，但是开始的代码还是有点慢，我在他们的基础上做了两个改进：
+
+* 最初的代码使用 `MVar <http://www.haskell.org/ghc/docs/latest/html/libraries/base/Control-Concurrent-MVar.html>`_ ，这是个线程安全的可变变量，通常是正合我们这种场景使用的。不幸的是锁的开销还是还大。于是我换成了 `IORef <http://www.haskell.org/ghc/docs/latest/html/libraries/base/Data-IORef.html>`_ 。它跟 `MVar`_ 不同的地方在于 `IORef`_ 只是一个可变变量，不带锁。然而它提供 `原子的修改操作 <http://www.haskell.org/ghc/docs/latest/html/libraries/base/Data-IORef.html#v:atomicModifyIORef>`_ ，利用Haskell引用透明的特点，可以做到不用锁即可防止竞争条件。
+
+* 之前使用了一个哈希表存放超时信息，但是管理一个可变的线程安全的哈希表引入了许多复杂性。我们知道函数式程序员只懂列表，所以我决定在这里尝试一下列表，结果很成功。
+
+整个超时库的实现不到70行代码。它创建一个超时管理线程，和一个 `IORef`_ 存放处理器列表。每个处理器包含一个超时发生时要执行的action（杀掉对应的线程）以及相应的状态： `active`, `inactive`, `paused`, `canceled` 。
+
+超时线程跑一个死循环，先用一个空列表交换出处理器列表，然后杀掉inactive的线程，再把剩下的处理器加到处理器列表上去。它利用了函数式编程两个特性：
+
+* Haskell为纯的代码（即没有副作用）提供原子的 `IORef`_ 修改操作，所以交换列表不用引入昂贵的锁操作。
+
+* Haskell的列表是单链表，意味着在表头插入元素是很快的，但是在末端追加则很慢。因为我们不关心处理器的顺序，所以管理器可以创建一个处理器的difference list（[Handle->[Handle]）并再一次利用 `IORef`_ 的原子操作把元素插入表头。
+
+对于被管理的线程来说，操作就相对简单了，只需设置相应状态为 `active`, `paused` 和 `canceled` 即可。这个操作再一次利用了 `IORef`_ 的原子操作，所以仍然没有锁的问题。这样我们就通过一些简单的操作和一个管理线程就解决了slowloris攻击的问题。
+
+`Warp`_ 让Haskell开发者可以用高级的接口编程，同时产生非常快的程序。 `Warp`_ 目前是Yesod web框架生产环境部署的基础，近期也会为 Happstack web框架所用。由于 `Warp`_ 代码量小，它可以运行在从服务器到嵌入式设备的任何地方。
+
