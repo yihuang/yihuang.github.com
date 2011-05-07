@@ -1,6 +1,6 @@
-html,body{margin:0;padding:0}
+html,body,pre{margin:0;padding:0}
 body{
-    font: 14px;
+    font: 12px/1.6 arial,helvetica,sans-serif;
     text-align: center;
     background: #fff;
     padding-bottom:20px;
@@ -15,6 +15,7 @@ h2 {
     margin: 1em 0px .5em 0px;
 }
 h2,h3 {color:#777;}
+p {margin:0px; padding:0.5em 0px;}
 img {border:0;}
 a { color: #0066B3; background: inherit; text-decoration: none;}
 #wrapper{width:768px;margin:0px auto;}
@@ -74,7 +75,7 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
 #nav .activelink a,#nav .activelink a:hover{background: #FFF;color: #003}
 
 #content, .postdetail {
-    font: 95%/1.5 TrebuchetMS,Arial,sans-serif;
+    font-size: 14px;
     margin: 10px auto;
     background: #fff;
     text-align: left;
@@ -96,7 +97,7 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
 }
 .postdetail {
     padding:15px 10px 0px;
-    background:#eee;
+    background:#fff;
 }
 .post {
 	background: #eee;
@@ -141,10 +142,17 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
     margin:0px 0px 2em;
 }
 p.topic-title, a.toc-backref {
-  color: #666;
+  /*color: #4E6272; */
+  color: #333;
+  margin:0px;
+  padding:0px;
 }
 p.topic-title, a.toc-backref, h1, h2 {
-  text-shadow: white 1px 1px 0px;
+  text-shadow: #ddd 1px 1px 0px;
+}
+p.topic-title, a.toc-backref, h2 {
+  font-size:20px;
+  margin: 1.6em 0 0em 0;
 }
 .announce, .share-icons {
     text-align:center;

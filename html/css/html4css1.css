@@ -185,7 +185,8 @@ div.align-right {
 /*   text-align: left } */
 
 ol.simple, ul.simple {
-  margin-bottom: 1em }
+  margin-bottom: 1em;
+  margin-top: 0px;}
 
 ol.arabic {
   list-style: decimal }
@@ -316,9 +317,8 @@ pre {
 }
 
 pre .line {
-    border-bottom: 1px dashed #ddd;
+    /*border-bottom: 1px dashed #ddd;*/
     line-height: 200%;
-    padding-left: 1em;
 }
 
 pre span {
@@ -338,6 +338,10 @@ pre span {
     text-fill-color:transparent;
     -webkit-text-fill-color:transparent;
     -moz-text-fill-color:transparent;
+}
+.highlight {
+    background-image: url('../images/code-bg.png');
+    padding: 5px 20px;
 }
 .highlight, .effects {position:relative;}
 .apply-effects {
