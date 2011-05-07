@@ -28,9 +28,9 @@ Glasgow Haskell Compiler
 
 GHC的微线程抽象能将同步的Haskell I/O调用转换成异步的系统调用。 `Warp`_ 只需要简单地调用诸如recv和send之类的函数，后面的复杂性都留给 GHC 去处理。
 
-直到GHC6.12，运行环境都还基于select系统调用。对于很多任务来说这已经足够了，但还不能满足web服务器所需要的扩展性。GHC7的发布带来了全新的IO管理器，它由谷歌的Johan Tibell和Serpentinede的Bryan O’Sullivan共同开发完成。这个新的运行环境针对不同操作系统使用不同的系统调用（epoll，kqueue等等）。另外，Tibell和O’Sullivan对IO管理器使用的数据结构也做了大量的改进：它现在使用基数排序树(`radix trie <http://en.wikipedia.org/wiki/Radix_tree>`)存放回调，使用优先搜索队列管理超时。
+直到GHC6.12，运行环境都还基于select系统调用。对于很多任务来说这已经足够了，但还不能满足web服务器所需要的扩展性。GHC7的发布带来了全新的IO管理器，它由谷歌的Johan Tibell和Serpentinede的Bryan O’Sullivan共同开发完成。这个新的运行环境针对不同操作系统使用不同的系统调用（epoll，kqueue等等）。另外，Tibell和O’Sullivan对IO管理器使用的数据结构也做了大量的改进：它现在使用基数排序树(`radix trie <http://en.wikipedia.org/wiki/Radix_tree>`_)存放回调，使用优先搜索队列管理超时。
 
-于是，Haskell程序轻松就可以处理上千的并发连接。而且程序员只需使用很简单的接口编程：使用 `forkIO <http://www.haskell.org/ghc/docs/7.0.1/html/libraries/base/Control-Concurrent.html#v:forkIO>` 创建微线程，然后在微线程里面可以直接调用阻塞函数。
+于是，Haskell程序轻松就可以处理上千的并发连接。而且程序员只需使用很简单的接口编程：使用 `forkIO <http://www.haskell.org/ghc/docs/7.0.1/html/libraries/base/Control-Concurrent.html#v:forkIO>`_ 创建微线程，然后在微线程里面可以直接调用阻塞函数。
 
 Enumerator
 ==========
@@ -41,11 +41,11 @@ Haskell社区最近的一个动作就是吸收了 `enumerator模式 <http://www.
 
 `Iteratee` 的另一面就是 `Enumerator <http://hackage.haskell.org/packages/archive/enumerator/0.4.10/doc/html/Data-Enumerator.html#t:Enumerator>`_ ，即数据生产者。 `Enumerator` 陆续地把数据丢给 `Iteratee` 去处理，一直到数据耗尽或者 `Iteratee` 叫停为止。一个简单的例子是文件输入输出： `enumFile <http://hackage.haskell.org/packages/archive/enumerator/0.4.4/doc/html/Data-Enumerator-IO.html#v:enumFile>`_ 这个 `Enumerator` 不断从输入文件中读取数据并传给 `Iteratee` ，然后 `iterHandle <http://hackage.haskell.org/packages/archive/enumerator/0.4.4/doc/html/Data-Enumerator-IO.html#v:iterHandle>`_ 这个 `Iteratee` 则接收字节流数据块然后发送给另一个句柄。
 
-第三个数据类型 `Enumeratee <http://hackage.haskell.org/packages/archive/enumerator/0.4.4/doc/html/Data-Enumerator.html#t:Enumeratee>`_ 是 `Enumerator`_ 和 `Iteratee`_ 的合体：它既能从 `Enumerator`_ 接收数据，也能把处理后的数据继续传给 `Iteratee`_ 。
+第三个数据类型 `Enumeratee <http://hackage.haskell.org/packages/archive/enumerator/0.4.4/doc/html/Data-Enumerator.html#t:Enumeratee>`_ 是 `Enumerator` 和 `Iteratee` 的合体：它既能从 `Enumerator` 接收数据，也能把处理后的数据继续传给 `Iteratee` 。
 
-`Warp` 整个I/O系统建立在 `Enumerator` 类型之上。当 `Warp`_ 建立完一个连接并启动了处理线程之后，就会基于客户socket构造一个 `Enumerator`_ ，它负责把数据“流”给 `Iteratee`_ 。对请求的解析就在这个 `Iteratee`_ 中进行。
+`Warp` 整个I/O系统建立在 `Enumerator` 类型之上。当 `Warp`_ 建立完一个连接并启动了处理线程之后，就会基于客户socket构造一个 `Enumerator` ，它负责把数据“流”给 `Iteratee` 。对请求的解析就在这个 `Iteratee` 中进行。
 
-`Enumerator` 内置的数据分块行为也正好符合 `Warp`_ 的需要。 `Enumerator`_ 负责选择合适的缓冲块大小，目前是4096字节。消费者 `Iteratee`_ 则完全不依赖这些选择。给它多少数据它就处理多少数据，如果当前传过来的数据块不足以完成操作（比如不完整的HTTP头），控制流会被交回给 `Enumerator`_ 以提供更多的数据。如果提供的数据超过所需，多余的数据会交还给 `Enumerator`_ ，后者可选择继续传递给下一个处理器。比如可以作为请求body的传递给应用程序，或者当作下一个请求的一部分。
+`Enumerator` 内置的数据分块行为也正好符合 `Warp`_ 的需要。 `Enumerator` 负责选择合适的缓冲块大小，目前是4096字节。消费者 `Iteratee` 则完全不依赖这些选择。给它多少数据它就处理多少数据，如果当前传过来的数据块不足以完成操作（比如不完整的HTTP头），控制流会被交回给 `Enumerator` 以提供更多的数据。如果提供的数据超过所需，多余的数据会交还给 `Enumerator` ，后者可选择继续传递给下一个处理器。比如可以作为请求body的传递给应用程序，或者当作下一个请求的一部分。
 
 `Enumeratee` 在 `Warp`_ 里同样扮演着重要的角色。它们保证应用程序在处理下一个请求之前一定已经耗尽前一个请求body。它们还负责将构造器形式(见下节)的响应body转换成分块传输编码的字节流形式。
 
