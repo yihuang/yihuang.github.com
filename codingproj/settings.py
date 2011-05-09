@@ -1,3 +1,7 @@
+import os
+ROOT = os.path.dirname(os.path.realpath(__file__))
+join = os.path.join
+
 MODE = 'dev'
 
 DEBUG = True
@@ -47,9 +51,24 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.contrib.messages.context_processors.messages",
+)
+
 ROOT_URLCONF = 'codingproj.urls'
 
-TEMPLATE_DIRS = ()
+TEMPLATE_DIRS = (
+    join(ROOT, "templates"),
+)
+
+STATICFILES_DIRS = (
+    join(ROOT, "static"),
+)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -61,6 +80,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'tagging',
     'snippet',
+    'snsauth',
+    'codecomment',
 )
 
 FORCE_LOWERCASE_TAGS = True
