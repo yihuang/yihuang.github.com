@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
-from django.views.generic import CreateView,
+from django.views.generic import CreateView
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.list import MultipleObjectTemplateResponseMixin
 

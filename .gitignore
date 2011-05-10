@@ -1,3 +1,5 @@
 *.pyc
-html/*.html
-html/*.xml
+*.db
+/html/*.html
+/html/*.xml
+/codingproj/settings.py

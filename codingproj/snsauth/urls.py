@@ -1,6 +1,8 @@
 from django.conf.urls.defaults import *
+from views import *
 
 urlpatterns = patterns('snsauth.views',
-    url(r'^douban_login/', 'douban_login', name='douban_login'),
-    url(r'^douban_login_done/', 'douban_login_done', name='douban_login_done'),
+    url(r'^douban/$', DoubanLoginView.as_view(), name='douban_login'),
+    url(r'^sina/$', SinaLoginView.as_view(), name='sina_login'),
+    url(r'^qq/$', QQLoginView.as_view(), name='qq_login'),
 )
