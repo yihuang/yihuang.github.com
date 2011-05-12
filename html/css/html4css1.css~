@@ -322,8 +322,8 @@ pre .line {
 }
 
 pre span {
-    /*vertical-align: bottom;
-    line-height: 1.4em;*/
+    vertical-align: bottom;
+    line-height: 1.4em;
 }
 
 .effects pre {

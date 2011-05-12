@@ -1,8 +1,8 @@
 .highlight {color: #000; font-weight: bold;
 text-shadow: #C7A570 1px 1px 0px;
-border-radius: 10px;
--webkit-border-radius: 10px;
--moz-border-radius: 10px;
+box-radius: 10px;
+-webkit-box-radius: 10px;
+-moz-box-radius: 10px;
 box-shadow: #333 2px 2px 5px;
 -webkit-box-shadow: #333 2px 2px 5px;
 -moz-box-shadow: #333 2px 2px 5px;
