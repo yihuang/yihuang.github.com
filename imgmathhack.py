@@ -67,7 +67,7 @@ class Tex_to_images(object):
             f = file(fpath, 'w')
             f.write('@Start\n%s\n@End\n' % (text,))
             f.close()
-            system(('cd tex2image/;./tex_to_images.prl -f ppm -d %(dir)s -o %(fname)s.tmp '
+            system(('cd tex2image/;./tex_to_images.prl -f ppm -d ../%(dir)s -o %(fname)s.tmp '
                        '%(options)s < ../%(fpath)s > /dev/null' % vars()))
             if self.converter:
                 system('%s < %s.tmp > %s%s' %

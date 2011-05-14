@@ -13,7 +13,7 @@ links=[
 nav_icons = [
     (u'首页', '/blog/', 'images/icons/home.png', ''),
     (u'文章列表', '/blog/list.html', 'images/icons/blog.png', ''),
-    (u'关于我', '/blog/about.html', 'images/icons/about.png', ''),
+    (u'订阅', '/blog/rss.xml', 'images/icons/about.png', ''),
 ]
 link_icons = [
     (u'Delicious', 'http://www.delicious.com/huangyi', 'images/icons/delicious.png',''),

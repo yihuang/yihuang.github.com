@@ -40,6 +40,7 @@ class MyHtmlFormatter(HtmlFormatter):
     def __init__(self, **options):
         super(MyHtmlFormatter, self).__init__(**options)
         self.linediv = get_bool_opt(options, 'linediv', False)
+        self.extra_cssclass = options.get('extra_cssclass', '')
 
     def _create_stylesheet(self):
         t2c = self.ttype2class = {Token: ''}
@@ -76,6 +77,21 @@ class MyHtmlFormatter(HtmlFormatter):
     def _wrap_linediv(self, inner):
         for t, line in inner:
             yield t, '<div class="line" id="LC%d">%s</div>'%(t, line)
+
+    def _wrap_div(self, inner):
+        style = []
+        if (self.noclasses and not self.nobackground and
+            self.style.background_color is not None):
+            style.append('background: %s' % (self.style.background_color,))
+        if self.cssstyles:
+            style.append(self.cssstyles)
+        style = '; '.join(style)
+
+        yield 0, ('<div' + (self.cssclass and ' class="%s %s"' % (self.cssclass, self.extra_cssclass))
+                  + (style and (' style="%s"' % style)) + '>')
+        for tup in inner:
+            yield tup
+        yield 0, '</div>\n'
 
     def format_unencoded(self, tokensource, outfile):
         source = self._format_lines(tokensource)

@@ -12,8 +12,9 @@ from myformatter import MyHtmlFormatter
 
 class CodeBlock(Directive):
     option_spec = {
-        'filename':directives.unchanged,
-        'width':directives.length_or_percentage_or_unitless,
+        'filename': directives.unchanged,
+        'width': directives.length_or_percentage_or_unitless,
+        'class': directives.unchanged,
     }
     optional_arguments = 0
     required_arguments = 1
@@ -35,7 +36,8 @@ class CodeBlock(Directive):
             content = u'\n'.join(self.content)
 
         width = options.get('width')
-        formatter_options = {'linediv': True}
+        extra_cssclass = options.get('class')
+        formatter_options = {'linediv': True, 'extra_cssclass': extra_cssclass}
         if width:
             formatter_options['cssstyles'] = 'width:'+width
         parsed = highlight(content, lexer, MyHtmlFormatter(**formatter_options))

@@ -1,7 +1,7 @@
 from common_settings import *
 
 MODE = 'dev'
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 STATIC_URL = '/static/'

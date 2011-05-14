@@ -24,6 +24,7 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
     width:100%;
     overflow:hidden;
     background: #333;
+    background-image: url('../images/blackboard.png');
     text-align:left;
 }
 #header img.logo{
@@ -33,10 +34,10 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
 #header h1 {
     padding:0px 20px 0 10px;
     font-weight:bolder;
-    font-size:100px;
+    font-size:80px;
     line-height:100px;
     margin:0 0 -9px 0;
-    letter-spacing:-14px;
+    /*letter-spacing:-14px;*/
     color: #fff;
     float:left;
 }
