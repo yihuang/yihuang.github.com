@@ -1,0 +1,25 @@
+=====================
+Lazy Pattern Matching
+=====================
+
+看代码，不解释。
+
+普通pattern match：
+
+    .. code-block:: haskell
+
+        Prelude> let f (x, y) = [1, x]
+        Prelude> let a = f undefined
+        Prelude> head a
+        *** Exception: Prelude.undefined
+
+Lazy pattern matching：
+
+    .. code-block:: haskell
+
+        Prelude> let f ~(x, y) = [1, x]
+        Prelude> let a = f undefined
+        Prelude> head a
+        1
+        Prelude> a !! 1
+        *** Exception: Prelude.undefined
