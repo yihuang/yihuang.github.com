@@ -1,0 +1,68 @@
+===========================
+学舌文：代数，类型和Zipper
+===========================
+
+原文： `http://blog.lab49.com/archives/3011 <http://blog.lab49.com/archives/3011>`_ 。本文不能算翻译也非原创，是以原文为基础按照自己觉得舒服的方式写出来，姑且叫学舌文吧。
+
+接触Haskell后我们马上就会遇到了代数数据类型(`algebraic data type <http://www.haskell.org/haskellwiki/Algebraic_data_type>`_)的概念，这玩意本身不难理解，只是名字费解，它跟代数有一毛钱关系？
+
+事实上还真有很大关系，同构关系列举如下：
+
+* 普通类型对应代数变量。
+* 数据构造器或 `Tuple` 对应求积；
+* `|` 操作符对于求和；
+
+比如：
+
+.. code-block:: haskell
+
+    Int                         <==>    int
+    MyType Int Int or (Int,Int) <==>    int*int
+    Left Int | Right Int        <==>    int+int
+
+同构是个好东西啊，一下子中学学的代数知识似乎就可以在程序设计领域派上用场了。
+
+下面我们就用代数的记法，推导一下列表类型 `[a]` ，我们可以这样考虑，它可以是空表，或是一个a，或是两个a，或是三个a，或是... ，也就是：
+
+.. code-block:: haskell
+
+      1 + a + a*a + a*a*a ...
+    = 1 + a * (1 + a + a*a ...)
+
+由此可见，列表类型就是函数 `f(x)=1+a*x` 的不动点，也可以记作： `μX.(1+a*X)` 。
+类似的，我们也可以得出二叉树的类型： `μX.(a+X*X)` 。
+
+对比下Haskell里面这两个类型的定义：
+
+.. code-block:: haskell
+
+    data List a = Nil | Cons a (List a)
+    data Tree a = Leaf a | Branch (Tree a) (Tree a)
+
+Zipper
+======
+
+介绍完代数数据类型后，我们来看一个乍看似乎完全不相关的概念： `Zipper <http://learnyouahaskell.com/zippers>`_ ，在 `wikibook <http://en.wikibooks.org/wiki/Haskell/Zippers>`_ 和漂亮的 `learn you a haskell <http://learnyouahaskell.com/zippers>`_ 中都有详细的介绍， `zipper原始论文 <http://www.st.cs.uni-saarland.de/edu/seminare/2005/advanced-fp/docs/huet-zipper.pdf>`_ 。
+
+我们知道函数式程序设计中不允许修改状态，只能通过创建新的结构达到修改的目的。这样新旧版本的数据可以同时存在，天然线程安全，程序更易理解，blah,blah,blah。
+
+`Zipper`_ 发明出来就是用来高效地完成函数式数据结构的修改操作，可以想象它的重要性。
+可以把 `Zipper`_ 理解为在数据结构的某个位置挖了一个洞，然后我们可以用另一份数据补上这个洞以达到在该位置修改数据的目的。
+
+举个例子，包含三个整数的积类型： `int*int*int` ，或者 `int**3` int的三次方，Haskell的表示法就是 `(Int, Int, Int)` ，要挖个洞的话有三种挖法：
+
+.. code-block:: haskell
+
+    (_,   int, int)
+    (int, _,   int)
+    (int, int, _  )
+
+对每一种挖洞方法，我们只需要保存剩下两份数据，用Haskell表示就是： `First Int Int | Second Int Int | Third Int Int` ，用代数方法表示则是： `int*int + int*int + int*int` ，或者 `3*int**2` 。
+
+.. code-block:: haskell
+
+    int**3  --> 3*int**2
+
+也许你已经发现，这不就是微积分求导的结果吗！事实上还真是如此，在数据结构上打洞的规则和微积分里面求导的规则神奇地一致。
+
+不过处理列表和二叉树等递归类型还有点麻烦，因为微积分里貌似没有递归函数的概念，这个问题 `wikibook`_ 上有解释，不过没大看懂，我们留到下一篇再研究。
