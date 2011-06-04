@@ -4,6 +4,9 @@
 
 原文： `http://blog.lab49.com/archives/3011 <http://blog.lab49.com/archives/3011>`_ 。本文不能算翻译也非原创，是以原文为基础按照自己觉得舒服的方式写出来，姑且叫学舌文吧。
 
+代数数据类型
+============
+
 接触Haskell后我们马上就会遇到了代数数据类型(`algebraic data type <http://www.haskell.org/haskellwiki/Algebraic_data_type>`_)的概念，这玩意本身不难理解，只是名字费解，它跟代数有一毛钱关系？
 
 事实上还真有很大关系，同构关系列举如下：
