@@ -24,7 +24,7 @@
                     <p class="author">${date} 黄毅</p>
                     % endif
                     ${c.fragment}
-                    <hr/>
+                    <br/>
                     <div id="disqus_thread"></div>
                     <script type="text/javascript">
                         var disqus_shortname = 'yi-programmer';

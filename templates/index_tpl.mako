@@ -14,6 +14,7 @@
     <body>
 	<div id="wrapper">
         <%include file="header.mako"/>
+
         <div id="content">
             <div id="right">
                 % for article in articles:
@@ -28,6 +29,14 @@
         <hr>
         <%include file="footer.mako"/>
 	</div>
+
+        <div id="sidebar" style="margin-top:10px;">
+        <!--<div id="popularthreads" class="dsq-widget"><h2 class="dsq-widget-title">Popular Threads</h2><script type="text/javascript" src="http://yi-programmer.disqus.com/popular_threads_widget.js?num_items=5"></script></div>-->
+
+        <div id="recentcomments" class="dsq-widget"><h3 style="text-align:left;" class="dsq-widget-title">Recent Comments</h3><script type="text/javascript" src="http://yi-programmer.disqus.com/recent_comments_widget.js?num_items=5&hide_avatars=0&avatar_size=32&excerpt_length=200"></script></div>
+        <!--<a href="http://disqus.com/">Powered by Disqus</a>-->
+        </div>
+
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript">
