@@ -81,6 +81,7 @@ a { color: #0066B3; background: inherit; text-decoration: none;}
     background: #fff;
     text-align: left;
     position: relative;
+    clear:both;
 }
 
 #middle {
@@ -164,4 +165,17 @@ p.topic-title, a.toc-backref, h2 {
 .announce {
     color:black;
     border-top:1px dashed #999;
+}
+.widget-wrapper {
+    float:left;
+}
+.dsq-widget {
+    float:left;
+    width:48%;
+}
+.dsq-widget-title {
+    text-align: left;
+}
+#recentcomments {
+    margin-right: 30px;
 }
