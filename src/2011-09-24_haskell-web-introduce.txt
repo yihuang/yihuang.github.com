@@ -1,0 +1,5 @@
+=================================
+珠三角技术沙龙介绍Haskell Web开发
+=================================
+
+2011年09年17日，再次跑到珠三角技术沙龙忽悠Haskell，这次是广州，侧重Haskell服务器端以及Web开发中的实用功能。 `Slides <http://www.slideshare.net/cngump/haskell-web>`_ `沙龙活动总结 <http://techparty.org/>`_
