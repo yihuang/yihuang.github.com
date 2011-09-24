@@ -18,6 +18,7 @@ nav_icons = [
 link_icons = [
     (u'Github', 'https://github.com/yihuang/', 'images/icons/github.png', ''),
     (u'豆瓣', 'http://www.douban.com/people/huangyi/', 'images/icons/douban.png',''),
+    (u'新浪微博', 'http://weibo.com/1897911954', 'images/icons/weibo.png',''),
     (u'Google Reader Share', 'http://www.google.com/reader/shared/yi.codeplayer', 'images/icons/greader.png',''),
     (u'Delicious', 'http://www.delicious.com/huangyi', 'images/icons/delicious.png',''),
     (u'42区', 'http://42qu.com/-10000020', 'images/icons/42qu.png',''),

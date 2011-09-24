@@ -2,4 +2,8 @@
 珠三角技术沙龙介绍Haskell Web开发
 =================================
 
-2011年09年17日，再次跑到珠三角技术沙龙忽悠Haskell，这次是广州，侧重Haskell服务器端以及Web开发中的实用功能。 `Slides <http://www.slideshare.net/cngump/haskell-web>`_ `沙龙活动总结 <http://techparty.org/>`_
+2011年09年17日，再次跑到珠三角技术沙龙忽悠Haskell，这次是广州，侧重Haskell服务器端以及Web开发中的实用功能。 `沙龙活动总结 <http://techparty.org/>`_
+
+.. raw:: html
+
+    <div style="width:425px" id="__ss_9364009"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/cngump/haskell-web" title="走马观花— Haskell Web 开发" target="_blank">走马观花— Haskell Web 开发</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/9364009" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe> <div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/" target="_blank">presentations</a> from <a href="http://www.slideshare.net/cngump" target="_blank">Gump Law</a> </div> </div>
