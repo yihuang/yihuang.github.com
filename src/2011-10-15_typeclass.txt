@@ -1,0 +1,188 @@
+========================
+Haskell Type Class 介绍
+========================
+
+.. meta::
+    :keywords: haskell type class functional programming fp
+    :description: introduction to haskell type class
+
+写程序没啥灵感了，不如写点博客吧。
+typeclass 作为 haskell 一大标志性特性，还是很值得介绍介绍的。
+
+.. 目录::
+
+预备知识
+========
+
+* 函数类型签名的语法 `foo :: Int -> Int -> Bool`
+* 函数定义的语法 `foo a b = ...`
+* 函数调用的语法 `foo 1 2`
+
+不研究haskell的朋友如果觉得后面还有哪里不清楚的地方，可以反馈给我，我在预备知识里进行补充。
+
+多态
+====
+
+先多说几句：函数重载有一个更学术的名字，叫ad-hoc多态，是说函数可以针对不同的参数类型和返回值类型有不同的实现，比如比较函数 `==` ，针对 `Int` 和 `String` 的实现肯定是不同的。注意这里还可以针对返回值类型进行重载，之所以单独说这个是因为似乎主流语言都不怎么支持，其实还是很有用的。
+
+而泛型的学术名称叫做参数化多态，是说函数的类型签名中可以包含类型变量，使用时类型变量会被替换成具体类型，而针对不同具体类型的函数体是一模一样的。比如 `replicate` 的签名：
+
+.. code-block:: haskell
+
+    replicate :: Int -> a -> [a]
+    replicate 0 _ = []
+    replicate n a = a : replicate (n-1) a
+
+它的作用是把一个值重复N次构成一个列表，不管这个值具体是什么类型， `replicate` 的实现算法是完全相同的。所以我们用一个类型变量 `a` 来表示这个值的类型，意思也就是说它可以是任何类型。
+
+类型变量 `a` 表示这个参数可以是任意类型，同时也约束该函数的实现不能对这个参数具体是什么类型做任何假定，也就是说函数不能对这个参数做任何操作，因为任何操作都隐含着这样一个假定，就是该参数的类型支持该操作，比如对这个参数做加法操作就意味着该参数的类型必须支持加法操作，而既然该参数可以是任意类型，它当然可以是某个不支持加法操作的类型，这样就矛盾了。所以不允许对它进行任何操作。
+
+这其实是一个很强的约束。所以当你在haskell中看到一个类型签名为： `a -> [a]` 的函数，你就可以毫无悬念地推断出这个函数可能的几种实现：
+
+.. code-block:: haskell
+
+    foo a = [a]
+    foo a = [a, a]
+    foo a = [a, a, a]
+    ...
+
+因为类型不允许该函数对它的参数做任何操作，所以该函数的实现也就不可能逃出上面这些模式，所以你只要看着这个函数签名就可以肯定地说：这个函数的实现就是把一个值重复N次构造一个列表出来，不过具体它会重复多少次，暂时还说不准。
+
+所以当我们赋予类型以强制的约束力，类型的表达能力就发挥出来了，我们光看着函数的签名就可以获得丰富的关于函数实现的信息。
+当然前提还是函数签名本身定义得够精确，如果上面这个 `foo` 的类型是 `Int -> [Int]` 的话，就没那么容易确定它的行为了，因为它可以对它的参数进行各种数值运算。
+
+所以haskell程序员有一个“怪癖”，那就是喜欢根据类型签名去找函数实现，而且他们还真的做了这么一个搜索引擎来干这个事情：hoogle和hayoo，hoogle索引了一些常用的库，而hayoo索引了hackage上所有库。
+
+比如写程序写着写着发现需要把一个列表根据某个条件拆分成两个列表，本能会告诉我们这样一个通用功能极可能已经有可重用的实现，于是我们根据我们的需求写一个尽量精确的类型签名： `(a -> Bool) -> [a] -> ([a], [a])` ，第一个参数是一个用来表达分拆条件的函数，我们希望这个函数把返回 `True` 的元素放一个列表，返回 `False` 的元素放另一个列表，然后把两个列表组成元组返回，当然，至于分别放哪一个列表，我们并不关心。把这个类型签名放到hoogle搜一下，只出现三个结果，都来自标准库： `break` 、 `span` 、 `partition` ，然后通过进一步考察，我们发现他们功能分别如下：
+
+.. code-block:: haskell
+
+    break     (> 3) [1,2,3,4,1,2,3,4] == ([1,2,3],[4,1,2,3,4])
+    span      (< 4) [1,2,3,4,1,2,3,4] == ([1,2,3],[4,1,2,3,4])
+    partition (> 3) [1,2,3,4,1,2,3,4] == ([4,4],[1,2,3,1,2,3])
+
+显然， `partition` 就是我们要找的函数。
+
+扯远了，回到重载上来。比如我们希望比较函数 `==` 可以适用于各种不同类型，显然参数化多态无能为力，因为不可能存在一个通用的算法能实现不同类型的比较操作。
+
+我们可以先定义一个抽象接口，然后让具体类型去分别完成不同的实现。
+
+.. code-block:: haskell
+
+    class Eq a where
+        (==) :: a -> a -> Bool
+
+意思是说所有属于 `Eq` 这个typeclass的类型都支持 `==` 操作，或者说：如果类型 `a` 属于typeclass `Eq` 的话，那就可以对 `a` 做 `==` 操作。
+
+然后我们希望实现整数的比较操作，我们就定义一个针对整数的 `Eq` 实例，在里面实现针对整数的比较操作：
+
+.. code-block:: haskell
+
+    instance Eq Int where
+        (==) = compareInt
+
+`compareInt` 的类型签名毫无悬念，必须是 `Int -> Int -> Bool` 了。因为这是编译器实现的基本操作，所以我们没法写出更具体的实现。
+
+而 `==` 本身的类型签名则是： `Eq a => a -> a -> Bool` ，可以读作：对于所有属于typeclass `Eq` 的类型 `a` ，接收两个同为类型 `a` 的参数，返回一个 `Bool` 值。关键字 `=>` 前面的部分叫做类型约束。
+
+更进一步，结合typeclass和参数化多态，我们还可以为多态类型（泛型类型）实现通用的比较操作，比如二元组：
+
+.. code-block:: haskell
+
+    instance (Eq a, Eq b) => Eq (a, b) where
+        (a1, b1) == (a2, b2) = a1==a2 && b1==b2
+
+意思是说，如果 `a` 、 `b` 类型都实现了比较操作，那它们组成的元组也能实现比较操作，实现方式就是元组的两个元素分别进行比较然后and一下。
+
+.. code-block:: haskell
+
+    instance Eq a => Eq [a] where
+        []     == []     = True
+        (x:xs) == (y:ys) = x==y && xs==ys
+        _      == _      = False
+
+这个是利用递归实现了列表的比较操作，我就不多加解释了，haskell的语法这么简洁，我感觉就算没接触过haskell的同学应该也能看出代码的含义，这一点我还期待大家的反馈。
+
+返回值重载
+===========
+
+再来一个需求，我们处理外部输入的时候，需要把字符串解析成特定的类型，比如 `readInt :: String -> Int` 、 `readBool :: String -> Bool` ，同样我们可以写一个typeclass和ad-hoc多态类型的函数，与传统函数重载不同的是，这个函数在使用时将根据它的返回值类型的不同选择不同的实现：
+
+.. code-block:: haskell
+
+    class Read a where
+        read :: String -> a
+
+    instance Read Int where
+        read = readInt
+
+    instance Read Bool where
+        read = readBool
+
+`read` 的函数签名是 `Read a => String -> a` 意思是说它可以把字符串转换成任何属于typeclass `Read` 的类型。使用时可以使用显式类型申明，比如 `(read "1") :: Int` ，或者让类型推导推出 `read` 的具体类型，从而选择一个确定的实现。举个例子，有个服务器程序可以通过命令行参数指定绑定端口号，可以使用 `read` 函数把字符串类型的命令行参数解析成整型的端口号：
+
+.. code-block:: haskell
+
+    startServer :: Int -> IO ()
+    startServer port = ...
+
+    main = do
+        [s] <- getArgs
+        startServer (read s)
+
+haskell的类型推导机制可以自动得出 `read` 在这个上下文中的具体类型应该是 `String -> Int` ，从而选择 `readInt` 作为实现。
+
+同样，我们也可以基于 `read` 继续构造其他多态函数，比如 `readLn :: Read a => IO a` ，它的功能就是从标准输入读一行内容并转换成任何需要的类型，转换失败的情况会抛出异常。
+
+常量重载
+=========
+
+考虑到常量可以看做是零参数的函数，加上可以基于函数返回值进行重载，那么重载常量也就是理所当然的了。标准库有一个很有用的typeclass就属于这种情况：
+
+.. code-block:: haskell
+
+    class Bounded a where
+        minBound, maxBound :: a
+
+表示属于typeclass `Bounded` 的类型都定义了上界和下界。通过显式指定类型来查看常见的实现：
+
+.. code-block:: haskell
+
+    ghci> maxBound :: Int
+    2147483647
+    ghci> minBound :: Int
+    -2147483648
+    ghci> maxBound :: Word
+    4294967295
+    ghci> minBound :: Word
+    0
+    ghci> minBound :: Char
+    '\NUL'
+    ghci> maxBound :: Char
+    '\1114111'
+
+另外一个常见的模式就是，经常需要为某个类型提供一个默认值，同样我们可以通过typeclass定义一个可重载的常量。
+
+.. code-block:: haskell
+
+    class Default a where
+        def :: a
+
+    instance Default PortNumber where
+        def = PortNumber 8000
+
+    instance Default HostName where
+        def = HostName "localhost"
+
+    instance Default Config where
+        def = Config { hostName = def
+                     , portNumber = def
+                     }
+
+这样，假设有一个函数根据配置项启动一个server的话： `start :: Config -> IO ()` ，使用 `start def` 就会使用默认配置项启动这个server。
+
+抽象接口
+=========
+
+因为一个 typeclass 可以包括多个函数，所以typeclass也可提供类似OO语言中抽象接口的功能。typeclass就是接口，instance就是实现，这个大家都很熟，就不多说了。
+
