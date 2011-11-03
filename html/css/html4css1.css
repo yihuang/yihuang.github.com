@@ -313,7 +313,7 @@ span.lineno { background-color: #f0f0f0; padding: 0 5px 0 5px; }
 
 pre {
     font-family: 'Bitstream Vera Sans Mono','Courier New',monospace;
-    font-size: 18px;
+    font-size: 16px;
 }
 .small pre {
     font-size: 14px;

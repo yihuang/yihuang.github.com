@@ -1,0 +1,104 @@
+写 parser 的时候需要写这样的代码： 
+
+.. code-block:: haskell
+
+    takeTill pred
+
+其中 `pred` 是个判别函数，签名为： `Char -> Bool` 。 `takeTill` 的作用就是一直解析到 `pred` 返回 `True` 为止。
+
+比如你要解析到下一个 `>` 或者 `=` ，你就写： 
+
+.. code-block:: haskell
+
+    takeTill (inClass ">=")
+
+想解析到下一个空白字符为止，就写： 
+
+.. code-block:: haskell
+
+    takeTill isSpace
+
+想解析各种空白字符呢，就在上面的基础上取个反： 
+
+.. code-block:: haskell
+
+    takeTill (not . isSpace)
+
+这个例子是想提醒大家 `isSpace` 是个函数，所以这里需要进行函数组合，而不是直接调用 `not` 。
+
+那我今天想说的是什么呢。现在我想解析到下一个 `>` 或 `=` 或空白字符为止，也就是说需要把前两个拼起来，直接写起来是这样的： 
+
+.. code-block:: haskell
+
+    takeTill (\c -> inClass ">=" c || isSpace c)
+
+也不麻烦，只不过对于患有代码洁癖的我来说，视觉上还不太给力。于是，我继续重构如下： 
+
+.. code-block:: haskell
+
+    takeTill (inClass ">=" ||. isSpace)
+
+多实现一个组合函数 `||.` ： 
+
+.. code-block:: haskell
+
+    (||.) :: (a -> Bool) -> (a -> Bool) -> a -> Bool
+    (||.) f g a = f a || g a
+
+把两个判别函数组合成一个新的判别函数。
+
+为了将它推广到其他的组合操作，我们进一步泛化一个通用函数，姑且取名叫 `fn` 吧 ： 
+
+.. code-block:: haskell
+
+    fn :: (b -> b -> b) -> (a -> b) -> (a -> b) -> a -> b
+    fn op f g a = f a `op` g a 
+
+前面的 `||.` 就成为： 
+
+.. code-block:: haskell
+
+    (||.) = fn (||)
+
+大功告成，正当我准备好好欣赏一下最终的产物 `fn` 的时候，却突然发现， `fn` 的作用不就是把 `b` 层面的二元函数提升到 `(a -> b)` 层面么，正如 `||` 和 `||.` 都是或操作，只不过一个作用在 `Bool` 值层面，一个作用在 `a -> Bool` 判别函数层面。如此通用的概念，我意识到我很可能重造轮子了。
+
+于是我请lambdabot大神帮我诊断一下： 
+
+.. code-block:: haskell
+
+    <huangyi> @pl fn op g k a = g a `op` k a
+    <lambdabot> fn = liftM2
+
+果然，lambdabot告诉我， `fn` 其实就是 `liftM2` 。 `liftM2` 是专门用来把二元函数提升到 `Monad` 中去的，而 `((->) a)` 正是 `Monad` 的实例。 
+
+.. code-block:: haskell
+
+    instance Monad ((->) a) where
+        return = const
+        -- (>>=) :: (a -> b) -> (b -> a -> c) -> (a -> c)
+        f >>= g = g . f
+
+    liftM2 :: Monad m => (a -> b -> c) -> m a -> m b -> m c
+    liftM2 op ma mb = do
+        a <- ma
+        b <- mb
+        return (a `op` b)
+
+其实只需要提升一下抽象层次的话，还不需动用 `Monad` 这样的大杀器， `Applicative` 也可以搞定。 
+
+.. code-block:: haskell
+
+    instance Applicative ((->) a) where
+        -- <$> :: (b -> c) -> (a -> b) -> (a -> c)
+        f <$> g = f . g
+        -- (<*>) :: (a -> b -> c) -> (a -> b) -> (a -> c)
+        f <*> g = \a -> (f a) (g a)
+
+用 `Applicative` 的话，前面的 `fn` 就等价于 `liftA2` 了。 
+
+.. code-block:: haskell
+
+    liftA2 :: Application f => (a -> b -> c) -> f a -> f b -> f c
+    liftA2 op fa fb = op <$> fa <*> fb
+
+绕了一圈，最后还是没逃出Haskell最基本的框框。
