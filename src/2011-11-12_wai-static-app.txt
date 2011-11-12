@@ -1,0 +1,91 @@
+======================
+warp静态文件服务器评测
+======================
+
+安装
+====
+
+#. 安装GHC和Cabal，参考： `http://book.realworldhaskell.org/read/installing-ghc-and-haskell-libraries.html <http://book.realworldhaskell.org/read/installing-ghc-and-haskell-libraries.html>`_
+
+#. 使用Cabal安装 `Warp <https://github.com/yesodweb/wai/tree/master/warp>`_ 服务器和 `wai-app-static <https://github.com/yesodweb/wai/tree/master/wai-app-static>`_ ，Cabal将自动下载安装依赖的一些库： ::
+
+    cabal install warp wai-app-static
+
+#. 编写我们的静态文件服务器：
+
+.. code-block:: haskell
+    :filename: code/wai-static.hs
+
+特性
+====
+
+一个完善的静态文件服务器：
+
+#. 能以高阶函数的方式定制文件查找逻辑
+
+#. 根据文件扩展名产生mimetype
+
+#. 304响应，支持If-Modified-Since，支持If-None-Match匹配文件哈希值
+
+#. 目录末尾自动添加'/' ，自动查找可配置的index文件等等。
+
+性能
+====
+
+* 环境：Thinkpad X61, T8100 双核，Linux 2.6.38，GHC 7.2.1
+* 编译选项： ``ghc -O3 -threaded Main.hs``
+* 执行选项： ``./Main +RTS -N1 -qa``
+* 对照nginx：worker 1, sendfile on
+
+因为我这个破本只有两个核，一个用来运行 `ab` ，一个可以用来运行web server，所以上面都只配置一个worker进程。
+
+测试命令： ``ab -c 100 -n 100000 -r http://localhost:3000/test.html``
+测试6次，平均每秒请求数分别为： ::
+
+   1 7174.23
+   2 6946.33
+   3 6120.31
+   4 6819.33
+   5 7373.51
+   6 6776.65
+
+对比nginx： ::
+
+   1 13543
+   2 13601.69
+   3 13512.38
+   4 13654.39
+   5 13680.97
+   6 13630.64
+
+warp pong test
+==============
+
+顺便再测下warp，把静态文件app去掉，换上一个最简单的app：
+
+.. code-block:: haskell
+    :filename: code/wai-pong.hs
+
+相同条件下测试，平均每秒请求数为： ::
+
+   1 22184.93
+   2 22232.89
+   3 22150.83
+   4 22189.02
+   5 22267.33
+   6 22125.08
+
+nginx的话，好像没有办法构造一个等价测试案例，我配置了一个最简单的server block： ::
+
+    server {
+        server_name localhost;
+        location = / {
+        }
+    }
+
+然后测试 http://localhost/ 这个 404 的响应，结果跟上面nginx返回静态文件的结果类似。
+
+结论
+====
+
+warp pong 测试结果很惊人，看来 static app 还有不小的优化空间的。nginx主要是用来做个对照，没看过nginx代码，不一定公平。期待大家在不同环境下去测试测试，看结果如何。
