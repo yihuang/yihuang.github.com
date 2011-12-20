@@ -1,0 +1,12 @@
+span.option {
+    cursor:pointer;
+    border: 1px solid transparent;
+}
+#result {
+    position:fixed;
+    right: 10px;
+    top: 10px;
+    background: #ccc;
+    width: 30%;
+    height: 100%;
+}
