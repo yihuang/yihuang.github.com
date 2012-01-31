@@ -1,12 +1,12 @@
 # coding: utf-8
 from utils import *
 domain = 'yi-programmer.com'
-blogurl = 'http://%s/blog/'%domain
+blogurl = 'http://%s/'%domain
 blogname=u'精确编程'
 description=u''
 links=[
-    u'<a href="/">Home</a>',
-    u'<a href="/blog/">Blog</a>',
+    u'<a href="index.html">Home</a>',
+    u'<a href="index.html">Blog</a>',
     u'<a href="https://groups.google.com/group/yi-programmer-comment" target="_blank">Comments</a>',
     u'<a href="http://9.douban.com/subject/9361637/" target="_blank">豆瓣九点</a>',
 ]
