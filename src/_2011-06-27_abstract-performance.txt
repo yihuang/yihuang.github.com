@@ -1,0 +1,50 @@
+==========================
+抽象和性能 - Stream Fusion
+==========================
+
+从经验来看，抽象和性能，似乎是鱼和熊掌不能兼得。比如从C到Java到Python，抽象层次越高的语言，性能越低下。
+
+然而当抽象层次再上一个台阶，到达编译型函数式语言，反而能回到C级别的高性能，因为在这里高的抽象层次给编译期代码优化提供了巨大的帮助。
+
+本文介绍一种针对列表处理循环的优化。
+
+高阶函数和循环
+==============
+
+正如命令式语言的GOTO，递归是函数式语言中很底层的构造，使用它我们可以表达各种循环模式。
+
+函数式语言最崇尚代码复用了，我们可以把常用的循环模式封装成不同的高阶函数，所以实际编程中很多时候只需要跟这些高阶函数打交道。
+
+prim :: [Int]
+prim = filter (isPrim l prim) [1..]
+
+filter map zip zipWith fold
+
+循环退出条件
+
+takeWhile f
+
+性能分析
+========
+
+fusion
+======
+
+map f . map g = map (f . g)
+
+filter f . filter g = filter (\x -> f x && g x)
+
+Stream Fusion
+=============
+
+data Step s a = Done
+              | Skip !s
+              | Yield !a !s
+
+data Stream a = Stream (s -> Step s a) s
+
+stream :: [a] -> Stream a
+unstream :: Stream a -> [a]
+
+filter :: (a -> Bool) -> [a] -> [a]
+

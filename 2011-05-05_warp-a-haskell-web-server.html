@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>Warp: 一个Haskell web服务器</title>
+<meta content="warp haskell web server" name="keywords" />
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">Warp: 一个Haskell web服务器</h1>
+
+                    <p class="author">2011-05-05 黄毅</p>
+                    <p><a class="reference external" href="http://steve.vinoski.net/pdf/IC-Warp_a_Haskell_Web_Server.pdf">原文：http://steve.vinoski.net/pdf/IC-Warp_a_Haskell_Web_Server.pdf</a></p>
+<p>大概两年前，我开始编写 <a class="reference external" href="http://www.yesodweb.com/">Yesod</a> web框架。最初选择的部署方式是 FastCGI ，不过我还是写了一个简单的HTTP服务器用来测试，我给它起了个相当创造性的名字：SimpleServer 。因为 Yesod 是基于 Web Application Interface (<a class="reference external" href="https://github.com/snoyberg/wai">WAI</a>) 开发的，这是 Haskell web服务器和应用程序之间的标准接口，所以很容易针对测试和部署使用不同的后端。</p>
+<p>很快就有人请求给 SimpleServer 加特性了，于是诸如分块传输编码(chunked transfer encoding)和基于 <a class="reference external" href="http://linux.die.net/man/2/sendfile">sendfile</a> 的静态文件处理等特性就陆陆续续地加了进来。有一天，来自 Soft Mechanic 的 Matt Brown 为 SimpleServer 稍微做了点调优，然后惊喜地发现它已然是Haskell世界最快的web服务器了（见图1）。之后我们俩又做了些中规中矩的改进，就发布了，起名叫 <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 。</p>
+<div class="figure align-center">
+<img alt="images/warp/benchmark.png" src="images/warp/benchmark.png" />
+<p class="caption">图1. Pong benchmark. Requests/second (越高越好).</p>
+</div>
+<p><a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 本身针对性能的代码不多。因为大部分功能都是建立在巨人的肩膀上——通过使用一些表现极好的库， <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 得以500行代码的规模就提供大量的特性。</p>
+<div class="contents topic" id="id1">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#glasgow-haskell-compiler" id="id6">Glasgow Haskell Compiler</a></li>
+<li><a class="reference internal" href="#enumerator" id="id7">Enumerator</a></li>
+<li><a class="reference internal" href="#blaze-builder" id="id8">Blaze-Builder</a></li>
+<li><a class="reference internal" href="#blaze-builder-enumerator" id="id9">Blaze-Builder-Enumerator</a></li>
+<li><a class="reference internal" href="#web-application-interface" id="id10">Web Application Interface</a></li>
+<li><a class="reference internal" href="#request-parsing" id="id11">Request Parsing</a></li>
+<li><a class="reference internal" href="#timeout-handling" id="id12">Timeout Handling</a></li>
+</ul>
+</div>
+<div class="section" id="glasgow-haskell-compiler">
+<h2><a class="toc-backref" href="#id6">Glasgow Haskell Compiler</a></h2>
+<p>第一个库其实不是库：Glasgow Haskell Compiler (<a class="reference external" href="http://www.haskell.org/ghc/">GHC</a>) 是Haskell编译器的事实标准。它提供各种工业级的优化手段，比如循环展开，大规模内联，unboxing 和 循环融合（fusion）。甚至你还可以通过规则重写(<a class="reference external" href="http://www.haskell.org/ghc/docs/7.0.3/html/users_guide/rewrite-rules.html">rule rewrite</a>)指定你自己的优化策略。另外，它还提供先进的多线程运行环境。这个运行环境最牛逼的特性就是微线程。正因为有了微线程，Warp才可以为每一个请求分配单独的线程去处理，不需要操心微线程运行环境的各种复杂性。</p>
+<p>GHC的微线程抽象能将同步的Haskell I/O调用转换成异步的系统调用。 <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 只需要简单地调用诸如recv和send之类的函数，后面的复杂性都留给 GHC 去处理。</p>
+<p>直到GHC6.12，运行环境都还基于select系统调用。对于很多任务来说这已经足够了，但还不能满足web服务器所需要的扩展性。GHC7的发布带来了全新的IO管理器，它由谷歌的Johan Tibell和Serpentinede的Bryan O’Sullivan共同开发完成。这个新的运行环境针对不同操作系统使用不同的系统调用（epoll，kqueue等等）。另外，Tibell和O’Sullivan对IO管理器使用的数据结构也做了大量的改进：它现在使用基数排序树(<a class="reference external" href="http://en.wikipedia.org/wiki/Radix_tree">radix trie</a>)存放回调，使用优先搜索队列管理超时。</p>
+<p>于是，Haskell程序轻松就可以处理上千的并发连接。而且程序员只需使用很简单的接口编程：使用 <a class="reference external" href="http://www.haskell.org/ghc/docs/7.0.1/html/libraries/base/Control-Concurrent.html#v:forkIO">forkIO</a> 创建微线程，然后在微线程里面可以直接调用阻塞函数。</p>
+</div>
+<div class="section" id="enumerator">
+<h2><a class="toc-backref" href="#id7">Enumerator</a></h2>
+<p>Haskell社区最近的一个动作就是吸收了 <a class="reference external" href="http://www.haskell.org/haskellwiki/Enumerator_and_iteratee">enumerator模式</a> 。该模式能以确定性的方式处理流式的数据。这一点对于web服务器来说尤其重要，因为web服务器需要能快速释放像文件描述符这样的系统稀缺资源。</p>
+<p><a class="reference external" href="https://github.com/snoyberg/wai">WAI</a> 和 <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 使用的 <a class="reference external" href="http://hackage.haskell.org/package/enumerator">enumerator library</a> 是由 John Millikin 开发的，该库的核心数据类型叫 <a class="reference external" href="http://hackage.haskell.org/packages/archive/enumerator/0.4.10/doc/html/Data-Enumerator.html#t:Iteratee">Iteratee</a> 。 <cite>Iteratee</cite> 是数据消费者，接收一些数据块然后对其进行处理。 <cite>Iteratee</cite> 是 <a class="reference external" href="http://www.haskell.org/haskellwiki/Monad">Monad</a> 的实例，所以可以很容易地组合多个 <cite>Iteratee</cite> 以构造复杂的行为。（简单介绍一下， <cite>Monad</cite> 是用来封装计算的副作用的容器。Haskell程序员可以轻松组合多个 <cite>Monad</cite> 值以构造更强大的计算）</p>
+<p><cite>Iteratee</cite> 的另一面就是 <a class="reference external" href="http://hackage.haskell.org/packages/archive/enumerator/0.4.10/doc/html/Data-Enumerator.html#t:Enumerator">Enumerator</a> ，即数据生产者。 <cite>Enumerator</cite> 陆续地把数据丢给 <cite>Iteratee</cite> 去处理，一直到数据耗尽或者 <cite>Iteratee</cite> 叫停为止。一个简单的例子是文件输入输出： <a class="reference external" href="http://hackage.haskell.org/packages/archive/enumerator/0.4.4/doc/html/Data-Enumerator-IO.html#v:enumFile">enumFile</a> 这个 <cite>Enumerator</cite> 不断从输入文件中读取数据并传给 <cite>Iteratee</cite> ，然后 <a class="reference external" href="http://hackage.haskell.org/packages/archive/enumerator/0.4.4/doc/html/Data-Enumerator-IO.html#v:iterHandle">iterHandle</a> 这个 <cite>Iteratee</cite> 则接收字节流数据块然后发送给另一个句柄。</p>
+<p>第三个数据类型 <a class="reference external" href="http://hackage.haskell.org/packages/archive/enumerator/0.4.4/doc/html/Data-Enumerator.html#t:Enumeratee">Enumeratee</a> 是 <cite>Enumerator</cite> 和 <cite>Iteratee</cite> 的合体：它既能从 <cite>Enumerator</cite> 接收数据，也能把处理后的数据继续传给 <cite>Iteratee</cite> 。</p>
+<p><cite>Warp</cite> 整个I/O系统建立在 <cite>Enumerator</cite> 类型之上。当 <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 建立完一个连接并启动了处理线程之后，就会基于客户socket构造一个 <cite>Enumerator</cite> ，它负责把数据“流”给 <cite>Iteratee</cite> 。对请求的解析就在这个 <cite>Iteratee</cite> 中进行。</p>
+<p><cite>Enumerator</cite> 内置的数据分块行为也正好符合 <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 的需要。 <cite>Enumerator</cite> 负责选择合适的缓冲块大小，目前是4096字节。消费者 <cite>Iteratee</cite> 则完全不依赖这些选择。给它多少数据它就处理多少数据，如果当前传过来的数据块不足以完成操作（比如不完整的HTTP头），控制流会被交回给 <cite>Enumerator</cite> 以提供更多的数据。如果提供的数据超过所需，多余的数据会交还给 <cite>Enumerator</cite> ，后者可选择继续传递给下一个处理器。比如可以作为请求body的传递给应用程序，或者当作下一个请求的一部分。</p>
+<p><cite>Enumeratee</cite> 在 <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 里同样扮演着重要的角色。它们保证应用程序在处理下一个请求之前一定已经耗尽前一个请求body。它们还负责将构造器形式(见下节)的响应body转换成分块传输编码的字节流形式。</p>
+</div>
+<div class="section" id="blaze-builder">
+<h2><a class="toc-backref" href="#id8">Blaze-Builder</a></h2>
+<p>Haskell中表达一个字符串最简单的方式就是一个Unicode字符的列表。然而这有两大性能问题：往列表append数据复杂度O(n)，而且列表本身的结构也需要许多开销。历史上还存在两个方案，分别解决这两个问题中的一个：</p>
+<ul class="simple">
+<li>在数据构造阶段使用 <a class="reference external" href="http://en.wikipedia.org/wiki/Difference_list">difference list</a> ，只在最后阶段才转换成常规列表。因为 <a class="reference external" href="http://en.wikipedia.org/wiki/Difference_list">difference list</a> 的append操作时间复杂度是 O(1)。</li>
+<li>直接使用更紧致的数据类型，比如 <a class="reference external" href="http://hackage.haskell.org/package/bytestring">Bytestring</a> 或者更新的 <a class="reference external" href="http://hackage.haskell.org/package/text">Text</a> 类型。</li>
+</ul>
+<p>由Ghent大学的Jasper Van der Jeugt和ETH Zurich的Simon Meier开发的 <a class="reference external" href="https://github.com/jaspervdj/blaze-html">blaze-html</a> 库，针对HTML构建过程中的这两个问题提供了解决方案。它的中心概念是 <cite>Builder</cite> ，值本身就了解如何填充缓冲区。 <cite>Builder</cite> 内部就是一个由缓冲区填充行为组成的difference list。结合这两点，我们就得到了既紧致又有高效的append操作的数据结构，同样重要的是，我们能保证缓冲区的数据正好只被拷贝一次。</p>
+<p>很快我们发现 <cite>Builder</cite> 抽象不光可以用来生成 HTML 。 <a class="reference external" href="http://www.yesodweb.com/">Yesod</a> web 框架还用它来生成CSS,Javascript和JSON。Meier 把 <cite>Builder</cite> 数据类型和相关的函数拆分开来形成了单独的 <a class="reference internal" href="#blaze-builder">blaze-builder</a> 库。</p>
+<p><a class="reference external" href="https://github.com/snoyberg/wai">WAI</a> 和 <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 依赖 <a class="reference internal" href="#blaze-builder">blaze-builder</a> 构建response。应用程序总是以 <cite>Builder</cite> 的形式把response body发送给服务器。然后 <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 就可以高效得把response body添加到response header后面，所以，对于常见的response， <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 只需要使用一块内存缓冲区和一个系统调用即可。</p>
+<p><a class="reference internal" href="#blaze-builder">blaze-builder</a> 还提供一个帮助函数，能够自动在每个HTTP response数据块前面加上长度。这个函数还能将多个 <cite>Builder</cite> 合并到一个合适的大小，并把块大小加到响应头中。这个函数可以被所有Haskell HTTP服务器使用。</p>
+</div>
+<div class="section" id="blaze-builder-enumerator">
+<h2><a class="toc-backref" href="#id9">Blaze-Builder-Enumerator</a></h2>
+<p>我工作中曾需要写个修改XML文件的程序，因为只需要修改一些属性，倒正好是流式算法的应用场合， <cite>Enumerator</cite> 就能派上用场了。Millikin已经写了一个包装c语言libxml库的解析库，但是没有提供构造输出的方法。</p>
+<p>简单的做法就是把每个XML事件转换成 <cite>ByteString</cite> 。但是这就需要创建大量小缓冲区。更好的方法是使用Builder，但是接收整个 Builder 流，对它们进行合并然后写到文件中去，这个过程需要把整个body保留在内存里面，而我正想避免这一点。</p>
+<p>最终，我写了一个 <cite>Enumeratee</cite> ，它接收Builder流，用它们填充好缓冲区。当一块缓冲区填满后，再把它包装成 <cite>ByteString</cite> 发送给 <cite>Iteratee</cite> 。这样，它可以选择合适的 <cite>ByteString</cite> 缓冲区大小，以节约缓冲区拷贝操作，并保持常数级内存占用。后来Meier对这个代码做了一些改进，之后发布出来，叫做 <a class="reference external" href="https://github.com/meiersi/blaze-builder-enumerator">blaze-builder-enumerator</a> 。</p>
+<p>后来写web服务器的时候，我又遇到了相同的需求。应用程序交给服务器的数据块大小是任意的，服务器需要将数据块合并成合适大小的缓冲区以降低系统调用的次数，并且处理多个缓冲区拷贝的时候还要避免太大的内存消耗。</p>
+<p>在 <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 里面，当应用程序返回 <cite>ResponseEnumerator</cite> 时，控制流就会在服务器和 <cite>Enumerator</cite> 之间转过来转过去。 <cite>Enumerator</cite> 不断传递一些Builder块给服务器。服务器使用这些Builder填充一块缓冲区。当该缓冲区填满后，服务器就会把内容发给socket然后释放缓冲区。这意味着数据只被拷贝一次到缓冲区，并且服务器也只需要申请一块缓冲区，保证了常数级的内存占用。</p>
+</div>
+<div class="section" id="web-application-interface">
+<h2><a class="toc-backref" href="#id10">Web Application Interface</a></h2>
+<p><a class="reference external" href="https://github.com/snoyberg/wai">WAI</a> 是处于web应用程序和后端之间的底层接口。它既能支持 <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 这样的独立服务器也支持CGI，FastCGI和开发服务器，后者能在开发阶段自动打断代码执行。 <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 是 <a class="reference external" href="https://github.com/snoyberg/wai">WAI</a> 的主要后端。</p>
+<p><a class="reference external" href="https://github.com/snoyberg/wai">WAI</a> 的概念很简单，应用程序就是一个函数，接受一个request参数并返回response。 <cite>Request</cite> 数据类型包含了request path, query string, request headers, remote host/port 等信息。值得注意的是这里面没有 request body。为什么？要理解这一点，我们来看看下面这个类型签名：</p>
+<pre class="literal-block">
+type Application = Request -&gt; Iteratee ByteString IO Response
+</pre>
+<p><cite>Application</cite> 返回的是包装在 <cite>Iteratee</cite> 里面的 <cite>Response</cite> ，所以其实是由 <cite>Iteratee</cite> 负责接收request body的。前面也提到过， <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 的全部操作都是在 <cite>Iteratee monad</cite> 里面进行；调用Application也是这其中的一步。 <cite>Enumerator</cite> 方法的美妙之处就在于可以如此轻松地把这所有action组合在一起。</p>
+<p>存在三种类型的response, 分别由三个数据构造器表达。 <cite>ResponseFile</cite> 包含状态码，response header的列表，和文件路径。这使得像 <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 这样的后端可以使用高效的 <a class="reference external" href="http://linux.die.net/man/2/sendfile">sendfile</a> 系统调用将文件内容发送给客户端。</p>
+<p><cite>ResponseBuilder</cite> 包含状态码，response header 列表，和一个Builder值。这是最常用的响应类型。大部分编程语言都需要将整个响应存放在内存中。而Haskell默认使用惰性求值，意味着值是按需计算的。所以我们可以把巨大的响应编码成这单个值，应用程序只会按需消耗必要的内存。</p>
+<p>最有意思的响应类型是 <cite>ResponseEnumerator</cite> ，它可以使得响应的产生和其他不纯的action交错进行。比如流式输出一个巨大的数据库响应到客户端。虽然我们也可以使用 <cite>ResponseBuilder</cite> ，但是需要将整个数据库的内容读到内存然后发送出去。而使用 <cite>ResponseEnumerator</cite> 的话，控制流会在应用程序和后端之间来回传递。一旦 <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 填满一个缓冲区，它就立刻把数据发送给客户端并释放这块内存。</p>
+</div>
+<div class="section" id="request-parsing">
+<h2><a class="toc-backref" href="#id11">Request Parsing</a></h2>
+<p>感谢Haskell高质量的 <cite>ByteString</cite> 库（来自Galois的Don Stewart，牛津大学的Duncan Coutts，Oregon State大学的David Roundy）， <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 团队才能实现一个清晰，容易理解，安全且高效的请求解析器。这个库为C语言字节数组提供了一个高级的接口，表达力强劲且高效。我们可以像链表一样使用 <cite>ByteString</cite> ，这样一来大量函数式程序员所熟悉的惯用法可以直接派上用场。同时可以直接利用标准C的I/O设施，无需任何转换。接口函数默认提供边界检查，同时也提供不检查的版本。Warp在几个可以确保安全的场合会使用不做检查的版本。</p>
+<p>HTTP协议由一个请求行开始，后面跟着多条header行。用一个空行标记header的结束。行之间由回车符和换行符分隔，header本身是由冒号分隔的key-value对。寻找换行和冒号可以由 <cite>memchr</cite> 高效完成。然后请求解析器使用零拷贝的 <cite>substring</cite> 函数即可把数据解析出来。</p>
+<p>虽然协议语法如此简单，也还是存在一些小麻烦。单个数据块可能包含多行，一行也可能包含在多个数据块中。同时我们还要处理一些异常情况：客户端可能花费过长的时间发送数据，或者在发送标记结束的空行之前就关闭了连接。我们还要防止攻击者通过发送无限长的头来耗尽我们的内存。</p>
+<p>GHC的异常机制和微线程机制让我们可以把超时和异常文件结束的情况封装成单独的阻塞函数调用。这样解析器就只负责保证header的大小在允许的范围。</p>
+<p>解析器实现为一个递归的 <cite>Iteratee</cite> ，有四个参数：当前header大小，两个difference list（一个用于当前header行的分段，一个用于解析好的header行），当前的输入缓冲区。使用difference list除了能提供O(1)的append操作外，还能利用尾递归优化。</p>
+<p>每一次递归调用都会处理一块数据，把它添加到当前行，并增加header的大小。如果解析器遇到行结束符并且当前行非空，就把它加到header列表，然后为下一行建立个空的difference list，然后继续递归调用。如果当前行是空行，就说明我们到了header的结尾，把输入缓冲区剩下的内容交回给 <cite>Enumeratee</cite> ，然后函数就返回了。</p>
+</div>
+<div class="section" id="timeout-handling">
+<h2><a class="toc-backref" href="#id12">Timeout Handling</a></h2>
+<p>最近一个针对web服务器的攻击方法叫slowloris攻击：攻击者会建立尽可能多的连接，然后发送trickles数据，试图耗尽服务器的连接池。这种攻击方法特别好用，因为它对攻击者所需的资源要求不高，标准的应对方法就是引入超时控制：如果一个客户端超过一定时间没有发送任何数据那就关闭该socket。</p>
+<p>第一版Warp直接使用了GHC中的超时控制代码。很遗憾不是很合用；扩展性不好，更糟的是还会产生死锁。（GHC已经修复的这个bug，但大部分用户还是运行着有问题的版本）所以，Warp需要更优雅的方案。</p>
+<p>这又是一个Haskell web开发社区可以发威的绝好机会：谷歌的Gregory Collins和See­Reason Partners的Jeremy Shaw （他们分别开发了 <a class="reference external" href="http://snapframework.com/">Snap</a> 和 <a class="reference external" href="http://happstack.com/">Happstack</a> 框架）已经协同开发了更高效的超时代码。他们开了个好头，但是开始的代码还是有点慢，我在他们的基础上做了两个改进：</p>
+<ul class="simple">
+<li>最初的代码使用 <a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Control-Concurrent-MVar.html">MVar</a> ，这是个线程安全的可变变量，通常是正合我们这种场景使用的。不幸的是锁的开销还是还大。于是我换成了 <a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Data-IORef.html">IORef</a> 。它跟 <a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Control-Concurrent-MVar.html">MVar</a> 不同的地方在于 <a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Data-IORef.html">IORef</a> 只是一个可变变量，不带锁。然而它提供 <a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Data-IORef.html#v:atomicModifyIORef">原子的修改操作</a> ，利用Haskell引用透明的特点，可以做到不用锁即可防止竞争条件。</li>
+<li>之前使用了一个哈希表存放超时信息，但是管理一个可变的线程安全的哈希表引入了许多复杂性。我们知道函数式程序员只懂列表，所以我决定在这里尝试一下列表，结果很成功。</li>
+</ul>
+<p>整个超时库的实现不到70行代码。它创建一个超时管理线程，和一个 <a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Data-IORef.html">IORef</a> 存放处理器列表。每个处理器包含一个超时发生时要执行的action（杀掉对应的线程）以及相应的状态： <cite>active</cite>, <cite>inactive</cite>, <cite>paused</cite>, <cite>canceled</cite> 。</p>
+<p>超时线程跑一个死循环，先用一个空列表交换出处理器列表，然后杀掉inactive的线程，再把剩下的处理器加到处理器列表上去。它利用了函数式编程两个特性：</p>
+<ul class="simple">
+<li>Haskell为纯的代码（即没有副作用）提供原子的 <a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Data-IORef.html">IORef</a> 修改操作，所以交换列表不用引入昂贵的锁操作。</li>
+<li>Haskell的列表是单链表，意味着在表头插入元素是很快的，但是在末端追加则很慢。因为我们不关心处理器的顺序，所以管理器可以创建一个处理器的difference list（[Handle-&gt;[Handle]）并再一次利用 <a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Data-IORef.html">IORef</a> 的原子操作把元素插入表头。</li>
+</ul>
+<p>对于被管理的线程来说，操作就相对简单了，只需设置相应状态为 <cite>active</cite>, <cite>paused</cite> 和 <cite>canceled</cite> 即可。这个操作再一次利用了 <a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Data-IORef.html">IORef</a> 的原子操作，所以仍然没有锁的问题。这样我们就通过一些简单的操作和一个管理线程就解决了slowloris攻击的问题。</p>
+<p><a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 让Haskell开发者可以用高级的接口编程，同时产生非常快的程序。 <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 目前是Yesod web框架生产环境部署的基础，近期也会为 Happstack web框架所用。由于 <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 代码量小，它可以运行在从服务器到嵌入式设备的任何地方。</p>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2011-05-05_warp-a-haskell-web-server';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html&title=Warp: 一个Haskell web服务器"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html&title=Warp: 一个Haskell web服务器"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=Warp: 一个Haskell web服务器&uri=http://www.yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html&title=Warp: 一个Haskell web服务器"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html&it=Warp: 一个Haskell web服务器&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html&title=Warp: 一个Haskell web服务器&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html&t=Warp: 一个Haskell web服务器"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html&title=Warp: 一个Haskell web服务器"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=Warp: 一个Haskell web服务器&rurl=http://www.yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html&rcontent=http://www.yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html&t=Warp: 一个Haskell web服务器"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2011-05-05_warp-a-haskell-web-server.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

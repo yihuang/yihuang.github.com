@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" contect="width=device-width"></meta>
+        <meta name="KEYWords" contect="黃毅 yihuang codeplayer python haskell web"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <title>精确编程</title>
+        <link rel="stylesheet" type="text/css" href="css/html4css1.css" />
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body>
+	<div id="wrapper">
+        <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+
+        <div class="widget-wrapper">
+            <div id="recentcomments" class="dsq-widget"><h3 class="dsq-widget-title">Recent Comments</h3><script type="text/javascript" src="http://yi-programmer.disqus.com/recent_comments_widget.js?num_items=5&hide_avatars=0&avatar_size=32&excerpt_length=200"></script></div>
+            <div id="popularthreads" class="dsq-widget"><h3 class="dsq-widget-title">Popular Threads</h3><script type="text/javascript" src="http://yi-programmer.disqus.com/popular_threads_widget.js?num_items=5"></script></div>
+        </div>
+        <div id="content">
+            <div id="right">
+                <div class="post">
+                    <a href="2011-11-03_.html"><h1>无题 <span class="date">2011-11-03</span></h1></a>
+                    <p>写 parser 的时候需要写这样的代码：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">takeTill</span> <span class="n">pred</span>
+</div></pre></div>
+<p>其中 <cite>pred</cite> 是个判别函数，签名为： <cite>Char -&gt; Bool</cite> 。 <cite>takeTill</cite> 的作用就是一直解析到 <cite>pred</cite> 返回 <cite>True</cite> 为止。</p>
+<p>比如你要解析到下一个 <cite>&gt;</cite> 或者 <cite>=</cite> ，你就写：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">takeTill</span> <span class="p">(</span><span class="n">inClass</span> <span class="s">&quot;&gt;=&quot;</span><span class="p">)</span>
+</div></pre></div>
+<p>想解析到下一个空白字符为止，就写：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">takeTill</span> <span class="n">isSpace</span>
+</div></pre></div>
+<p>想解析各种空白字符呢，就在上面的基础上取个反：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">takeTill</span> <span class="p">(</span><span class="n">not</span> <span class="o">.</span> <span class="n">isSpace</span><span class="p">)</span>
+</div></pre></div>
+<p>这个例子是想提醒大家 <cite>isSpace</cite> 是个函数，所以这里需要进行函数组合，而不是直接调用 <cite>not</cite> 。</p>
+<p>那我今天想说的是什么呢。现在我想解析到下一个 <cite>&gt;</cite> 或 <cite>=</cite> 或空白字符为止，也就是说需要把前两个拼起来，直接写起来是这样的：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">takeTill</span> <span class="p">(</span><span class="nf">\</span><span class="n">c</span> <span class="ow">-&gt;</span> <span class="n">inClass</span> <span class="s">&quot;&gt;=&quot;</span> <span class="n">c</span> <span class="o">||</span> <span class="n">isSpace</span> <span class="n">c</span><span class="p">)</span>
+</div></pre></div>
+<p>也不麻烦，只不过对于患有 <a class="reference external" href="http://www.douban.com/group/purecoding/">代码洁癖</a> 的我来说，视觉上还不太给力。于是，我继续重构如下：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">takeTill</span> <span class="p">(</span><span class="n">inClass</span> <span class="s">&quot;&gt;=&quot;</span> <span class="o">||.</span> <span class="n">isSpace</span><span class="p">)</span>
+</div></pre></div>
+<p>多实现一个组合函数 <cite>||.</cite> ：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="p">(</span><span class="o">||.</span><span class="p">)</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+</div><div class="line" id="LC1"><span class="p">(</span><span class="o">||.</span><span class="p">)</span> <span class="n">f</span> <span class="n">g</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">f</span> <span class="n">a</span> <span class="o">||</span> <span class="n">g</span> <span class="n">a</span>
+</div></pre></div>
+<p>把两个判别函数组合成一个新的判别函数。</p>
+<p>为了将它推广到其他的组合操作，我们进一步泛化一个通用函数，姑且取名叫 <cite>fn</cite> 吧 ：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">fn</span> <span class="ow">::</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span>
+</div><div class="line" id="LC1"><span class="nf">fn</span> <span class="n">op</span> <span class="n">f</span> <span class="n">g</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">f</span> <span class="n">a</span> <span class="p">`</span><span class="n">op</span><span class="p">`</span> <span class="n">g</span> <span class="n">a</span>
+</div></pre></div>
+<p>前面的 <cite>||.</cite> 就成为：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="p">(</span><span class="o">||.</span><span class="p">)</span> <span class="ow">=</span> <span class="n">fn</span> <span class="p">(</span><span class="o">||</span><span class="p">)</span>
+</div></pre></div>
+<p>大功告成，正当我准备好好欣赏一下最终的产物 <cite>fn</cite> 的时候，却突然发现， <cite>fn</cite> 的作用不就是把 <cite>b</cite> 层面的二元函数提升到 <cite>(a -&gt; b)</cite> 层面么，正如 <cite>||</cite> 和 <cite>||.</cite> 都是或操作，只不过一个作用在 <cite>Bool</cite> 值层面，一个作用在 <cite>a -&gt; Bool</cite> 判别函数层面。如此通用的概念，我意识到我很可能重造轮子了。</p>
+<p>于是我请 <a class="reference external" href="http://www.haskell.org/haskellwiki/Lambdabot">lambdabot</a> mm帮我诊断一下：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="o">&lt;</span><span class="n">huangyi</span><span class="o">&gt;</span> <span class="o">@</span><span class="n">pl</span> <span class="n">fn</span> <span class="n">op</span> <span class="n">g</span> <span class="n">k</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">g</span> <span class="n">a</span> <span class="p">`</span><span class="n">op</span><span class="p">`</span> <span class="n">k</span> <span class="n">a</span>
+</div><div class="line" id="LC1"><span class="o">&lt;</span><span class="n">lambdabot</span><span class="o">&gt;</span> <span class="n">fn</span> <span class="ow">=</span> <span class="n">liftM2</span>
+</div></pre></div>
+<p>果然，小mm告诉我， <cite>fn</cite> 其实就是 <cite>liftM2</cite> 。 <cite>liftM2</cite> 是专门用来把二元函数提升到 <cite>Monad</cite> 中去的，而 <cite>((-&gt;) a)</cite> 正是 <cite>Monad</cite> 的实例。</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Monad</span> <span class="p">((</span><span class="ow">-&gt;</span><span class="p">)</span> <span class="n">a</span><span class="p">)</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">return</span> <span class="ow">=</span> <span class="n">const</span>
+</div><div class="line" id="LC1">    <span class="c1">-- (&gt;&gt;=) :: (a -&gt; b) -&gt; (b -&gt; a -&gt; c) -&gt; (a -&gt; c)</span>
+</div><div class="line" id="LC1">    <span class="n">f</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span> <span class="ow">=</span> <span class="n">g</span> <span class="o">.</span> <span class="n">f</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">liftM2</span> <span class="ow">::</span> <span class="kt">Monad</span> <span class="n">m</span> <span class="ow">=&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">c</span>
+</div><div class="line" id="LC1"><span class="nf">liftM2</span> <span class="n">op</span> <span class="n">ma</span> <span class="n">mb</span> <span class="ow">=</span> <span class="kr">do</span>
+</div><div class="line" id="LC1">    <span class="n">a</span> <span class="ow">&lt;-</span> <span class="n">ma</span>
+</div><div class="line" id="LC1">    <span class="n">b</span> <span class="ow">&lt;-</span> <span class="n">mb</span>
+</div><div class="line" id="LC1">    <span class="n">return</span> <span class="p">(</span><span class="n">a</span> <span class="p">`</span><span class="n">op</span><span class="p">`</span> <span class="n">b</span><span class="p">)</span>
+</div></pre></div>
+<p>其实只需要提升一下抽象层次的话，还不需动用 <cite>Monad</cite> 这样的大杀器， <cite>Applicative</cite> 也可以搞定。</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Applicative</span> <span class="p">((</span><span class="ow">-&gt;</span><span class="p">)</span> <span class="n">a</span><span class="p">)</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="c1">-- &lt;$&gt; :: (b -&gt; c) -&gt; (a -&gt; b) -&gt; (a -&gt; c)</span>
+</div><div class="line" id="LC1">    <span class="n">f</span> <span class="o">&lt;$&gt;</span> <span class="n">g</span> <span class="ow">=</span> <span class="n">f</span> <span class="o">.</span> <span class="n">g</span>
+</div><div class="line" id="LC1">    <span class="c1">-- (&lt;*&gt;) :: (a -&gt; b -&gt; c) -&gt; (a -&gt; b) -&gt; (a -&gt; c)</span>
+</div><div class="line" id="LC1">    <span class="n">f</span> <span class="o">&lt;*&gt;</span> <span class="n">g</span> <span class="ow">=</span> <span class="nf">\</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">g</span> <span class="n">a</span><span class="p">)</span>
+</div></pre></div>
+<p>用 <cite>Applicative</cite> 的话，前面的 <cite>fn</cite> 就等价于 <cite>liftA2</cite> 了。</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">liftA2</span> <span class="ow">::</span> <span class="kt">Application</span> <span class="n">f</span> <span class="ow">=&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">c</span>
+</div><div class="line" id="LC1"><span class="nf">liftA2</span> <span class="n">op</span> <span class="n">fa</span> <span class="n">fb</span> <span class="ow">=</span> <span class="n">op</span> <span class="o">&lt;$&gt;</span> <span class="n">fa</span> <span class="o">&lt;*&gt;</span> <span class="n">fb</span>
+</div></pre></div>
+<p>绕了一圈，最后还是没逃出Haskell最基本的框框。</p>
+
+                </div>
+                <div class="post">
+                    <a href="2011-06-04_type-inference-and-unification.html"><h1>类型推导和合一算法的简单介绍 <span class="date">2011-06-04</span></h1></a>
+                    <p>Hindley Milner类型系统最过瘾的就是 <a class="reference external" href="http://en.wikipedia.org/wiki/Type_inference">类型推导</a> 功能。写程序的时候可以完全忽略变量和函数的类型，由编译器自动推导类型并做类型检查。可以说是静态语言和动态语言的完美结合。本文简单介绍类型推导的过程，以及其中的关键算法： <a class="reference external" href="http://en.wikipedia.org/wiki/Unification">合一</a> 。</p>
+<p>先问一个问题， <cite>flip id</cite> 的类型是什么？我们知道 <cite>id</cite> 是原封不动地返回传给它的参数，类型是 <cite>a -&gt; a</cite> ； <cite>flip</cite> 是用来交换一个函数前两个参数的位置，类型是 <cite>(a -&gt; b -&gt; c) -&gt; b -&gt; a -&gt; c</cite> ，然而用 <cite>id</cite> 去调用 <cite>flip</cite> 返回的是个什么类型？心算起来还是有难度，幸好我们可以求助于 ghci ：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">id</span>
+</div><div class="line" id="LC1"><span class="nf">id</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+</div><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">flip</span>
+</div><div class="line" id="LC1"><span class="nf">flip</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">c</span>
+</div><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">flip</span> <span class="n">id</span>
+</div><div class="line" id="LC1"><span class="nf">flip</span> <span class="n">id</span> <span class="ow">::</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">c</span>
+</div></pre></div>
+<p>Haskell是如何算出这个结果的？这就是类型推导算法在起作用了。简单地说，类型推导过程分两部进行：1. 根据类型系统规则产生一个方程组；2.解方程组。</p>
+<p>比如上面这个问题，我们先假定 <cite>flip id</cite> 的类型是 <cite>x</cite> ，然后根据函数调用的规则以及 <cite>id</cite> 的类型，我们发现 <cite>flip</cite> 的类型应该是 <cite>(a -&gt; a) -&gt; x</cite> ，同时我们已知 <cite>flip</cite> 的类型是： <cite>(a -&gt; b -&gt; c) -&gt; b -&gt; a -&gt; c</cite> ，这两个写法必须是等价的。根据这一点，我们就能得出一个方程组，通过合一算法解方程组，我们就可以得到 <cite>x</cite> 的值。</p>
+<p>首先为了防止命名冲突，先进行必要的重命名，同时对 <cite>flip</cite> 的类型进行一点等价转换，现在两个类型便成为如下形式：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="p">(</span><span class="n">d</span> <span class="ow">-&gt;</span> <span class="n">d</span>       <span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">x</span>
+</div><div class="line" id="LC1"><span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span>
+</div></pre></div>
+<p>根据其中的对应关系，我们可以得出这些一样等式：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">d</span> <span class="ow">=</span> <span class="n">a</span>
+</div><div class="line" id="LC1"><span class="nf">d</span> <span class="ow">=</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span>
+</div><div class="line" id="LC1"><span class="nf">x</span> <span class="ow">=</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">c</span>
+</div></pre></div>
+<p>然后再通过一些等价替换就不难解出 <cite>x</cite> 的值了： <cite>b -&gt; (b -&gt; c) -&gt; c</cite> 。</p>
+<p>我用Haskell写了一个 <a class="reference external" href="https://github.com/yihuang/haskell-snippets/blob/master/Unif.hs">合一算法的简单实现</a> ，供大家学习参考，运行效果如下：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="o">*</span><span class="kt">Main</span><span class="o">&gt;</span> <span class="n">test</span> <span class="p">(</span><span class="n">f</span> <span class="p">[</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">x</span><span class="p">])</span> <span class="p">(</span><span class="n">f</span> <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">],</span> <span class="n">f</span> <span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">c</span><span class="p">]])</span>
+</div><div class="line" id="LC1"><span class="nf">f</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>  <span class="o">&lt;==&gt;</span>  <span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">),</span><span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">c</span><span class="p">))</span>
+</div><div class="line" id="LC1"><span class="nf">d</span> <span class="ow">-&gt;</span> <span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="nf">x</span> <span class="ow">-&gt;</span> <span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">),</span><span class="n">c</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="nf">a</span> <span class="ow">-&gt;</span> <span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
+</div></pre></div>
+
+                </div>
+                <div class="post">
+                    <a href="2011-05-22_explain-algebraic-data-type.html"><h1>学舌文：代数，类型和Zipper <span class="date">2011-05-22</span></h1></a>
+                    <p>原文： <a class="reference external" href="http://blog.lab49.com/archives/3011">http://blog.lab49.com/archives/3011</a> 。本文不能算翻译也非原创，是以原文为基础按照自己觉得舒服的方式写出来，姑且叫学舌文吧。</p>
+<div class="section" id="id1">
+<h2>代数数据类型</h2>
+<p>接触Haskell后我们马上就会遇到了代数数据类型(<a class="reference external" href="http://www.haskell.org/haskellwiki/Algebraic_data_type">algebraic data type</a>)的概念，这玩意本身不难理解，只是名字费解，它跟代数有一毛钱关系？</p>
+<p>事实上还真有很大关系，同构关系列举如下：</p>
+<ul class="simple">
+<li>普通类型对应代数变量。</li>
+<li>数据构造器或 <cite>Tuple</cite> 对应求积；</li>
+<li><cite>|</cite> 操作符对于求和；</li>
+</ul>
+<p>比如：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kt">Int</span>                         <span class="o">&lt;==&gt;</span>    <span class="n">int</span>
+</div><div class="line" id="LC1"><span class="kt">MyType</span> <span class="kt">Int</span> <span class="kt">Int</span> <span class="n">or</span> <span class="p">(</span><span class="kt">Int</span><span class="p">,</span><span class="kt">Int</span><span class="p">)</span> <span class="o">&lt;==&gt;</span>    <span class="n">int</span><span class="o">*</span><span class="n">int</span>
+</div><div class="line" id="LC1"><span class="kt">Left</span> <span class="kt">Int</span> <span class="o">|</span> <span class="kt">Right</span> <span class="kt">Int</span>        <span class="o">&lt;==&gt;</span>    <span class="n">int</span><span class="o">+</span><span class="n">int</span>
+</div></pre></div>
+<p>同构是个好东西啊，一下子中学学的代数知识似乎就可以在程序设计领域派上用场了。</p>
+<p>下面我们就用代数的记法，推导一下列表类型 <cite>[a]</cite> ，我们可以这样考虑，它可以是空表，或是一个a，或是两个a，或是三个a，或是... ，也就是：</p>
+<div class="highlight None"><pre><div class="line" id="LC1">  <span class="mi">1</span> <span class="o">+</span> <span class="n">a</span> <span class="o">+</span> <span class="n">a</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="n">a</span><span class="o">*</span><span class="n">a</span><span class="o">*</span><span class="n">a</span> <span class="o">...</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">a</span> <span class="o">+</span> <span class="n">a</span><span class="o">*</span><span class="n">a</span> <span class="o">...</span><span class="p">)</span>
+</div></pre></div>
+<p>由此可见，列表类型就是函数 <cite>f(x)=1+a*x</cite> 的不动点，也可以记作： <cite>μX.(1+a*X)</cite> 。
+类似的，我们也可以得出二叉树的类型： <cite>μX.(a+X*X)</cite> 。</p>
+<p>对比下Haskell里面这两个类型的定义：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">data</span> <span class="kt">List</span> <span class="n">a</span> <span class="ow">=</span> <span class="kt">Nil</span> <span class="o">|</span> <span class="kt">Cons</span> <span class="n">a</span> <span class="p">(</span><span class="kt">List</span> <span class="n">a</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="kr">data</span> <span class="kt">Tree</span> <span class="n">a</span> <span class="ow">=</span> <span class="kt">Leaf</span> <span class="n">a</span> <span class="o">|</span> <span class="kt">Branch</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">)</span>
+</div></pre></div>
+</div>
+<div class="section" id="id2">
+<h2>Zipper</h2>
+<p>介绍完代数数据类型后，我们来看一个乍看似乎完全不相关的概念： <a class="reference external" href="http://learnyouahaskell.com/zippers">Zipper</a> ，在 <a class="reference external" href="http://en.wikibooks.org/wiki/Haskell/Zippers">wikibook</a> 和漂亮的 <a class="reference external" href="http://learnyouahaskell.com/zippers">learn you a haskell</a> 中都有详细的介绍， <a class="reference external" href="http://www.st.cs.uni-saarland.de/edu/seminare/2005/advanced-fp/docs/huet-zipper.pdf">zipper原始论文</a> 。</p>
+<p>我们知道函数式程序设计中不允许修改状态，只能通过创建新的结构达到修改的目的。这样新旧版本的数据可以同时存在，天然线程安全，程序更易理解，blah,blah,blah。</p>
+<p><a class="reference external" href="http://learnyouahaskell.com/zippers">Zipper</a> 发明出来就是用来高效地完成函数式数据结构的修改操作，可以想象它的重要性。
+可以把 <a class="reference external" href="http://learnyouahaskell.com/zippers">Zipper</a> 理解为在数据结构的某个位置挖了一个洞，然后我们可以用另一份数据补上这个洞以达到在该位置修改数据的目的。</p>
+<p>举个例子，包含三个整数的积类型： <cite>int*int*int</cite> ，或者 <cite>int**3</cite> int的三次方，Haskell的表示法就是 <cite>(Int, Int, Int)</cite> ，要挖个洞的话有三种挖法：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="p">(</span><span class="kr">_</span><span class="p">,</span>   <span class="n">int</span><span class="p">,</span> <span class="n">int</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="p">(</span><span class="n">int</span><span class="p">,</span> <span class="kr">_</span><span class="p">,</span>   <span class="n">int</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="p">(</span><span class="n">int</span><span class="p">,</span> <span class="n">int</span><span class="p">,</span> <span class="kr">_</span>  <span class="p">)</span>
+</div></pre></div>
+<p>对每一种挖洞方法，我们只需要保存剩下两份数据，用Haskell表示就是： <cite>First Int Int | Second Int Int | Third Int Int</cite> ，用代数方法表示则是： <cite>int*int + int*int + int*int</cite> ，或者 <cite>3*int**2</cite> 。</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">int</span><span class="o">**</span><span class="mi">3</span>  <span class="o">--&gt;</span> <span class="mi">3</span><span class="o">*</span><span class="n">int</span><span class="o">**</span><span class="mi">2</span>
+</div></pre></div>
+<p>也许你已经发现，这不就是微积分求导的结果吗！事实上还真是如此，在数据结构上打洞的规则和微积分里面求导的规则神奇地一致。</p>
+<p>不过处理列表和二叉树等递归类型还有点麻烦，因为微积分里貌似没有递归函数的概念，这个问题 <a class="reference external" href="http://en.wikibooks.org/wiki/Haskell/Zippers">wikibook</a> 上有解释，不过没大看懂，我们留到下一篇再研究。</p>
+</div>
+
+                </div>
+                <div class="post">
+                    <a href="2011-05-14_lazy-pattern-match.html"><h1>Lazy Pattern Matching <span class="date">2011-05-14</span></h1></a>
+                    <p>看代码，不解释。</p>
+<p>普通pattern match：</p>
+<blockquote>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="kr">let</span> <span class="n">f</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">]</span>
+</div><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="kr">let</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">f</span> <span class="n">undefined</span>
+</div><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="n">head</span> <span class="n">a</span>
+</div><div class="line" id="LC1"><span class="o">***</span> <span class="kt">Exception:</span> <span class="kt">Prelude</span><span class="o">.</span><span class="n">undefined</span>
+</div></pre></div>
+</blockquote>
+<p>Lazy pattern matching：</p>
+<blockquote>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="kr">let</span> <span class="n">f</span> <span class="o">~</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">]</span>
+</div><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="kr">let</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">f</span> <span class="n">undefined</span>
+</div><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="n">head</span> <span class="n">a</span>
+</div><div class="line" id="LC1"><span class="mi">1</span>
+</div><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="n">a</span> <span class="o">!!</span> <span class="mi">1</span>
+</div><div class="line" id="LC1"><span class="o">***</span> <span class="kt">Exception:</span> <span class="kt">Prelude</span><span class="o">.</span><span class="n">undefined</span>
+</div></pre></div>
+</blockquote>
+
+                </div>
+                <div class="post">
+                    <a href="2011-05-05_warp-a-haskell-web-server.html"><h1>Warp: 一个Haskell web服务器 <span class="date">2011-05-05</span></h1></a>
+                    <p><a class="reference external" href="http://steve.vinoski.net/pdf/IC-Warp_a_Haskell_Web_Server.pdf">原文：http://steve.vinoski.net/pdf/IC-Warp_a_Haskell_Web_Server.pdf</a></p>
+<p>大概两年前，我开始编写 <a class="reference external" href="http://www.yesodweb.com/">Yesod</a> web框架。最初选择的部署方式是 FastCGI ，不过我还是写了一个简单的HTTP服务器用来测试，我给它起了个相当创造性的名字：SimpleServer 。因为 Yesod 是基于 Web Application Interface (<a class="reference external" href="https://github.com/snoyberg/wai">WAI</a>) 开发的，这是 Haskell web服务器和应用程序之间的标准接口，所以很容易针对测试和部署使用不同的后端。</p>
+<p>很快就有人请求给 SimpleServer 加特性了，于是诸如分块传输编码(chunked transfer encoding)和基于 <a class="reference external" href="http://linux.die.net/man/2/sendfile">sendfile</a> 的静态文件处理等特性就陆陆续续地加了进来。有一天，来自 Soft Mechanic 的 Matt Brown 为 SimpleServer 稍微做了点调优，然后惊喜地发现它已然是Haskell世界最快的web服务器了（见图1）。之后我们俩又做了些中规中矩的改进，就发布了，起名叫 <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 。</p>
+<div class="figure align-center">
+<img alt="images/warp/benchmark.png" src="images/warp/benchmark.png" />
+<p class="caption">图1. Pong benchmark. Requests/second (越高越好).</p>
+</div>
+<p><a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 本身针对性能的代码不多。因为大部分功能都是建立在巨人的肩膀上——通过使用一些表现极好的库， <a class="reference external" href="https://github.com/snoyberg/warp">Warp</a> 得以500行代码的规模就提供大量的特性。</p>
+<div class="contents topic" id="id1">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="http://yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html#glasgow-haskell-compiler" id="id6">Glasgow Haskell Compiler</a></li>
+<li><a class="reference internal" href="http://yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html#enumerator" id="id7">Enumerator</a></li>
+<li><a class="reference internal" href="http://yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html#blaze-builder" id="id8">Blaze-Builder</a></li>
+<li><a class="reference internal" href="http://yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html#blaze-builder-enumerator" id="id9">Blaze-Builder-Enumerator</a></li>
+<li><a class="reference internal" href="http://yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html#web-application-interface" id="id10">Web Application Interface</a></li>
+<li><a class="reference internal" href="http://yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html#request-parsing" id="id11">Request Parsing</a></li>
+<li><a class="reference internal" href="http://yi-programmer.com/blog/2011-05-05_warp-a-haskell-web-server.html#timeout-handling" id="id12">Timeout Handling</a></li>
+</ul>
+</div>
+
+                </div>
+                <p class="more"><a href="list.html">查看全部文章>></a></p>
+            </div>
+        </div>
+        <hr>
+        <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+	</div>
+
+        <div id="sidebar" style="margin-top:10px;">
+        <!--<div id="popularthreads" class="dsq-widget"><h2 class="dsq-widget-title">Popular Threads</h2><script type="text/javascript" src="http://yi-programmer.disqus.com/popular_threads_widget.js?num_items=5"></script></div>-->
+
+        <!--<a href="http://disqus.com/">Powered by Disqus</a>-->
+        </div>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+        try{
+        var pageTracker = _gat._getTracker("UA-415070-6");
+        pageTracker._trackPageview();
+        } catch(err) {}
+    </script>
+    </body>
+</html>

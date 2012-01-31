@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>聪明的JQuery [1]</title>
+<meta content="jquery javascript features event" name="keywords" />
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">聪明的JQuery [1]</h1>
+
+                    <p class="author">2010-10-02 黄毅</p>
+                    <p>后续： <a class="reference external" href="2010-10-06_clever-jquery-part-2.html">聪明的JQuery [2]</a></p>
+<p>JQuery有不少优点，比如大家都知道的：dom selector，plugin，method chaining，干净的接口设计等。</p>
+<p>这里我再记录几个使用JQuery过程中发现的，也许不那么为人熟知的聪明的设计。</p>
+<div class="contents topic" id="id1">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#stack-architecture" id="id2">stack architecture</a></li>
+<li><a class="reference internal" href="#event-namespace" id="id3">event namespace</a></li>
+<li><a class="reference internal" href="#live-event" id="id4">live event</a></li>
+<li><a class="reference internal" href="#deep-extend" id="id5">deep extend</a></li>
+<li><a class="reference internal" href="#data" id="id6">$.data</a></li>
+<li><a class="reference internal" href="#metadata" id="id7">$.metadata</a></li>
+</ul>
+</div>
+<div class="section" id="stack-architecture">
+<h2><a class="toc-backref" href="#id2">stack architecture</a></h2>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">)</span>                       <span class="c1">// [body]</span>
+</div><div class="line" id="LC1">    <span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">)</span>                  <span class="c1">// [p, p, p] =&gt; [body]</span>
+</div><div class="line" id="LC1">        <span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>              <span class="c1">// [a, a] =&gt; [p, p, p] =&gt; [body]</span>
+</div><div class="line" id="LC1">            <span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>    <span class="c1">// 操作 [a, a]</span>
+</div><div class="line" id="LC1">        <span class="p">.</span><span class="nx">end</span><span class="p">()</span>                  <span class="c1">// [p, p, p] =&gt; [body]</span>
+</div><div class="line" id="LC1">        <span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>        <span class="c1">// 操作 [p, p, p]</span>
+</div><div class="line" id="LC1">    <span class="p">.</span><span class="nx">end</span><span class="p">()</span>                      <span class="c1">// [body]</span>
+</div></pre></div>
+</div>
+<div class="section" id="event-namespace">
+<h2><a class="toc-backref" href="#id3">event namespace</a></h2>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;click.foo&#39;</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;mouseover.foo&#39;</span><span class="p">,</span> <span class="nx">fn</span><span class="p">);</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="c1">// Unbind click.foo event</span>
+</div><div class="line" id="LC1"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">).</span><span class="nx">unbind</span><span class="p">(</span><span class="s1">&#39;click.foo&#39;</span><span class="p">);</span>
+</div><div class="line" id="LC1"><span class="c1">// Unbind all .foo namespaced events</span>
+</div><div class="line" id="LC1"><span class="c1">// click.foo, mouseover.fo</span>
+</div><div class="line" id="LC1"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">).</span><span class="nx">unbind</span><span class="p">(</span><span class="s1">&#39;.foo&#39;</span><span class="p">);</span>
+</div></pre></div>
+<p>通过给事件加命名空间， <cite>unbind</cite> 事件的时候可以进行更精确的控制。</p>
+</div>
+<div class="section" id="live-event">
+<h2><a class="toc-backref" href="#id4">live event</a></h2>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.clickable&#39;</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;clickable&quot;&gt;&lt;/div&gt;&#39;</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="nb">document</span><span class="p">)</span>
+</div></pre></div>
+<p>传统的 <cite>bind</cite> ，只绑定当前存在的DOM元素，后续动态添加的元素则需要重新绑定事件。</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.clickable&#39;</span><span class="p">).</span><span class="nx">live</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;clickable&quot;&gt;&lt;/div&gt;&#39;</span><span class="p">).</span><span class="nx">appendTo</span><span class="p">(</span><span class="nb">document</span><span class="p">)</span>
+</div></pre></div>
+<p>使用 <cite>live</cite> 绑定事件甚至可以影响动态添加的元素。原理见： <a class="reference external" href="http://api.jquery.com/live/#event-delegation">http://api.jquery.com/live/#event-delegation</a></p>
+</div>
+<div class="section" id="deep-extend">
+<h2><a class="toc-backref" href="#id5">deep extend</a></h2>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="o">&gt;</span> <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="o">:</span><span class="p">{</span><span class="s1">&#39;a-a&#39;</span><span class="o">:</span><span class="mi">1</span><span class="p">},</span> <span class="s1">&#39;b&#39;</span><span class="o">:</span><span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="o">:</span><span class="p">{</span><span class="s1">&#39;a-b&#39;</span><span class="o">:</span><span class="mi">1</span><span class="p">}})</span>
+</div><div class="line" id="LC1"><span class="nb">Object</span>
+</div><div class="line" id="LC1">    <span class="nx">a</span><span class="o">:</span> <span class="nb">Object</span>
+</div><div class="line" id="LC1">        <span class="nx">a</span><span class="o">-</span><span class="nx">b</span><span class="o">:</span> <span class="mi">1</span>
+</div><div class="line" id="LC1">    <span class="nx">b</span><span class="o">:</span> <span class="mi">1</span>
+</div><div class="line" id="LC1"><span class="o">&gt;</span> <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="o">:</span><span class="p">{</span><span class="s1">&#39;a-a&#39;</span><span class="o">:</span><span class="mi">1</span><span class="p">},</span> <span class="s1">&#39;b&#39;</span><span class="o">:</span><span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="o">:</span><span class="p">{</span><span class="s1">&#39;a-b&#39;</span><span class="o">:</span><span class="mi">1</span><span class="p">}})</span>
+</div><div class="line" id="LC1"><span class="nb">Object</span>
+</div><div class="line" id="LC1">    <span class="nx">a</span><span class="o">:</span> <span class="nb">Object</span>
+</div><div class="line" id="LC1">        <span class="nx">a</span><span class="o">-</span><span class="nx">a</span><span class="o">:</span> <span class="mi">1</span>
+</div><div class="line" id="LC1">        <span class="nx">a</span><span class="o">-</span><span class="nx">b</span><span class="o">:</span> <span class="mi">1</span>
+</div><div class="line" id="LC1">    <span class="nx">b</span><span class="o">:</span> <span class="mi">1</span>
+</div></pre></div>
+<p>deep extend可以递归对内部的对象进行扩展，而非替换。</p>
+</div>
+<div class="section" id="data">
+<h2><a class="toc-backref" href="#id6">$.data</a></h2>
+<p>JS开发经常需要把一些信息绑定到某个DOM节点，以方便获取。直接使用DOM属性的话容易导致DOM和JS之间的循环引用，进而导致某些浏览器的内存泄漏。JQuery提供 <cite>data</cite> 方法可以避开这个问题。使用方法很简单：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#element&#39;</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#element&#39;</span><span class="p">).</span><span class="nx">data</span><span class="p">({</span><span class="s1">&#39;name1&#39;</span><span class="o">:</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="s1">&#39;name2&#39;</span><span class="o">:</span><span class="s1">&#39;value&#39;</span><span class="p">})</span>
+</div><div class="line" id="LC1"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#element&#39;</span><span class="p">).</span><span class="nx">removeData</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+</div></pre></div>
+<p>原理也很简单：首先把JS对象存放在一个全局cache里面，KEY是JQuery维护的自增ID，保证全局唯一，在DOM节点上不直接引用JS对象，而是引用这个ID，这样就避免了DOM和JS之间的直接引用。</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="o">&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#demo&#39;</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="o">&gt;</span> <span class="nx">$</span><span class="p">.</span><span class="nx">expando</span>
+</div><div class="line" id="LC1"><span class="s2">&quot;jQuery1285955046738&quot;</span>
+</div><div class="line" id="LC1"><span class="o">&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#demo&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;jQuery1285955046738&#39;</span><span class="p">]</span>
+</div><div class="line" id="LC1"><span class="mi">68</span>
+</div><div class="line" id="LC1"><span class="o">&gt;</span> <span class="nx">$</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="mi">68</span><span class="p">].</span><span class="nx">key</span>
+</div><div class="line" id="LC1"><span class="s1">&#39;value&#39;</span>
+</div></pre></div>
+</div>
+<div class="section" id="metadata">
+<h2><a class="toc-backref" href="#id7">$.metadata</a></h2>
+<p>这个不是JQuery Core自带的，而是个第三方的插件，不过也很有意思，尤其在 JQuery UI 中扮演了关键的角色。</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;demo&quot;</span> <span class="na">class=</span><span class="s">&quot;normalclass {name:&#39;value&#39;}&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</div></pre></div>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="o">&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#demo&#39;</span><span class="p">).</span><span class="nx">metadata</span><span class="p">().</span><span class="nx">name</span>
+</div><div class="line" id="LC1"><span class="nx">value</span>
+</div></pre></div>
+<p>也就是说我们可以直接在HTML里面给元素绑定一些数据，比如说为JS的处理准备点配置信息，或是包含相关的数据供JS进行操作。</p>
+<p>除了把数据写在class里面，它还提供另外两种存放数据的方法，详见 <a class="reference external" href="http://plugins.jquery.com/project/metadata">http://plugins.jquery.com/project/metadata</a></p>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2010-10-02_clever-jquery';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2010-10-02_clever-jquery.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2010-10-02_clever-jquery.html&title=聪明的JQuery [1]"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2010-10-02_clever-jquery.html&title=聪明的JQuery [1]"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=聪明的JQuery [1]&uri=http://www.yi-programmer.com/blog/2010-10-02_clever-jquery.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2010-10-02_clever-jquery.html&title=聪明的JQuery [1]"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2010-10-02_clever-jquery.html&it=聪明的JQuery [1]&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2010-10-02_clever-jquery.html&title=聪明的JQuery [1]&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2010-10-02_clever-jquery.html&t=聪明的JQuery [1]"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2010-10-02_clever-jquery.html&title=聪明的JQuery [1]"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=聪明的JQuery [1]&rurl=http://www.yi-programmer.com/blog/2010-10-02_clever-jquery.html&rcontent=http://www.yi-programmer.com/blog/2010-10-02_clever-jquery.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2010-10-02_clever-jquery.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2010-10-02_clever-jquery.html&t=聪明的JQuery [1]"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2010-10-02_clever-jquery.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

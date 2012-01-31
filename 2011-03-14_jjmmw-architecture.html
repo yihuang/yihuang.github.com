@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>网站架构总结</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">网站架构总结</h1>
+
+                    <p class="author">2011-03-14 黄毅</p>
+                    <!-- meta:
+:keywords: web architecture munin django git jquery
+:description: 网站架构分享 -->
+<p>俺们不是什么很大的网站，用的也都是些很常见的技术，不过毕竟也是辛辛苦苦重构了大量旧代码才终于梳理出一套比较完整的体系，趁着它雏形初具的时候，赶紧整理分享一下。也许能帮谁省掉一些走弯路的时间，如果有幸收到一些建议，那就赚到了。</p>
+<div class="contents topic" id="id2">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id3" id="id16">后端</a><ul>
+<li><a class="reference internal" href="#django" id="id17">Django</a></li>
+<li><a class="reference internal" href="#nginx" id="id18">Nginx</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id8" id="id19">前端</a><ul>
+<li><a class="reference internal" href="#lab" id="id20">LAB</a></li>
+<li><a class="reference internal" href="#jquery" id="id21">JQuery</a></li>
+<li><a class="reference internal" href="#scons" id="id22">SCons</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id12" id="id23">监控</a><ul>
+<li><a class="reference internal" href="#munin" id="id24">Munin</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id14" id="id25">开发流程</a><ul>
+<li><a class="reference internal" href="#git" id="id26">Git</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id16">后端</a></h2>
+<div class="section" id="django">
+<h3><a class="toc-backref" href="#id17">Django</a></h3>
+<p>使用 <a class="reference external" href="http://www.python.org/">python</a> + <a class="reference external" href="http://www.djangoproject.com/">django</a> 框架，虽说 <a class="reference external" href="http://www.djangoproject.com/">django</a> 确实有种种不尽如人意的地方， <a class="reference external" href="http://docs.djangoproject.com/en/dev/topics/templates/">模板</a> 不如 <a class="reference external" href="http://www.makotemplates.org/">mako</a> ， <a class="reference external" href="http://docs.djangoproject.com/en/dev/topics/db/models/">orm</a> 也比不上 <a class="reference external" href="http://www.sqlalchemy.org">sqlalchemy</a> ，不过这些不爽都还敌不过它带来的便利。它自带的 <a class="reference external" href="http://docs.djangoproject.com/en/dev/ref/contrib/admin/">管理后台</a> 以及各种内置的或是第三方的app绝对是能延年益寿的好东西。自带的管理后台通过一些简单的定制完全能满足我们后台管理的需求。</p>
+</div>
+<div class="section" id="nginx">
+<h3><a class="toc-backref" href="#id18">Nginx</a></h3>
+<p>架构上也是很常见的 <a class="reference external" href="http://wiki.nginx.org/Main">nginx</a> 接入加上后端的 <a class="reference external" href="http://httpd.apache.org/">apache</a> + <a class="reference external" href="http://code.google.com/p/modwsgi/">mod_wsgi</a> (<a class="reference external" href="http://code.google.com/p/modwsgi/wiki/ConfigurationDirectives#WSGIDaemonProcess">daemon模式</a>)，目前来看 <a class="reference external" href="http://code.google.com/p/modwsgi/">mod_wsgi</a> 进程还是很耗内存的，也在考虑采用 <a class="reference external" href="http://projects.unbit.it/uwsgi/">uwsgi</a> 。</p>
+<p>网站有较大一部分都是以提供内容为主的，对这一部分可以采用大粒度的缓存措施：全页面缓存，少量个性化内容通过ajax加载。也考虑过在 <a class="reference external" href="http://wiki.nginx.org/Main">nginx</a> 这一层做 <a class="reference external" href="http://wiki.nginx.org/HttpSsiModule">ssi</a> ，不过目前来看ajax的效果还不错。</p>
+<p>具体做法是采用 <a class="reference external" href="http://wiki.nginx.org/Main">nginx</a> 的 <a class="reference external" href="http://wiki.nginx.org/HttpRedis">HttpRedis</a> 扩展，用 <a class="reference external" href="http://redis.io/">redis</a> 做缓存（放弃 <a class="reference external" href="http://memcached.org/">memcache</a> 的原因是我们有页面大小超过了1m...），url当key， <a class="reference external" href="http://wiki.nginx.org/Main">nginx</a> 从 <a class="reference external" href="http://redis.io/">redis</a> 中取出页面直接返回。后端写了一个 <a class="reference external" href="http://www.djangoproject.com/">django</a> 的 <a class="reference external" href="http://docs.djangoproject.com/en/dev/topics/http/middleware/">middleware</a> ，负责根据一定的策略将页面内容写入 <a class="reference external" href="http://redis.io/">redis</a> 并设置适当的超时时间。</p>
+<p>因为我们有一些页面确实很大（超过1m），甚至考虑过直接把页面gzip后的内容写入 <a class="reference external" href="http://redis.io/">redis</a> ， <a class="reference external" href="http://wiki.nginx.org/Main">nginx</a> 取到内容后设置下相应的header直接转给浏览器，这样既可节省不少 <a class="reference external" href="http://redis.io/">redis</a> 的体积，也可省下不少 <a class="reference external" href="http://wiki.nginx.org/Main">nginx</a> 与 <a class="reference external" href="http://redis.io/">redis</a> 之间传输以及压缩的开销。不过这个方案暂未实验成功，不知道有没有同学有成功经验可以分享一下。</p>
+<p>我们有一个项目涉及到关系结构比较复杂的数据以及大量计算，说结构复杂主要还是针对关系数据库来说的，但当我们开始考虑采用 <a class="reference external" href="http://www.mongodb.org/">mongodb</a> 来实现之后，一切都变得自然而然水到渠成了。这一节的收获就是，选到正确的工具，太重要了。</p>
+</div>
+</div>
+<div class="section" id="id8">
+<h2><a class="toc-backref" href="#id19">前端</a></h2>
+<p>在大量使用前端js搭建的项目中，有一条经验就是，尽量让首屏的内容不依赖js，这样一方面所有js都能异步加载，让页面以最快的速度率先展现出来，也可以在js不可用的情况展现只读的内容，也能做到一点 <a class="reference external" href="http://en.wikipedia.org/wiki/Progressive_enhancement">progressive enhancement</a> 。</p>
+<div class="section" id="lab">
+<h3><a class="toc-backref" href="#id20">LAB</a></h3>
+<p>js异步加载使用的是 <a class="reference external" href="http://labjs.com/">LAB</a> ，喜欢它的小体积，我们用一个django模板的 <a class="reference external" href="http://docs.djangoproject.com/en/dev/howto/custom-template-tags/">自定义tag</a> ，把压缩后的LAB.js直接嵌入页面，这样当浏览器渲染首屏页面的过程中，只需等待唯一一个css文件加载完即可，并且异步加载js的代码还可以放在header里面，能在第一时间进行加载。</p>
+</div>
+<div class="section" id="jquery">
+<h3><a class="toc-backref" href="#id21">JQuery</a></h3>
+<p>JS采用 <a class="reference external" href="http://jquery.com/">JQuery</a> 框架，DOM事件在js初始化时统一绑定上去，通过使用class和data属性，这一步可以做得非常简便。另外这个项目里面涉及不少表格， <a class="reference external" href="http://jquery.com/">JQuery</a> 的 <a class="reference external" href="http://api.jquery.com/live/">live事件</a> 可以派上大用场。</p>
+<p>相关代码大致如下：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="c1">// 绑定所有按钮和链接的点击事件</span>
+</div><div class="line" id="LC1"><span class="c1">// &lt;a href=&quot;#&quot; data-click=&quot;refresh&quot; class=&quot;action&quot;&gt;刷新&lt;/a&gt;</span>
+</div><div class="line" id="LC1"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;a .action, button.action&#39;</span><span class="p">).</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</div><div class="line" id="LC1">    <span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="k">if</span><span class="p">(</span> <span class="nx">action</span> <span class="o">&amp;&amp;</span> <span class="nx">g_actions</span><span class="p">[</span><span class="nx">action</span><span class="p">]</span> <span class="p">)</span> <span class="p">{</span>
+</div><div class="line" id="LC1">        <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span> <span class="nx">g_actions</span><span class="p">[</span><span class="nx">action</span><span class="p">]</span> <span class="p">);</span>
+</div><div class="line" id="LC1">    <span class="p">}</span>
+</div><div class="line" id="LC1"><span class="p">});</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="c1">// 绑定表格里面所有事件</span>
+</div><div class="line" id="LC1"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.liveaction&#39;</span><span class="p">,</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#tab-fundlist&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]).</span><span class="nx">live</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ev</span><span class="p">)</span> <span class="p">{</span>
+</div><div class="line" id="LC1">    <span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">);</span>
+</div><div class="line" id="LC1">    <span class="nx">get_action</span><span class="p">(</span><span class="nx">action</span><span class="p">).</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">ev</span><span class="p">);</span>
+</div><div class="line" id="LC1">    <span class="nx">ev</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+</div><div class="line" id="LC1"><span class="p">});</span>
+</div></pre></div>
+<p>UI采用的 <a class="reference external" href="http://jqueryui.com/">JQueryUI</a> 框架。大量jquery惯用法的使用，使用 <a class="reference external" href="http://jqueryui.com/">JQueryUI</a> 的代码实现得非常干净，定制和扩展起来也很容易。唯一的问题是ie6下面的性能明显要差，尤其是 <a class="reference external" href="http://jqueryui.com/demos/autocomplete/">autocomplete</a> 在菜单项比较多的时候，很慢。原因是里面存在大量琐碎的dom操作，改用innerHTML优化一下之后好多了，只是代码也丑多了。</p>
+</div>
+<div class="section" id="scons">
+<h3><a class="toc-backref" href="#id22">SCons</a></h3>
+<p>我们使用 <a class="reference external" href="http://code.google.com/closure/compiler/">closurec</a> 打包压缩js，使用 <a class="reference external" href="http://developer.yahoo.com/yui/compressor/">yui-compressor</a> 打包压缩css。</p>
+<p>在自动化js css合并压缩的问题上，曾经考虑过Makefile，最终放弃，因为我们希望在开发模式和部署模式下面进行不同的操作，用Makefile干这个太麻烦了。于是采用了同为python门下的 <a class="reference external" href="http://www.scons.org/">SCons</a> ，结论是相当好用。</p>
+<p>大概流程如下：切换到 static 目录下面；开发过程中可以执行 <cite>scons MODE=dev</cite> ，将进入开发模式，只简单地把js和css文件concat到一起；准备部署时执行 <cite>scons</cite> ，将进入部署模式，对js和css进行合并压缩。</p>
+<p>static/SConstruct :</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="n">SConscript</span><span class="p">([</span>
+</div><div class="line" id="LC1">    <span class="s">&#39;js/SConstruct&#39;</span><span class="p">,</span>
+</div><div class="line" id="LC1">    <span class="s">&#39;css/aristo/SConstruct&#39;</span><span class="p">,</span>
+</div><div class="line" id="LC1"><span class="p">])</span>
+</div></pre></div>
+<p>static/js/SConstruct :</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kn">import</span> <span class="nn">os</span>
+</div><div class="line" id="LC1"><span class="kn">from</span> <span class="nn">sconsutils</span> <span class="kn">import</span> <span class="n">closurec</span><span class="p">,</span> <span class="n">concat</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">deps</span> <span class="o">=</span> <span class="p">{</span>
+</div><div class="line" id="LC1">    <span class="s">&#39;LAB.js&#39;</span><span class="p">:</span> <span class="p">[</span>
+</div><div class="line" id="LC1">        <span class="s">&#39;src/LAB.js&#39;</span><span class="p">,</span>
+</div><div class="line" id="LC1">    <span class="p">],</span>
+</div><div class="line" id="LC1">    <span class="s">&#39;jquery.js&#39;</span><span class="p">:</span> <span class="p">[</span>
+</div><div class="line" id="LC1">        <span class="s">&#39;src/jquery-1.4.4.js&#39;</span><span class="p">,</span>
+</div><div class="line" id="LC1">        <span class="c"># jquery 相关插件...</span>
+</div><div class="line" id="LC1">    <span class="p">],</span>
+</div><div class="line" id="LC1">    <span class="s">&#39;jquery.ui.js&#39;</span><span class="p">:</span> <span class="p">[</span>
+</div><div class="line" id="LC1">        <span class="s">&#39;src/ui/jquery.ui.core.js&#39;</span><span class="p">,</span>
+</div><div class="line" id="LC1">        <span class="c"># jquery ui 相关文件...</span>
+</div><div class="line" id="LC1">    <span class="p">],</span>
+</div><div class="line" id="LC1">    <span class="s">&#39;fundbook.js&#39;</span><span class="p">:</span> <span class="p">[</span>
+</div><div class="line" id="LC1">        <span class="s">&#39;src/fundbook.main.js&#39;</span><span class="p">,</span>
+</div><div class="line" id="LC1">        <span class="c"># 项目本身的js...</span>
+</div><div class="line" id="LC1">    <span class="p">],</span>
+</div><div class="line" id="LC1"><span class="p">}</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">env</span> <span class="o">=</span> <span class="n">Environment</span><span class="p">(</span><span class="n">ENV</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">deps</span><span class="p">:</span>
+</div><div class="line" id="LC1">    <span class="n">env</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">deps</span><span class="p">[</span><span class="n">target</span><span class="p">],</span> <span class="n">closurec</span> <span class="k">if</span> <span class="n">ARGUMENTS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;mode&#39;</span><span class="p">)</span><span class="o">!=</span><span class="s">&#39;dev&#39;</span> <span class="k">else</span> <span class="n">concat</span><span class="p">)</span>
+</div></pre></div>
+<p>static/css/aristo/SConstruct :</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kn">import</span> <span class="nn">os</span>
+</div><div class="line" id="LC1"><span class="kn">from</span> <span class="nn">sconsutils</span> <span class="kn">import</span> <span class="n">yuicss</span><span class="p">,</span> <span class="n">concat</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">env</span> <span class="o">=</span> <span class="n">Environment</span><span class="p">(</span><span class="n">ENV</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="n">env</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="s">&#39;all.css&#39;</span><span class="p">,</span> <span class="p">[</span>
+</div><div class="line" id="LC1">    <span class="s">&#39;jquery-ui-1.8.4.custom.css&#39;</span><span class="p">,</span>
+</div><div class="line" id="LC1">    <span class="s">&#39;jquery.tablesorter.css&#39;</span><span class="p">,</span>
+</div><div class="line" id="LC1">    <span class="s">&#39;main.css&#39;</span><span class="p">,</span>
+</div><div class="line" id="LC1"><span class="p">],</span> <span class="n">yuicss</span> <span class="k">if</span> <span class="n">ARGUMENTS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;mode&#39;</span><span class="p">)</span><span class="o">!=</span><span class="s">&#39;dev&#39;</span> <span class="k">else</span> <span class="n">concat</span><span class="p">)</span>
+</div></pre></div>
+<p>sconsutils.py :</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kn">import</span> <span class="nn">SCons</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="k">def</span> <span class="nf">yuicss</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">for_signature</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div><div class="line" id="LC1">    <span class="n">source</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">source</span><span class="p">))</span>
+</div><div class="line" id="LC1">    <span class="n">cmd</span> <span class="o">=</span> <span class="s">&#39;cat </span><span class="si">%s</span><span class="s"> | yui-compressor --type css -o </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="k">return</span> <span class="n">cmd</span>
+</div><div class="line" id="LC1"><span class="n">yuicss</span> <span class="o">=</span> <span class="n">SCons</span><span class="o">.</span><span class="n">Action</span><span class="o">.</span><span class="n">CommandGeneratorAction</span><span class="p">(</span><span class="n">yuicss</span><span class="p">,</span> <span class="p">{})</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="k">def</span> <span class="nf">closurec</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">for_signature</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div><div class="line" id="LC1">    <span class="n">source</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span><span class="s">&#39;--js=&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">source</span><span class="p">))</span>
+</div><div class="line" id="LC1">    <span class="n">cmd</span> <span class="o">=</span> <span class="s">&#39;closurec </span><span class="si">%s</span><span class="s"> --js_output_file=</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="k">return</span> <span class="n">cmd</span>
+</div><div class="line" id="LC1"><span class="n">closurec</span> <span class="o">=</span> <span class="n">SCons</span><span class="o">.</span><span class="n">Action</span><span class="o">.</span><span class="n">CommandGeneratorAction</span><span class="p">(</span><span class="n">closurec</span><span class="p">,</span> <span class="p">{})</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="k">def</span> <span class="nf">concat</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">for_signature</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div><div class="line" id="LC1">    <span class="n">source</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">source</span><span class="p">))</span>
+</div><div class="line" id="LC1">    <span class="n">cmd</span> <span class="o">=</span> <span class="s">&quot;cat </span><span class="si">%s</span><span class="s"> &gt; </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="k">return</span> <span class="n">cmd</span>
+</div><div class="line" id="LC1"><span class="n">concat</span> <span class="o">=</span> <span class="n">SCons</span><span class="o">.</span><span class="n">Action</span><span class="o">.</span><span class="n">CommandGeneratorAction</span><span class="p">(</span><span class="n">concat</span><span class="p">,</span> <span class="p">{})</span>
+</div></pre></div>
+</div>
+</div>
+<div class="section" id="id12">
+<h2><a class="toc-backref" href="#id23">监控</a></h2>
+<div class="section" id="munin">
+<h3><a class="toc-backref" href="#id24">Munin</a></h3>
+<p>向所有和我一样被 <a class="reference external" href="http://en.wikipedia.org/wiki/Simple_Network_Management_Protocol">snmp协议</a> 搞晕了的同学诚挚推荐 <a class="reference external" href="http://munin-monitoring.org/">Munin</a> 。</p>
+</div>
+</div>
+<div class="section" id="id14">
+<h2><a class="toc-backref" href="#id25">开发流程</a></h2>
+<div class="section" id="git">
+<h3><a class="toc-backref" href="#id26">Git</a></h3>
+<p>在最初为了赶时髦从 <a class="reference external" href="http://subversion.tigris.org/">svn</a> 切换到 <a class="reference external" href="http://git-scm.com/">git</a> 时，确实产生了一点混乱。不过当我们拿 <a class="reference external" href="http://git-scm.com/">git</a> 当 <a class="reference external" href="http://subversion.tigris.org/">svn</a> 用过一段时间后，也逐渐看清了针对 <a class="reference external" href="http://git-scm.com/">git</a> 来说正确的代码管理流程。</p>
+<p>第一，在团队成员的代码库之间建立只读共享，linux机器跑一个 <a class="reference external" href="http://www.kernel.org/pub/software/scm/git/docs/git-daemon.html">git-daemon</a> 即可，windows机器跑这个有点麻烦，我们的解决方案是直接建立samba共享。这样一来，成员之间就可以互相pull代码了；第二，由leader单独管理master分支，应该保持跟运营中的代码一致，成员完成一个需求后向leader发一个pull request，leader fetch该成员的代码，做必要的review和测试之后，merge进master分支，然后发布。</p>
+<p>另外，为了保持版本历史的干净，我们倾向于 <a class="reference external" href="http://www.kernel.org/pub/software/scm/git/docs/git-rebase.html">rebase</a> 而非 <a class="reference external" href="http://www.kernel.org/pub/software/scm/git/docs/git-merge.html">merge</a> 。</p>
+<p>这个过程具体涉及到的命令如下：</p>
+<p>member :</p>
+<pre class="literal-block">
+git commit -m &quot;finish a feature&quot;
+# 自测OK
+git pull --rebase leader/master
+# 解决 rebase 可能导致的冲突
+# member 向 leader 发起 pull request
+</pre>
+<p>leader :</p>
+<pre class="literal-block">
+git fetch member
+# review and test ...
+git merge member/master --ff-only
+# 如果 fast-forward 失败，则通知member重新进行pull --rebase
+# 测试OK后发布
+</pre>
+<p>如果feature较大，leader也可以选择建立一个 testing 的分支进行review和test，这些细节leader可以灵活控制。</p>
+<p>每个开发人员本地的代码管理， <a class="reference external" href="https://github.com/nvie/gitflow">git flow</a> 是一个相当好的范例，直接使用即可。</p>
+<p>对于我们来说， <a class="reference external" href="http://git-scm.com/">git</a> 这样的流程，简直是完美。</p>
+</div>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2011-03-14_jjmmw-architecture';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2011-03-14_jjmmw-architecture.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2011-03-14_jjmmw-architecture.html&title=网站架构总结"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2011-03-14_jjmmw-architecture.html&title=网站架构总结"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=网站架构总结&uri=http://www.yi-programmer.com/blog/2011-03-14_jjmmw-architecture.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2011-03-14_jjmmw-architecture.html&title=网站架构总结"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2011-03-14_jjmmw-architecture.html&it=网站架构总结&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2011-03-14_jjmmw-architecture.html&title=网站架构总结&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2011-03-14_jjmmw-architecture.html&t=网站架构总结"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2011-03-14_jjmmw-architecture.html&title=网站架构总结"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=网站架构总结&rurl=http://www.yi-programmer.com/blog/2011-03-14_jjmmw-architecture.html&rcontent=http://www.yi-programmer.com/blog/2011-03-14_jjmmw-architecture.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2011-03-14_jjmmw-architecture.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2011-03-14_jjmmw-architecture.html&t=网站架构总结"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2011-03-14_jjmmw-architecture.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

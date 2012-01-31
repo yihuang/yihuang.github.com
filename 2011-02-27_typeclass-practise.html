@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>type class 练习(part 1)</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">type class 练习(part 1)</h1>
+
+                    <p class="author">2011-02-27 黄毅</p>
+                    <!-- meta:
+:keywords: haskell type class monad functor applicative
+:description: `Monad Reader 13期 <http://www.haskell.org/wikiupload/8/85/TMR-Issue13.pdf>`_ 有一篇挺好的文章，简单介绍 haskell 中基础的type class及其关系。本文记录我阅读过程中练习的实现代码。 -->
+<div class="figure align-center">
+<img alt="images/typeclass-relation.png" src="images/typeclass-relation.png" />
+<p class="caption">基本type class关系图</p>
+</div>
+<p><a class="reference external" href="http://www.haskell.org/wikiupload/8/85/TMR-Issue13.pdf">Monad Reader 13期</a> 有一篇挺好的文章&quot;The Typeclassopedia&quot;，介绍了许多 haskell 中基本的type class及其联系。本文记录我阅读过程中做为笔记的代码。</p>
+<blockquote>
+&quot;good intuition comes from hard work, not from learning the right metaphor.&quot;</blockquote>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Data.Monoid</span>
+</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Prelude</span> <span class="n">hiding</span><span class="p">(</span><span class="kt">Functor</span><span class="p">,</span> <span class="n">fmap</span><span class="p">,</span> <span class="p">(</span><span class="o">&gt;&gt;=</span><span class="p">),</span> <span class="p">(</span><span class="o">&gt;&gt;</span><span class="p">),</span> <span class="kt">Monad</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">class</span> <span class="kt">Functor</span> <span class="n">f</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">fmap</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">b</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Functor</span> <span class="kt">Maybe</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">fmap</span> <span class="n">g</span> <span class="kt">Nothing</span> <span class="ow">=</span> <span class="kt">Nothing</span>
+</div><div class="line" id="LC1">    <span class="n">fmap</span> <span class="n">g</span> <span class="p">(</span><span class="kt">Just</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="p">(</span><span class="n">g</span> <span class="n">a</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Functor</span> <span class="p">(</span><span class="kt">Either</span> <span class="n">e</span><span class="p">)</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">fmap</span> <span class="kr">_</span> <span class="p">(</span><span class="kt">Left</span> <span class="n">e</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Left</span> <span class="n">e</span>
+</div><div class="line" id="LC1">    <span class="n">fmap</span> <span class="n">g</span> <span class="p">(</span><span class="kt">Right</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="p">(</span><span class="n">g</span> <span class="n">a</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Functor</span> <span class="p">((</span><span class="ow">-&gt;</span><span class="p">)</span> <span class="n">e</span><span class="p">)</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="c1">-- fmap g f = g . f</span>
+</div><div class="line" id="LC1">    <span class="c1">-- 化简可得：</span>
+</div><div class="line" id="LC1">    <span class="n">fmap</span> <span class="ow">=</span> <span class="p">(</span><span class="o">.</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Functor</span> <span class="p">((,)</span> <span class="n">e</span><span class="p">)</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">fmap</span> <span class="n">g</span> <span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">g</span> <span class="n">a</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">class</span> <span class="kt">Functor</span> <span class="n">f</span> <span class="ow">=&gt;</span> <span class="kt">Pointed</span> <span class="n">f</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">pure</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">a</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Pointed</span> <span class="kt">Maybe</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">pure</span> <span class="ow">=</span> <span class="kt">Just</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Pointed</span> <span class="p">((</span><span class="ow">-&gt;</span><span class="p">)</span> <span class="n">e</span><span class="p">)</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">pure</span> <span class="ow">=</span> <span class="n">const</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Pointed</span> <span class="p">(</span><span class="kt">Either</span> <span class="n">e</span><span class="p">)</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">pure</span> <span class="ow">=</span> <span class="kt">Right</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="p">(</span><span class="kt">Monoid</span> <span class="n">e</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Pointed</span> <span class="p">((,)</span> <span class="n">e</span><span class="p">)</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="c1">-- pure a = (mempty, a)</span>
+</div><div class="line" id="LC1">    <span class="c1">-- 化简可得：</span>
+</div><div class="line" id="LC1">    <span class="n">pure</span> <span class="ow">=</span> <span class="p">(,)</span> <span class="n">mempty</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">class</span> <span class="p">(</span><span class="kt">Pointed</span> <span class="n">f</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Applicative</span> <span class="n">f</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="o">&lt;*&gt;</span><span class="p">)</span> <span class="ow">::</span> <span class="n">f</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">b</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Applicative</span> <span class="kt">Maybe</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="kt">Nothing</span> <span class="o">&lt;*&gt;</span> <span class="kr">_</span> <span class="ow">=</span> <span class="kt">Nothing</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="kt">Just</span> <span class="n">g</span><span class="p">)</span> <span class="o">&lt;*&gt;</span> <span class="n">f</span> <span class="ow">=</span> <span class="n">fmap</span> <span class="n">g</span> <span class="n">f</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Applicative</span> <span class="p">(</span><span class="kt">Either</span> <span class="n">e</span><span class="p">)</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="kt">Left</span> <span class="n">e</span><span class="p">)</span> <span class="o">&lt;*&gt;</span> <span class="kr">_</span> <span class="ow">=</span> <span class="kt">Left</span> <span class="n">e</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="kt">Right</span> <span class="n">g</span><span class="p">)</span> <span class="o">&lt;*&gt;</span> <span class="n">f</span> <span class="ow">=</span> <span class="n">fmap</span> <span class="n">g</span> <span class="n">f</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Applicative</span> <span class="p">((</span><span class="ow">-&gt;</span><span class="p">)</span> <span class="n">e</span><span class="p">)</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="n">ff</span> <span class="o">&lt;*&gt;</span> <span class="n">f</span><span class="p">)</span> <span class="n">e</span> <span class="ow">=</span> <span class="p">(</span><span class="n">ff</span> <span class="n">e</span><span class="p">)</span> <span class="p">(</span><span class="n">f</span> <span class="n">e</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="p">(</span><span class="kt">Monoid</span> <span class="n">e</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Applicative</span> <span class="p">((,)</span> <span class="n">e</span><span class="p">)</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span> <span class="o">&lt;*&gt;</span> <span class="p">(</span><span class="n">e2</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">mappend</span> <span class="n">e1</span> <span class="n">e2</span><span class="p">,</span> <span class="n">g</span> <span class="n">a</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">class</span> <span class="p">(</span><span class="kt">Applicative</span> <span class="n">m</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Monad</span> <span class="n">m</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="o">&gt;&gt;=</span><span class="p">)</span> <span class="ow">::</span> <span class="n">m</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="o">&gt;&gt;</span><span class="p">)</span> <span class="ow">::</span> <span class="n">m</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span>
+</div><div class="line" id="LC1">    <span class="n">ma</span> <span class="o">&gt;&gt;</span> <span class="n">mb</span> <span class="ow">=</span> <span class="n">ma</span> <span class="o">&gt;&gt;=</span> <span class="nf">\</span><span class="kr">_</span><span class="ow">-&gt;</span><span class="n">mb</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Monad</span> <span class="kt">Maybe</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="kt">Nothing</span> <span class="o">&gt;&gt;=</span> <span class="kr">_</span> <span class="ow">=</span> <span class="kt">Nothing</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="kt">Just</span> <span class="n">a</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span> <span class="ow">=</span> <span class="n">g</span> <span class="n">a</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Monad</span> <span class="p">(</span><span class="kt">Either</span> <span class="n">e</span><span class="p">)</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="kt">Left</span> <span class="n">e</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="kr">_</span> <span class="ow">=</span> <span class="kt">Left</span> <span class="n">e</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="kt">Right</span> <span class="n">a</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span> <span class="ow">=</span> <span class="n">g</span> <span class="n">a</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Monad</span> <span class="p">((</span><span class="ow">-&gt;</span><span class="p">)</span> <span class="n">e</span><span class="p">)</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="p">(</span> <span class="n">m</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span> <span class="p">)</span> <span class="n">e</span> <span class="ow">=</span> <span class="n">g</span> <span class="p">(</span><span class="n">m</span> <span class="n">e</span><span class="p">)</span> <span class="n">e</span> <span class="ow">=</span> <span class="p">(</span><span class="n">g</span> <span class="o">.</span> <span class="n">m</span><span class="p">)</span> <span class="n">e</span> <span class="n">e</span>
+</div><div class="line" id="LC1">    <span class="c1">-- 或者</span>
+</div><div class="line" id="LC1">    <span class="c1">-- ( m &gt;&gt;= g ) e = (g . m) e e</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="p">(</span><span class="kt">Monoid</span> <span class="n">e</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Monad</span> <span class="p">((,)</span> <span class="n">e</span><span class="p">)</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="kr">_</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span> <span class="ow">=</span> <span class="n">g</span> <span class="n">a</span>
+</div></pre></div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2011-02-27_typeclass-practise';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2011-02-27_typeclass-practise.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2011-02-27_typeclass-practise.html&title=type class 练习(part 1)"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2011-02-27_typeclass-practise.html&title=type class 练习(part 1)"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=type class 练习(part 1)&uri=http://www.yi-programmer.com/blog/2011-02-27_typeclass-practise.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2011-02-27_typeclass-practise.html&title=type class 练习(part 1)"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2011-02-27_typeclass-practise.html&it=type class 练习(part 1)&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2011-02-27_typeclass-practise.html&title=type class 练习(part 1)&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2011-02-27_typeclass-practise.html&t=type class 练习(part 1)"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2011-02-27_typeclass-practise.html&title=type class 练习(part 1)"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=type class 练习(part 1)&rurl=http://www.yi-programmer.com/blog/2011-02-27_typeclass-practise.html&rcontent=http://www.yi-programmer.com/blog/2011-02-27_typeclass-practise.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2011-02-27_typeclass-practise.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2011-02-27_typeclass-practise.html&t=type class 练习(part 1)"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2011-02-27_typeclass-practise.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

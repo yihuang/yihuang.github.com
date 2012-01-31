@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>对 haskell 与 monad 的理解</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">对 haskell 与 monad 的理解</h1>
+
+                    <p class="author">2010-03-20 黄毅</p>
+                    <div class="contents topic" id="id1">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#haskellio" id="id6">haskell作为纯函数式语言如何处理IO</a></li>
+<li><a class="reference internal" href="#monad" id="id7">Monad是什么</a></li>
+<li><a class="reference internal" href="#id4" id="id8">这些接口目的何在</a></li>
+</ul>
+</div>
+<div class="section" id="haskellio">
+<h2><a class="toc-backref" href="#id6">haskell作为纯函数式语言如何处理IO</a></h2>
+<p>并不是真正的处理，只是通过类型系统将跟IO相关的“不纯”的代码和其他纯函数式代码隔离开。通过编译期类型检查进行保证。</p>
+<p>具体实现就是通过叫 IO 的 type constructor <a class="citation-reference" href="#io" id="id2">[io]</a> ，而这个 IO 就是 Monad 的一种。</p>
+</div>
+<div class="section" id="monad">
+<h2><a class="toc-backref" href="#id7">Monad是什么</a></h2>
+<p>在数学上Monad是一门处理状态转换的数学理论。</p>
+<p>对于haskell来说，Monad 就是一个 type class <a class="citation-reference" href="#id5" id="id3">[monad]</a> ，这个 type class 定义了一组接口，前面说的 IO 就是实现了这组接口的实例。</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">class</span> <span class="kt">Monad</span> <span class="n">m</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="o">&gt;&gt;=</span><span class="p">)</span> <span class="ow">::</span> <span class="n">forall</span> <span class="n">a</span> <span class="n">b</span><span class="o">.</span> <span class="n">m</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="o">&gt;&gt;</span><span class="p">)</span> <span class="ow">::</span> <span class="n">forall</span> <span class="n">a</span> <span class="n">b</span><span class="o">.</span> <span class="n">m</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span>
+</div><div class="line" id="LC1">    <span class="n">return</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">a</span>
+</div><div class="line" id="LC1">    <span class="n">fail</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">a</span>
+</div></pre></div>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id8">这些接口目的何在</a></h2>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">foo</span><span class="p">,</span><span class="n">bar</span> <span class="ow">::</span> <span class="kt">String</span><span class="ow">-&gt;</span><span class="kt">IO</span> <span class="kt">String</span>
+</div><div class="line" id="LC1"><span class="nf">foo</span> <span class="n">msg</span> <span class="ow">=</span> <span class="n">return</span> <span class="p">(</span><span class="s">&quot;foo &quot;</span><span class="o">++</span><span class="n">msg</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="nf">bar</span> <span class="n">msg</span> <span class="ow">=</span> <span class="n">return</span> <span class="p">(</span><span class="s">&quot;bar &quot;</span><span class="o">++</span><span class="n">msg</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
+</div><div class="line" id="LC1">    <span class="n">foo</span> <span class="s">&quot;world&quot;</span>
+</div><div class="line" id="LC1">    <span class="n">name</span> <span class="ow">&lt;-</span> <span class="n">getLine</span>
+</div><div class="line" id="LC1">    <span class="n">bar</span> <span class="n">name</span>
+</div></pre></div>
+<p>上面的do语法糖扩展出来实际上是下面这样：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">foo</span> <span class="s">&quot;world&quot;</span> <span class="o">&gt;&gt;=</span>
+</div><div class="line" id="LC1">  <span class="p">(</span><span class="nf">\</span><span class="kr">_</span> <span class="ow">-&gt;</span>
+</div><div class="line" id="LC1">    <span class="n">getLine</span> <span class="o">&gt;&gt;=</span>
+</div><div class="line" id="LC1">      <span class="p">(</span><span class="nf">\</span><span class="n">name</span> <span class="ow">-&gt;</span>
+</div><div class="line" id="LC1">        <span class="n">bar</span> <span class="n">name</span><span class="p">)))</span>
+</div></pre></div>
+<p>这些接口的目的就在于保证操作的顺序执行，也就是说实现了这些接口的类型，使用do语法就可以编写顺序执行的语句了。</p>
+<p>haskell 的 IO 类型就是利用这点保证IO操作的顺序执行，并通过类型系统将涉及IO和不涉及IO操作的函数清晰地区别开来。</p>
+<table class="docutils citation" frame="void" id="io" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[io]</a></td><td><a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/System-IO.html">http://www.haskell.org/ghc/docs/latest/html/libraries/base/System-IO.html</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[monad]</a></td><td><a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/base/Control-Monad.html">http://www.haskell.org/ghc/docs/latest/html/libraries/base/Control-Monad.html</a></td></tr>
+</tbody>
+</table>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2010-03-20_haskell_and_monad';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2010-03-20_haskell_and_monad.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2010-03-20_haskell_and_monad.html&title=对 haskell 与 monad 的理解"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2010-03-20_haskell_and_monad.html&title=对 haskell 与 monad 的理解"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=对 haskell 与 monad 的理解&uri=http://www.yi-programmer.com/blog/2010-03-20_haskell_and_monad.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2010-03-20_haskell_and_monad.html&title=对 haskell 与 monad 的理解"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2010-03-20_haskell_and_monad.html&it=对 haskell 与 monad 的理解&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2010-03-20_haskell_and_monad.html&title=对 haskell 与 monad 的理解&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2010-03-20_haskell_and_monad.html&t=对 haskell 与 monad 的理解"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2010-03-20_haskell_and_monad.html&title=对 haskell 与 monad 的理解"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=对 haskell 与 monad 的理解&rurl=http://www.yi-programmer.com/blog/2010-03-20_haskell_and_monad.html&rcontent=http://www.yi-programmer.com/blog/2010-03-20_haskell_and_monad.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2010-03-20_haskell_and_monad.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2010-03-20_haskell_and_monad.html&t=对 haskell 与 monad 的理解"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2010-03-20_haskell_and_monad.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

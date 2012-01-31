@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>fold</title>
+<meta content="haskell fold functional programming" name="keywords" />
+<meta content="fold 是个常见的高阶函数，在python中叫做reduce，给它一个函数和一个结构，它能将这个结构中的元素组合起来。" name="description" />
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">fold</h1>
+
+                    <p class="author">2011-02-24 黄毅</p>
+                    <p>本来以为很简单的概念，看完 <a class="reference external" href="http://en.wikipedia.org/wiki/Fold_(higher-order_function)">wiki</a> 后又糊涂了，下面文字是笔记和翻译的合体。</p>
+<p>fold 是个常见的高阶函数，在python中叫做reduce，给它一个函数和一个结构，它能将这个结构中的元素组合起来。</p>
+<p>举了python列表的例子就很清楚： <tt class="docutils literal">reduce(lambda a, b:a+b, [1,2,3,4,5])</tt> 就等价于 <tt class="docutils literal">1+2+3+4+5</tt> 。</p>
+<p>不过更精确地说是上面表达式是等价于 <tt class="docutils literal"><span class="pre">((((1+2)+3)+4)+5)</span></tt> ，只不过因为 <tt class="docutils literal">+</tt> 操作满足结合律，所以括号就无关紧要了。但是对于不满足结合律的操作来说，括号的不同括法就要导出不同的结果了，所以根据求值的顺序， <tt class="docutils literal">fold</tt> 可分为 <tt class="docutils literal">foldl</tt> 和 <tt class="docutils literal">foldr</tt> 两种。他们的区别我想用haskell代码来解释：</p>
+<ul class="simple">
+<li><tt class="docutils literal">foldl (+) 0 [1,2,3,4,5]</tt> 等价于 <tt class="docutils literal"><span class="pre">((((1+2)+3)+4)+5)</span></tt></li>
+<li><tt class="docutils literal">foldr (+) 0 [1,2,3,4,5]</tt> 等价于 <tt class="docutils literal"><span class="pre">(1+(2+(3+(4+5))))</span></tt></li>
+</ul>
+<p>在函数式语言中，列表这个结构是通过空列表 <tt class="docutils literal">nil</tt> 和操作符 <tt class="docutils literal">cons</tt> 进行定义的，haskell中对应有 <cite>[]</cite> 和 <cite>(:)</cite> 的语法糖。所以 <tt class="docutils literal">[1,2,3,4,5]</tt> 实际上是 <tt class="docutils literal"><span class="pre">1:[2:[3:[4:[5:[]]]]]</span></tt> ，这样一来，我们可以从一个新的视角看待 <tt class="docutils literal">fold</tt> 操作， <tt class="docutils literal">foldr (+) []</tt> 操作其实就是将操作符 <tt class="docutils literal">(:)</tt> 替换为 <tt class="docutils literal">(+)</tt> ：</p>
+<img alt="images/fold/foldr-transformation.png" src="images/fold/foldr-transformation.png" />
+<img alt="images/fold/foldl-transformation.png" src="images/fold/foldl-transformation.png" />
+<p>做个小练习，尝试搞清楚下面两个等式，有助于理解 <tt class="docutils literal">fold</tt> ，这种练习也有助于理解其他函数式风格的程序：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">reverse</span> <span class="ow">=</span> <span class="n">foldl</span> <span class="p">(</span><span class="n">flip</span> <span class="p">(</span><span class="kt">:</span><span class="p">))</span> <span class="kt">[]</span>
+</div><div class="line" id="LC1"><span class="nf">map</span> <span class="n">f</span> <span class="ow">=</span> <span class="n">foldr</span> <span class="p">((</span><span class="kt">:</span><span class="p">)</span> <span class="o">.</span> <span class="n">f</span><span class="p">)</span> <span class="kt">[]</span>
+</div></pre></div>
+<p>下面再给个 <tt class="docutils literal">foldr</tt> 和 <tt class="docutils literal">foldl</tt> 的实现：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">foldr</span> <span class="n">f</span> <span class="n">z</span> <span class="kt">[]</span>     <span class="ow">=</span> <span class="n">z</span>
+</div><div class="line" id="LC1"><span class="nf">foldr</span> <span class="n">f</span> <span class="n">z</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">f</span> <span class="n">x</span> <span class="p">(</span><span class="n">foldr</span> <span class="n">f</span> <span class="n">z</span> <span class="n">xs</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">foldl</span> <span class="n">f</span> <span class="n">z</span> <span class="kt">[]</span>     <span class="ow">=</span> <span class="n">z</span>
+</div><div class="line" id="LC1"><span class="nf">foldl</span> <span class="n">f</span> <span class="n">z</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">foldl</span> <span class="n">f</span> <span class="p">(</span><span class="n">f</span> <span class="n">z</span> <span class="n">x</span><span class="p">)</span> <span class="n">xs</span>
+</div></pre></div>
+<p>可以看出，在惰性求值的情况下， <tt class="docutils literal">foldr</tt> 中的 <tt class="docutils literal">f</tt> 可以决定是否需要对第二个参数求值，如果 <tt class="docutils literal">f</tt> 在满足一定条件后不需要第二个参数可以马上返回的话， <tt class="docutils literal">foldr f z</tt> 就可以直接处理无限列表而不会陷入无限递归。另外也容易看出 <tt class="docutils literal">foldl</tt> 是尾递归的；但是给它无限列表的话，必然要陷入无限循环。</p>
+<p>而且上面看过 <tt class="docutils literal">reverse</tt> 可以通过 <tt class="docutils literal">foldl</tt> 实现，所以也是尾递归的，同时我们又发现， <tt class="docutils literal">foldr</tt> 也可以通过先翻转列表然后执行 <tt class="docutils literal">foldl</tt> 来实现，这样我们就可以得到 <tt class="docutils literal">foldr</tt> 的一个尾递归的实现：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">foldr</span> <span class="n">f</span> <span class="n">z</span> <span class="n">l</span> <span class="ow">=</span> <span class="n">foldl</span> <span class="p">(</span><span class="n">flip</span> <span class="n">f</span><span class="p">)</span> <span class="n">z</span> <span class="p">(</span><span class="n">reverse</span> <span class="n">l</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="c1">-- 化简可得：</span>
+</div><div class="line" id="LC1"><span class="nf">foldr</span> <span class="n">f</span> <span class="n">z</span> <span class="ow">=</span> <span class="p">(</span><span class="n">foldl</span> <span class="p">(</span><span class="n">flip</span> <span class="n">f</span><span class="p">)</span> <span class="n">z</span><span class="p">)</span> <span class="o">.</span> <span class="n">reverse</span>
+</div></pre></div>
+<p>下面有个小技巧可以直观展示出 <tt class="docutils literal">foldr</tt> <tt class="docutils literal">foldl</tt> 对结构的变换过程：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="kr">let</span> <span class="n">t</span> <span class="ow">=</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="n">y</span> <span class="ow">-&gt;</span> <span class="n">concat</span> <span class="p">[</span><span class="s">&quot;(f &quot;</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="s">&quot; &quot;</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="s">&quot;)&quot;</span><span class="p">])</span>
+</div><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="n">foldr</span> <span class="n">t</span> <span class="s">&quot;z&quot;</span> <span class="p">(</span><span class="n">map</span> <span class="n">show</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">5</span><span class="p">])</span>
+</div><div class="line" id="LC1"><span class="s">&quot;(f 1 (f 2 (f 3 (f 4 (f 5 z)))))&quot;</span>
+</div><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="n">foldl</span> <span class="n">t</span> <span class="s">&quot;z&quot;</span> <span class="p">(</span><span class="n">map</span> <span class="n">show</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">5</span><span class="p">])</span>
+</div><div class="line" id="LC1"><span class="s">&quot;(f (f (f (f (f z 1) 2) 3) 4) 5)&quot;</span>
+</div></pre></div>
+<p>也可验证一下我们上面给出的第二个 <tt class="docutils literal">foldr</tt> 实现的正确与否：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="kr">let</span> <span class="n">myfoldr</span> <span class="n">f</span> <span class="n">z</span> <span class="ow">=</span> <span class="p">(</span><span class="n">foldl</span> <span class="p">(</span><span class="n">flip</span> <span class="n">f</span><span class="p">)</span> <span class="n">z</span><span class="p">)</span> <span class="o">.</span> <span class="n">reverse</span>
+</div><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="n">myfoldr</span> <span class="n">t</span> <span class="s">&quot;z&quot;</span> <span class="p">(</span><span class="n">map</span> <span class="n">show</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">5</span><span class="p">])</span>
+</div><div class="line" id="LC1"><span class="s">&quot;(f 1 (f 2 (f 3 (f 4 (f 5 z)))))&quot;</span>
+</div></pre></div>
+<p>最后，将针对列表的 <tt class="docutils literal">fold</tt> 概念扩展至任意的代数结构后成为一个叫 <a class="reference external" href="http://en.wikipedia.org/wiki/Catamorphism">Catamorphism</a> 的东西，可以看一个针对二叉树的例子：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">data</span> <span class="kt">Tree</span> <span class="n">a</span> <span class="ow">=</span> <span class="kt">Leaf</span> <span class="n">a</span>
+</div><div class="line" id="LC1">            <span class="o">|</span> <span class="kt">Branch</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">type</span> <span class="kt">TreeAlgebra</span> <span class="n">a</span> <span class="n">r</span> <span class="ow">=</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">r</span><span class="p">,</span> <span class="n">r</span> <span class="ow">-&gt;</span> <span class="n">r</span> <span class="ow">-&gt;</span> <span class="n">r</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">foldTree</span> <span class="ow">::</span> <span class="kt">TreeAlgebra</span> <span class="n">a</span> <span class="n">r</span> <span class="ow">-&gt;</span> <span class="kt">Tree</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">r</span>
+</div><div class="line" id="LC1"><span class="nf">foldTree</span> <span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span> <span class="p">(</span><span class="kt">Leaf</span> <span class="n">x</span><span class="p">)</span>     <span class="ow">=</span> <span class="n">f</span> <span class="n">x</span>
+</div><div class="line" id="LC1"><span class="nf">foldTree</span> <span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span> <span class="p">(</span><span class="kt">Branch</span> <span class="n">l</span> <span class="n">r</span><span class="p">)</span> <span class="ow">=</span> <span class="n">g</span> <span class="p">(</span><span class="n">foldTree</span> <span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span> <span class="n">l</span><span class="p">)</span> <span class="p">(</span><span class="n">foldTree</span> <span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span> <span class="n">r</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">treeDepth</span> <span class="ow">::</span> <span class="kt">TreeAlgebra</span> <span class="n">a</span> <span class="kt">Integer</span>
+</div><div class="line" id="LC1"><span class="nf">treeDepth</span> <span class="ow">=</span> <span class="p">(</span><span class="n">const</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">\</span><span class="n">l</span> <span class="n">r</span> <span class="ow">-&gt;</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">max</span> <span class="n">l</span> <span class="n">r</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">sumTree</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">TreeAlgebra</span> <span class="n">a</span> <span class="n">a</span>
+</div><div class="line" id="LC1"><span class="nf">sumTree</span> <span class="ow">=</span> <span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="p">(</span><span class="o">+</span><span class="p">))</span>
+</div></pre></div>
+<p>中心思想和 <tt class="docutils literal">foldr</tt> 类似，就是通过替换代数数据类型的构造函数，对结构进行变换。</p>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2011-02-24_fold';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2011-02-24_fold.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2011-02-24_fold.html&title=fold"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2011-02-24_fold.html&title=fold"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=fold&uri=http://www.yi-programmer.com/blog/2011-02-24_fold.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2011-02-24_fold.html&title=fold"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2011-02-24_fold.html&it=fold&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2011-02-24_fold.html&title=fold&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2011-02-24_fold.html&t=fold"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2011-02-24_fold.html&title=fold"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=fold&rurl=http://www.yi-programmer.com/blog/2011-02-24_fold.html&rcontent=http://www.yi-programmer.com/blog/2011-02-24_fold.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2011-02-24_fold.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2011-02-24_fold.html&t=fold"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2011-02-24_fold.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

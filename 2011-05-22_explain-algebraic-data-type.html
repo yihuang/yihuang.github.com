@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>学舌文：代数，类型和Zipper</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">学舌文：代数，类型和Zipper</h1>
+
+                    <p class="author">2011-05-22 黄毅</p>
+                    <p>原文： <a class="reference external" href="http://blog.lab49.com/archives/3011">http://blog.lab49.com/archives/3011</a> 。本文不能算翻译也非原创，是以原文为基础按照自己觉得舒服的方式写出来，姑且叫学舌文吧。</p>
+<div class="section" id="id1">
+<h2>代数数据类型</h2>
+<p>接触Haskell后我们马上就会遇到了代数数据类型(<a class="reference external" href="http://www.haskell.org/haskellwiki/Algebraic_data_type">algebraic data type</a>)的概念，这玩意本身不难理解，只是名字费解，它跟代数有一毛钱关系？</p>
+<p>事实上还真有很大关系，同构关系列举如下：</p>
+<ul class="simple">
+<li>普通类型对应代数变量。</li>
+<li>数据构造器或 <cite>Tuple</cite> 对应求积；</li>
+<li><cite>|</cite> 操作符对于求和；</li>
+</ul>
+<p>比如：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kt">Int</span>                         <span class="o">&lt;==&gt;</span>    <span class="n">int</span>
+</div><div class="line" id="LC1"><span class="kt">MyType</span> <span class="kt">Int</span> <span class="kt">Int</span> <span class="n">or</span> <span class="p">(</span><span class="kt">Int</span><span class="p">,</span><span class="kt">Int</span><span class="p">)</span> <span class="o">&lt;==&gt;</span>    <span class="n">int</span><span class="o">*</span><span class="n">int</span>
+</div><div class="line" id="LC1"><span class="kt">Left</span> <span class="kt">Int</span> <span class="o">|</span> <span class="kt">Right</span> <span class="kt">Int</span>        <span class="o">&lt;==&gt;</span>    <span class="n">int</span><span class="o">+</span><span class="n">int</span>
+</div></pre></div>
+<p>同构是个好东西啊，一下子中学学的代数知识似乎就可以在程序设计领域派上用场了。</p>
+<p>下面我们就用代数的记法，推导一下列表类型 <cite>[a]</cite> ，我们可以这样考虑，它可以是空表，或是一个a，或是两个a，或是三个a，或是... ，也就是：</p>
+<div class="highlight None"><pre><div class="line" id="LC1">  <span class="mi">1</span> <span class="o">+</span> <span class="n">a</span> <span class="o">+</span> <span class="n">a</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="n">a</span><span class="o">*</span><span class="n">a</span><span class="o">*</span><span class="n">a</span> <span class="o">...</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">a</span> <span class="o">+</span> <span class="n">a</span><span class="o">*</span><span class="n">a</span> <span class="o">...</span><span class="p">)</span>
+</div></pre></div>
+<p>由此可见，列表类型就是函数 <cite>f(x)=1+a*x</cite> 的不动点，也可以记作： <cite>μX.(1+a*X)</cite> 。
+类似的，我们也可以得出二叉树的类型： <cite>μX.(a+X*X)</cite> 。</p>
+<p>对比下Haskell里面这两个类型的定义：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">data</span> <span class="kt">List</span> <span class="n">a</span> <span class="ow">=</span> <span class="kt">Nil</span> <span class="o">|</span> <span class="kt">Cons</span> <span class="n">a</span> <span class="p">(</span><span class="kt">List</span> <span class="n">a</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="kr">data</span> <span class="kt">Tree</span> <span class="n">a</span> <span class="ow">=</span> <span class="kt">Leaf</span> <span class="n">a</span> <span class="o">|</span> <span class="kt">Branch</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">)</span>
+</div></pre></div>
+</div>
+<div class="section" id="id2">
+<h2>Zipper</h2>
+<p>介绍完代数数据类型后，我们来看一个乍看似乎完全不相关的概念： <a class="reference external" href="http://learnyouahaskell.com/zippers">Zipper</a> ，在 <a class="reference external" href="http://en.wikibooks.org/wiki/Haskell/Zippers">wikibook</a> 和漂亮的 <a class="reference external" href="http://learnyouahaskell.com/zippers">learn you a haskell</a> 中都有详细的介绍， <a class="reference external" href="http://www.st.cs.uni-saarland.de/edu/seminare/2005/advanced-fp/docs/huet-zipper.pdf">zipper原始论文</a> 。</p>
+<p>我们知道函数式程序设计中不允许修改状态，只能通过创建新的结构达到修改的目的。这样新旧版本的数据可以同时存在，天然线程安全，程序更易理解，blah,blah,blah。</p>
+<p><a class="reference external" href="http://learnyouahaskell.com/zippers">Zipper</a> 发明出来就是用来高效地完成函数式数据结构的修改操作，可以想象它的重要性。
+可以把 <a class="reference external" href="http://learnyouahaskell.com/zippers">Zipper</a> 理解为在数据结构的某个位置挖了一个洞，然后我们可以用另一份数据补上这个洞以达到在该位置修改数据的目的。</p>
+<p>举个例子，包含三个整数的积类型： <cite>int*int*int</cite> ，或者 <cite>int**3</cite> int的三次方，Haskell的表示法就是 <cite>(Int, Int, Int)</cite> ，要挖个洞的话有三种挖法：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="p">(</span><span class="kr">_</span><span class="p">,</span>   <span class="n">int</span><span class="p">,</span> <span class="n">int</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="p">(</span><span class="n">int</span><span class="p">,</span> <span class="kr">_</span><span class="p">,</span>   <span class="n">int</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="p">(</span><span class="n">int</span><span class="p">,</span> <span class="n">int</span><span class="p">,</span> <span class="kr">_</span>  <span class="p">)</span>
+</div></pre></div>
+<p>对每一种挖洞方法，我们只需要保存剩下两份数据，用Haskell表示就是： <cite>First Int Int | Second Int Int | Third Int Int</cite> ，用代数方法表示则是： <cite>int*int + int*int + int*int</cite> ，或者 <cite>3*int**2</cite> 。</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">int</span><span class="o">**</span><span class="mi">3</span>  <span class="o">--&gt;</span> <span class="mi">3</span><span class="o">*</span><span class="n">int</span><span class="o">**</span><span class="mi">2</span>
+</div></pre></div>
+<p>也许你已经发现，这不就是微积分求导的结果吗！事实上还真是如此，在数据结构上打洞的规则和微积分里面求导的规则神奇地一致。</p>
+<p>不过处理列表和二叉树等递归类型还有点麻烦，因为微积分里貌似没有递归函数的概念，这个问题 <a class="reference external" href="http://en.wikibooks.org/wiki/Haskell/Zippers">wikibook</a> 上有解释，不过没大看懂，我们留到下一篇再研究。</p>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2011-05-22_explain-algebraic-data-type';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2011-05-22_explain-algebraic-data-type.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2011-05-22_explain-algebraic-data-type.html&title=学舌文：代数，类型和Zipper"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2011-05-22_explain-algebraic-data-type.html&title=学舌文：代数，类型和Zipper"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=学舌文：代数，类型和Zipper&uri=http://www.yi-programmer.com/blog/2011-05-22_explain-algebraic-data-type.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2011-05-22_explain-algebraic-data-type.html&title=学舌文：代数，类型和Zipper"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2011-05-22_explain-algebraic-data-type.html&it=学舌文：代数，类型和Zipper&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2011-05-22_explain-algebraic-data-type.html&title=学舌文：代数，类型和Zipper&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2011-05-22_explain-algebraic-data-type.html&t=学舌文：代数，类型和Zipper"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2011-05-22_explain-algebraic-data-type.html&title=学舌文：代数，类型和Zipper"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=学舌文：代数，类型和Zipper&rurl=http://www.yi-programmer.com/blog/2011-05-22_explain-algebraic-data-type.html&rcontent=http://www.yi-programmer.com/blog/2011-05-22_explain-algebraic-data-type.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2011-05-22_explain-algebraic-data-type.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2011-05-22_explain-algebraic-data-type.html&t=学舌文：代数，类型和Zipper"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2011-05-22_explain-algebraic-data-type.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

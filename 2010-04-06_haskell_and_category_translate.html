@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>Haskell与范畴论</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">Haskell与范畴论</h1>
+
+                    <p class="author">2010-04-06 黄毅</p>
+                    <p>用haskell的概念解释范畴论。翻译自 wikibook : <a class="reference external" href="http://en.wikibooks.org/wiki/Haskell/Category_theory">http://en.wikibooks.org/wiki/Haskell/Category_theory</a></p>
+<div class="contents topic" id="id1">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id2" id="id11">范畴论简介</a><ul>
+<li><a class="reference internal" href="#id3" id="id12">范畴公理</a></li>
+<li><a class="reference internal" href="#hask-haskell" id="id13">Hask ，Haskell范畴</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id4" id="id14">函子</a><ul>
+<li><a class="reference internal" href="#hask" id="id15">Hask 上的函子</a></li>
+<li><a class="reference internal" href="#id5" id="id16">将范畴论的概念对应到Haskell</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#monads" id="id17">Monads</a><ul>
+<li><a class="reference internal" href="#monad" id="id18">示例：幂集函子同时也是monad</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id6" id="id19">monad公理和他们的重要性</a><ul>
+<li><a class="reference internal" href="#id7" id="id20">公理一</a></li>
+<li><a class="reference internal" href="#id8" id="id21">公理二</a></li>
+<li><a class="reference internal" href="#id9" id="id22">公理三和公理四</a></li>
+<li><a class="reference internal" href="#do" id="id23">应用到do语法</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id10" id="id24">总结</a></li>
+</ul>
+</div>
+<p>本文对范畴论做一个简单的介绍，最终目的是为了将它应用到Haskell语言。为了达到这个目的，我们一边介绍数学上的定义，一边给出对应的Haskell代码。我们不追求这个对应有多精确，只期望读者在读完以后，能对范畴论的基本概念及其跟Haskell之间的联系有一个直观的感受。</p>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id11">范畴论简介</a></h2>
+<div class="figure align-left" style="width: 200px">
+<img alt="images/Simple-cat.png" src="images/Simple-cat.png" />
+<p class="caption">一个简单的范畴，由三个对象 <em>A</em>, <em>B</em> 和 <em>C</em> 组成，有三个单位态射 <img alt="id_A" class="texmath align-middle" src="imgmath/499eb2b09943008868a9a9cd6103a9c8.png" />, <img alt="id_B" class="texmath align-middle" src="imgmath/43476b5f6e3e7e81fce8c66c4cff6bdc.png" /> 和 <img alt="id_C" class="texmath align-middle" src="imgmath/831718d386401211abede9605461d68f.png" /> ，还有另外两个态射 <img alt="f : C \to B" class="texmath align-middle" src="imgmath/437dc35950ab44fca38bb74e39f81838.png" />     和 <img alt="g : A \to B" class="texmath align-middle" src="imgmath/ce8cfb5fefe1532d7aec760b39dad613.png" />     。第三个组成元素（即如何对态射进行组合）没有展示出来。</p>
+</div>
+<p>本质上讲，范畴由三部分组成：</p>
+<ol class="arabic simple">
+<li>一组 <strong>对象</strong></li>
+<li>一组 <strong>态射</strong> 。每个态射捆绑两个对象（一个源对象，一个目标对象）。（也有人把它们叫做箭头，我们这里不这么叫它，因为这个词语在Haskell里面有其他含义。译注：其他含义指的是 <cite>Control.Arrow</cite> 。）如果 <em>f</em> 是一个从源对象 <em>A</em> 到目标对象 <em>B</em> 的态射，我们把它记作 <img alt="f:A \to B" class="texmath align-middle" src="imgmath/2a450c31e3aab1387c14df7f13d8fbb0.png" />   。</li>
+<li>一个称为 <strong>态射组合</strong> 的概念。如果 <em>h</em> 是态射 <em>f</em> 和 <em>g</em> 的组合，我们记作： <img alt="h=f \circ g" class="texmath align-middle" src="imgmath/4905722ccb4ddf95135c4692af69b48b.png" />     。</li>
+</ol>
+<p>许多事物都构成范畴。比如全部的集合就构成范畴 <strong>Set</strong> ，函数（译注：这里说的函数是指集合论中的函数）是它的态射，态射的组合就是函数的组合。全部的群也构成范畴 <strong>Grp</strong> ，保持群结构的函数就是它的态射（群同态），比如任意两个群 <em>G</em> 和 <em>H</em> ， <em>G</em> 的操作符为 <img alt="*" class="texmath align-middle" src="imgmath/3389dae361af79b04c9c8e7057f60cc6.png" /> ， <em>H</em> 的操作符是 <img alt="\circ" class="texmath align-middle" src="imgmath/1b3c1a40f9cb094d47e8c6f9b0df773f.png" /> ，那么函数 <img alt="f:G \to H" class="texmath align-middle" src="imgmath/1b1a69fdb60a37a964d031721a99a569.png" />   只要满足如下条件就是一个态射：</p>
+<img alt="f(u*v) = f(u)  \circ  f(v)" class="texdisplay align-center" src="imgmath/57c7689dcff3b80ed31642d8c48f7106.png" />
+<p>乍看之下似乎所有态射都是函数，实际上不一定，比如下面这个例子，任何偏序结构 (<em>P</em>, <img alt="\leq" class="texmath align-middle" src="imgmath/de44c582df9d8d29dbbd70aca311c641.png" /> ) 都构成范畴， <em>P</em> 中的元素就是该范畴的对象，任意两个元素 <em>a</em> 和 <em>b</em> 只要满足 <img alt="a \leq b" class="texmath align-middle" src="imgmath/387aef28346a0bfbbba3abe635b2c7df.png" /> ，那么 <img alt="a \to b" class="texmath align-middle" src="imgmath/38b589a4ca108f6c42cb4449362445b8.png" /> 就是一个态射。另外，在相同的源对象和目的对象之间可以存在多个态射。我们拿 <strong>Set</strong> 范畴为例， <img alt="\sin" class="texmath align-middle" src="imgmath/5912fc1251cd0c1e212f6dd8d19f17ef.png" /> 和 <img alt="\cos" class="texmath align-middle" src="imgmath/8effff999de692c242b9f7a539c63e58.png" /> 都是从 <img alt="R" class="texmath align-middle" src="imgmath/e1e1d3d40573127e9ee0480caf1283d6.png" /> 到 <img alt="[-1,1]" class="texmath align-middle" src="imgmath/d060b17b29e0dae91a1cac23ea62281a.png" /> 的函数，但是他们是不同的态射。</p>
+<div class="section" id="id3">
+<h3><a class="toc-backref" href="#id12">范畴公理</a></h3>
+<p>范畴需要满足三个公理。第一个就是态射的组合操作要满足结合律。记作：</p>
+<img alt="f \circ (g \circ h) = (g \circ h) \circ h" class="texdisplay align-center" src="imgmath/a90f14c29f28f016327516602a44f43b.png" />
+<p>第二，态射在组合操作下是闭合的。所以如果存在态射 <img alt="f:A \to B" class="texmath align-middle" src="imgmath/2a450c31e3aab1387c14df7f13d8fbb0.png" />  和 <img alt="g:B \to C" class="texmath align-middle" src="imgmath/ce30cb45593c0abbd363aa785714eb50.png" />  ，那么范畴中必定存在态射 <img alt="h:A \to C" class="texmath align-middle" src="imgmath/2015c7079075da44a8eef1285144cc3f.png" />  使得 <img alt="h=f \circ g" class="texmath align-middle" src="imgmath/4905722ccb4ddf95135c4692af69b48b.png" />    。以下面这个范畴为例：</p>
+<img alt="images/Composition-ex.png" class="align-center" src="images/Composition-ex.png" />
+<p><em>f</em> 和 <em>g</em> 都是态射，所以我们一定能够对他们进行组合并得到范畴中的另一个态射。那么哪一个是态射 <img alt="f \circ g" class="texmath align-middle" src="imgmath/c957199199fb6246131b44e53bd5576b.png" />  呢？唯一的选择就是 <img alt="id_A" class="texmath align-middle" src="imgmath/499eb2b09943008868a9a9cd6103a9c8.png" /> 了。类似地， <img alt="g \circ f=id_B" class="texmath align-middle" src="imgmath/24e8a06163567235155f8f29f0c588a1.png" />       。</p>
+<p>第三个公理，对任何一个范畴 <em>C</em> ，其中任何一个对象 <em>A</em> 一定存在一个单位态射， <img alt="id_A:A \to A" class="texmath align-middle" src="imgmath/88f184929fac8208ec599f6311b148a7.png" />     。这个态射是组合操作的单位元。</p>
+<img alt="g \circ id_A = id_B \circ g = g" class="texdisplay align-center" src="imgmath/ba8a218f55be323f98703dffb7b182b0.png" />
+</div>
+<div class="section" id="hask-haskell">
+<h3><a class="toc-backref" href="#id13">Hask ，Haskell范畴</a></h3>
+<p>本文重点关注一个叫 <strong>Hask</strong> 的范畴，该范畴由Haskell中所有类型组成，Haskell的函数就是它的态射， <cite>(.)</cite> 操作符便是态射组合，函数 <cite>f::A-&gt;B</cite> 就是 <strong>Hask</strong> 中从类型 <em>A</em> 到类型 <em>B</em> 的态射。第一和第三公理很容易验证通过，因为 <cite>(.)</cite> 操作符本身就是满足结合律的函数，而且很显然，对于任何函数 <cite>f</cite> 和 <cite>g</cite> ， <cite>f.g</cite> 仍然是一个函数。在 <strong>Hask</strong> 中，单位态射就是函数 <cite>id</cite> ，而且显然也满足第三公理：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">id</span> <span class="o">.</span> <span class="n">f</span> <span class="ow">=</span> <span class="n">f</span> <span class="o">.</span> <span class="n">id</span> <span class="ow">=</span> <span class="n">f</span>
+</div></pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id14">函子</a></h2>
+<div class="figure align-right" style="width: 360px">
+<img alt="images/Functor.png" src="images/Functor.png" />
+<p class="caption">这是从范畴 <img alt="\mathbf{C}" class="texmath align-middle" src="imgmath/05d05e751a80db7375eae13c25f0ca13.png" />   到范畴 <img alt="\mathbf{D}" class="texmath align-middle" src="imgmath/86e66312d234b4e2a7008b17a7412da4.png" />   的函子。图中的文字描述了对象 <em>A</em> 和 <em>B</em> 被转换到了范畴 <em>D</em> 中同一个对象，因此，态射 <em>g</em> 就被转换成了一个源对象和目标对象相同的态射（不一定是单位态射），而且 <img alt="id_A" class="texmath align-middle" src="imgmath/499eb2b09943008868a9a9cd6103a9c8.png" /> 和 <img alt="id_B" class="texmath align-middle" src="imgmath/43476b5f6e3e7e81fce8c66c4cff6bdc.png" /> 变成了相同的态射。对象之间的转换是用浅黄色的虚线箭头表示，态射之间的转换是用浅绿色的箭头表示。</p>
+</div>
+<p>OK，我们已经介绍了一些范畴，这些范畴里面都有些对象，还有一些态射能神奇地把对象关联在一起。下面我们要介绍一个范畴论中相当重要的概念，那就是 <strong>函子</strong> ，它甚至能把两个范畴关联在一起。函子本质上说其实就是范畴之间的转换。比如对于范畴 <em>C</em> 和 <em>D</em> ，函子 <img alt="F : C \to D" class="texmath align-middle" src="imgmath/17db817533f2a08e738c77d9ab246b83.png" />    能够：</p>
+<ul class="simple">
+<li>将 <em>C</em> 中任意对象 <em>a</em> 转换为 <em>D</em> 中的 <img alt="F(A)" class="texmath align-middle" src="imgmath/18760c0431a2f869b624f1448cab54b4.png" /></li>
+<li>将 <em>C</em> 中的态射 <img alt="f : A \to B" class="texmath align-middle" src="imgmath/3ce77e890e47fda3054d5eb796444049.png" />    转换为 <em>D</em> 中的 <img alt="F(f) : F(A) \to F(B)" class="texmath align-middle" src="imgmath/72a222f344f90bd9e37c840dff1f9d52.png" /></li>
+</ul>
+<p>“健忘”函子就是典型的一个函子： <img alt="\mathbf{Grp} \to \mathbf{Set}" class="texmath align-middle" src="imgmath/4391f88d04db06a9bdac35f0290644f7.png" />                      ，它能将群转换成它底层的集合，并将群的态射转换成集合上的相同行为的函数。另一个例子就是幂集函子： <img alt="\mathbf{Set} \to \mathbf{Set}" class="texmath align-middle" src="imgmath/bebd6024d889c9e281cecf123cbaadeb.png" />                      ，它能将集合转换成他们的幂集，并将函数 <img alt="f : X \to Y" class="texmath align-middle" src="imgmath/8b8a08b3fa6c938ada6dfd602e046cfb.png" />    转换成函数 <img alt="\mathcal{P}(X) \to \mathcal{P}(Y)" class="texmath align-middle" src="imgmath/1fe26f1dd18323e1804871cbb31c0b88.png" />                          ，后面这个函数接收所有 <img alt="U \subset X" class="texmath align-middle" src="imgmath/f16bce057764b9544dd66ca46d8e06dd.png" />    组成的集合（译注：也就是集合 <em>X</em> 的幂集），将它转换成 <img alt="f(U)" class="texmath align-middle" src="imgmath/237dccd3133f35c013d7673ca2a706e8.png" /> ，其中 <img alt="f(U) = \{ \, f(u) : u \in U \, \}" class="texmath align-middle" src="imgmath/00a3fb333428c79c451d492e93655815.png" />                          。对所有的范畴 <em>C</em> 都可以定义一个所谓的单位函子，也叫做 <img alt="1_C : C \to C" class="texmath align-middle" src="imgmath/584a60dce470190d2f4b393b32195b44.png" />      ，它将对象和态射直接转换成它们自己。在后面要讲的 <a class="reference internal" href="#id6">monad公理和他们的重要性</a> 一节中，我们将会看到单位函子的作用。</p>
+<p>同样的，函子也需要遵守一些公理。第一，给定一个对象 <em>A</em> 上的单位态射 <img alt="id_A" class="texmath align-middle" src="imgmath/499eb2b09943008868a9a9cd6103a9c8.png" /> ， <img alt="F(id_A)" class="texmath align-middle" src="imgmath/1239af8281432fc9a8083d65b00516b1.png" /> 必须也是 <img alt="F(A)" class="texmath align-middle" src="imgmath/18760c0431a2f869b624f1448cab54b4.png" /> 上的单位态射，也就是说：</p>
+<img alt="F(id_A) = id_{F(A)}" class="texdisplay align-center" src="imgmath/03e3aa5cbbc03541e11a809cc9c003ee.png" />
+<p>第二，函子在态射组合上必须满足分配率，也就是说：</p>
+<img alt="F(f \circ g) = F(f) \circ F(g)" class="texdisplay align-center" src="imgmath/be32bbf0f0677061d03cbd59567106fe.png" />
+<div class="section" id="hask">
+<h3><a class="toc-backref" href="#id15">Hask 上的函子</a></h3>
+<p>也许你已经看出来了， typeclass <cite>Functor</cite> 确实和范畴论中的函子概念关系紧密。函子包括两部分：首先它将一个范畴中的对象转换成另一个范畴中的对象，其次它还将一个范畴中的态射转换成另一个范畴中的态射。Haskell中的 <cite>Functor</cite> 其实是把 <strong>Hask</strong> 转换到 <strong>Hask</strong> 子范畴 <strong>Func</strong> 的函子，范畴 <strong>Func</strong> 是定义在该 <cite>Functor</cite> 的类型之上的一个范畴。比如函子 <cite>list</cite> 是从范畴 <strong>Hask</strong> 转换到范畴 <strong>Lst</strong> ，范畴 <strong>Lst</strong> 只包含一个类型 <cite>list</cite> ，换句话说函子 <cite>list</cite> 能将任意类型 <cite>T</cite> 转换为 <cite>[T]</cite> 。范畴 <strong>Lst</strong> 中的态射就是定义在 <cite>list</cite> 类型上的函数，即： <cite>[T]-&gt;[U]</cite> 。那么所有这些东西又如何跟Haskell的 <cite>Functor</cite> typeclass 联系在一起呢？我们回忆一下 <cite>Functor</cite> 的定义：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">class</span> <span class="kt">Functor</span> <span class="p">(</span><span class="n">f</span> <span class="ow">::</span> <span class="o">*</span> <span class="ow">-&gt;</span> <span class="o">*</span><span class="p">)</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">fmap</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">b</span><span class="p">)</span>
+</div></pre></div>
+<p>我们再定义一个实例：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Functor</span> <span class="kt">Maybe</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">fmap</span> <span class="n">f</span> <span class="p">(</span><span class="kt">Just</span> <span class="n">x</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="n">fmap</span> <span class="kr">_</span> <span class="kt">Nothing</span>  <span class="ow">=</span> <span class="kt">Nothing</span>
+</div></pre></div>
+<p>关键点来了：类型构造器 <cite>Maybe</cite> 将任意类型 <cite>T</cite> 转换成新类型 <cite>Maybe T</cite> ，同时定义在 <cite>Maybe</cite> 上的 <cite>fmap</cite> 能将函数 <cite>a-&gt;b</cite> 转换为函数 <cite>Maybe a-&gt;Maybe b</cite> 。这样，我们就已经把函子的两个组成部分都定义了，将 <strong>Hask</strong> 中的对象转换到另一个范畴中的对象，并将 <strong>Hask</strong> 中的态射转换到该范畴的态射。所以 <cite>Maybe</cite> 是一个函子。</p>
+<p>对于Haskell的 <cite>Functor</cite> 一个直观的感觉就是，他们代表了一类可以被map的类型。它可以是 <cite>list</cite> 或是 <cite>Maybe</cite> ，也可以是树这样复杂的结构。利用它我们可以编写一个执行实际map操作的函数，和 <cite>fmap</cite> 组合起来，然后就可以传递任意 <cite>Functor</cite> 结构给它。比如你可以写一个通用函数可以取代 <cite>Data.List.map</cite> ， <cite>Data.Map.map</cite> ， <cite>Data.Array.IArray.amap</cite> ，等等。</p>
+<p>我们继续来看函子公理，多态函数 <cite>id</cite> 可以替代任意的 <img alt="id_A" class="texmath align-middle" src="imgmath/499eb2b09943008868a9a9cd6103a9c8.png" /> ，所以第一条公理是满足的：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">fmap</span> <span class="n">id</span> <span class="ow">=</span> <span class="n">id</span>
+</div></pre></div>
+<p>直观地看，这句代码的含义是说map一个结构，然后对其中每一个元素啥也不做，和从一开始就啥也不做是等价的。</p>
+<p>第二，因为态射组合就是 <cite>(.)</cite> ，那么：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">fmap</span> <span class="p">(</span><span class="n">f</span> <span class="o">.</span> <span class="n">g</span><span class="p">)</span> <span class="ow">=</span> <span class="n">fmap</span> <span class="n">f</span> <span class="o">.</span> <span class="n">fmap</span> <span class="n">g</span>
+</div></pre></div>
+<p>这条公理还挺实用。这里我们可以把函子想象成类似 <cite>list</cite> 这样的容器，等号右边就是一个要遍历容器两遍的算法：首先map这个容器，对其中元素执行函数 <cite>g</cite> ，产生一个新容器，然后map该新容器，执行 <cite>f</cite> 。而这条公理告诉我们，这个算法可以换成一个只需遍历一遍的算法，并对其中每一个元素执行 <cite>f . g</cite> 。这个过程叫做 <a class="reference external" href="http://en.wikipedia.org/wiki/Loop_fusion">fusion</a> 。</p>
+</div>
+<div class="section" id="id5">
+<h3><a class="toc-backref" href="#id16">将范畴论的概念对应到Haskell</a></h3>
+<p>现在我们来总结一下范畴论的概念要如何转换到Haskell上面，这方面 <cite>Functor</cite> 提供了一个很好的例子。关键在于记住以下几点：</p>
+<ul class="simple">
+<li>我们只探讨 <strong>Hask</strong> 范畴和它的子范畴</li>
+<li>范畴的对象就是Haskell的类型</li>
+<li>范畴的态射就是Haskell的函数</li>
+<li>那些接受类型作为参数并返回另一个类型的东西叫类型构造子</li>
+<li>那些接受函数作为参数并返回另一个函数的东西叫高阶函数</li>
+<li>typeclass 以及它们提供的多态特性，正好反映了这样一个事实，那就是在范畴论中，其实很多概念都是在一组对象上定义的。</li>
+</ul>
+</div>
+</div>
+<div class="section" id="monads">
+<h2><a class="toc-backref" href="#id17">Monads</a></h2>
+<div class="figure align-right" style="width: 300px">
+<img alt="images/Unit-join.png" src="images/Unit-join.png" />
+<p class="caption"><em>unit</em> 和 <em>join</em> ，对monad中每一个对象都必须存在的两个态射</p>
+</div>
+<p>Monad是Haskell中一个相当重要的概念，实际上，它们最开始就是来自范畴论。monad 是一类特别的函子，它们拥有一些独特的结构。monad都是从一个范畴映射到其自身的函子。下面我们来看详细定义，Monad是一个函子 <img alt="M : C \to C" class="texmath align-middle" src="imgmath/603eb5550a7826654c92d8c2ddb9329f.png" />    ，并且对于 <em>C</em> 中每一个对象 <em>x</em> 都存在如下两个态射：</p>
+<ul class="simple">
+<li><img alt="\mathit{unit}^M_X : X \to M(X)" class="texmath align-middle" src="imgmath/2b767f195a3e9923edc14ba610a27a74.png" /></li>
+<li><img alt="\mathit{join}^M_X : M(M(X)) \to M(X)" class="texmath align-middle" src="imgmath/b07bb221062b4db94eb9e00e10f9b14f.png" /></li>
+</ul>
+<p>在随后的讨论中，只要不产生混淆，我们就去掉上标 <em>M</em> ，只说 <img alt="\mathit{unit}_X" class="texmath align-middle" src="imgmath/0d14c0af192d8a8abab7a8c5060e1b56.png" />        和 <img alt="\mathit{join}_X" class="texmath align-middle" src="imgmath/6fe028a426f91d45a47339b9a1e7fc2a.png" />        。</p>
+<p>现在我们来看看它是如何对应到Haskell的typeclass <cite>Monad</cite> 上的：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">class</span> <span class="kt">Functor</span> <span class="n">m</span> <span class="ow">=&gt;</span> <span class="kt">Monad</span> <span class="n">m</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">return</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">a</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="o">&gt;&gt;=</span><span class="p">)</span>  <span class="ow">::</span> <span class="n">m</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span>
+</div></pre></div>
+<p>类型约束 <cite>Functor m</cite> 可以确保我们已经拥有了函子结构：即对象和态射的一组转换关系。 <cite>return</cite> 就是对应的 <img alt="\mathit{unit}_X" class="texmath align-middle" src="imgmath/0d14c0af192d8a8abab7a8c5060e1b56.png" />        。不过下面我们就遇到问题了，虽然 <cite>return</cite> 的类型酷似 <em>unit</em> ，但 <cite>(&gt;&gt;=)</cite> 的类型却很难跟 <em>join</em> 联系起来。反而下面这样的函数： <cite>join :: Monad m =&gt; m (m a) -&gt; m a</cite> 看起来倒是跟 <em>join</em> 挺像的。实际上它们之间是可以互相转换的：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">join</span> <span class="ow">::</span> <span class="kt">Monad</span> <span class="n">m</span> <span class="ow">=&gt;</span> <span class="n">m</span> <span class="p">(</span><span class="n">m</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">a</span>
+</div><div class="line" id="LC1"><span class="nf">join</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">&gt;&gt;=</span> <span class="n">id</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="p">(</span><span class="o">&gt;&gt;=</span><span class="p">)</span> <span class="ow">::</span> <span class="kt">Monad</span> <span class="n">m</span> <span class="ow">=&gt;</span> <span class="n">m</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span>
+</div><div class="line" id="LC1"><span class="nf">x</span> <span class="o">&gt;&gt;=</span> <span class="n">f</span> <span class="ow">=</span> <span class="n">join</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">f</span> <span class="n">x</span><span class="p">)</span>
+</div></pre></div>
+<p>所以给出 <cite>return</cite> 和 <cite>join</cite> 和给出 <cite>return</cite> 和 <cite>&gt;&gt;=</cite> 是等价的。只不过在范畴论中通常用 <em>unit</em> 和 <em>join</em> 来定义monad，而Haskell程序员则更喜欢用 <cite>return</cite> 和 <cite>(&gt;&gt;=)</cite> _[3] 。范畴论的方式通常要更合理一点，因为对于一个结构 <em>M</em> 来说，如果存在一种自然的方式将任意对象 <em>X</em> 转换为 <img alt="M(X)" class="texmath align-middle" src="imgmath/dfad906f72bce48c6e81adbb040aec0b.png" /> ，并能将 <img alt="M(M(X))" class="texmath align-middle" src="imgmath/7e44d867d7718baeea17f3d555799d64.png" /> 转换为 <img alt="M(X)" class="texmath align-middle" src="imgmath/dfad906f72bce48c6e81adbb040aec0b.png" /> ，那么该结构很可能就是一个monad。这一点可以从下面的示例中看出。</p>
+<div class="section" id="monad">
+<h3><a class="toc-backref" href="#id18">示例：幂集函子同时也是monad</a></h3>
+<p>前面描述过的幂集函子 <img alt="P : \mathbf{Set} \to \mathbf{Set}" class="texmath align-middle" src="imgmath/467393d590d9fd6838125d74e22924c9.png" />                          可以形成一个monad。对每一个集合 <em>S</em> 都有 <img alt="\mathit{unit}_S(x) = \{x\}" class="texmath align-middle" src="imgmath/fb7cefe9f9561da13f83ba9f8132b85a.png" />                   ，将其中 <em>S</em> 的每一个元素映射到只含有该元素的一个集合。注意到这些只有一个元素的集合都是 <em>S</em> 的子集，所以 <img alt="\mathit{unit}_S" class="texmath align-middle" src="imgmath/73b7ba0d3b4ecb55709fb595bbcccaef.png" />        返回的正是 <em>S</em> 的幂集中的元素，这样就满足了 monad 对 <em>unit</em> 的要求。我们再来定义函数 <img alt="\mathit{join}_S" class="texmath align-middle" src="imgmath/4af7d133cc5416cb2c35ce3680fee0db.png" />        ，输入为 <img alt="L \in \mathcal{P}(\mathcal{P}(S))" class="texmath align-middle" src="imgmath/ae7e2e65de8f70ce3cfff146b3900845.png" />                          ，它是：</p>
+<ul class="simple">
+<li><em>S</em> 的幂集的幂集的元素.</li>
+<li>即 <em>S</em> 所有子集组成的集合的所有子集组成的集合的元素 .</li>
+<li>即 <em>S</em> 的部分子集组成的集合</li>
+</ul>
+<p>然后我们返回这些集合的并集, 这样就得到了 <em>S</em> 的另一个子集（译注：即 <img alt="P(S)" class="texmath align-middle" src="imgmath/670e000edb9faf3ec289f4790d58fedf.png" /> 的一个元素，也即成功地从 <img alt="P(P(X))" class="texmath align-middle" src="imgmath/1702ab6256f82d63326e37dfde841beb.png" /> 映射到了 <img alt="P(X)" class="texmath align-middle" src="imgmath/0c3d72395d7576ab13b9e9389f865960.png" /> ），公式如下。</p>
+<img alt="\mathit{join}_S(L) = \bigcup L" class="texdisplay align-center" src="imgmath/d8e4337c8928a40ced1e466eacf98efa.png" />
+<p>由此可见 <em>P</em> 确实是一个 monad 。</p>
+<p>其实 <em>P</em> 跟 <em>`list`</em> 几乎是等价的；除了后者处理的是列表而前者是集合，他们在其他地方基本一致。见表：</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="25%" />
+<col width="24%" />
+<col width="32%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head" colspan="2">集合上的幂集函子</th>
+<th class="head" colspan="2">Haskell中的List Monad</th>
+</tr>
+<tr><th class="head">类型</th>
+<th class="head">定义</th>
+<th class="head">类型</th>
+<th class="head">定义</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td colspan="2">给定集合 <em>S</em> 和态射 <img alt="A \to B" class="texmath align-middle" src="imgmath/a225487f82944eb21d7a2b5c47039cb5.png" /> ：</td>
+<td colspan="2">给定类型 <cite>T</cite> 和函数 <cite>f :: A -&gt; B</cite></td>
+</tr>
+<tr><td><img alt="P(f):P(A)-&gt;P(B)" class="texmath align-middle" src="imgmath/260a19dc0b406816d44cf2fcf6346dc3.png" /></td>
+<td><img alt="(P(f))(S)={f(a):a \in S}" class="texmath align-middle" src="imgmath/da3f06c1727e9d83778929545c2971db.png" /></td>
+<td><cite>fmap f :: [A] -&gt; [B]</cite></td>
+<td><cite>fmap f xs = [ f a | a &lt;- xs ]</cite></td>
+</tr>
+<tr><td><img alt="unit_S:S \to P(S)" class="texmath align-middle" src="imgmath/f6ffc02c01492f4dfc43da22c0e800a5.png" /></td>
+<td><img alt="unit_S(X)={X}" class="texmath align-middle" src="imgmath/d1c0867613b4bf9284227964909d6d1e.png" /></td>
+<td><cite>return :: T -&gt; [T]</cite></td>
+<td><cite>return x = [x]</cite></td>
+</tr>
+<tr><td><img alt="P(P(S)) \to P(S)" class="texmath align-middle" src="imgmath/72b03a1fd311f1d4b58b087c02d3e8c4.png" /></td>
+<td><img alt="join_S(L)= \bigcup L" class="texmath align-middle" src="imgmath/50cef707a79d3747dd6a3c8c68680de5.png" /></td>
+<td><cite>join :: [[T]] -&gt; [T]</cite></td>
+<td><cite>join xs = concat xs</cite></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="id6">
+<h2><a class="toc-backref" href="#id19">monad公理和他们的重要性</a></h2>
+<p>正如函子需要满足函子的公理，monad也有他们的公理要去满足。我们先把这些公理简单列举一下，并转换成haskell代码，最后再来探讨这些公理的重要性。</p>
+<p>给定一个monad <img alt="M:C \to C" class="texmath align-middle" src="imgmath/beb3f916fb7e2ff19ad833143a2aeeb4.png" />  和态射 <img alt="f:A \to B" class="texmath align-middle" src="imgmath/2a450c31e3aab1387c14df7f13d8fbb0.png" />  其中 <img alt="A,B \in C" class="texmath align-middle" src="imgmath/8255db1d6a5f2d076e7891e1ca1fd942.png" />  ，有公理如下：</p>
+<ol class="arabic simple">
+<li><img alt="join \circ M(join)=join \circ join" class="texmath align-middle" src="imgmath/bca549d27897ec953e101498cb9bd1ac.png" /></li>
+<li><img alt="join \circ M(unit)=join \circ unit=id" class="texmath align-middle" src="imgmath/bc92dbd87354141beccbf4dde8539c81.png" /></li>
+<li><img alt="unit \circ f=M(f) \circ unit" class="texmath align-middle" src="imgmath/d3603172121e894bef05a550d108457b.png" /></li>
+<li><img alt="join \circ M(M(f))=M(f) \circ join" class="texmath align-middle" src="imgmath/4a79870bb108b707ec5441356e95e283.png" /></li>
+</ol>
+<p>现在，大家应该可以很自然地把他们转换成下面这样的haskell代码了吧:</p>
+<ol class="arabic simple">
+<li><cite>join . fmap join = join . join</cite></li>
+<li><cite>join . fmap return = join . return = id</cite></li>
+<li><cite>return . f = fmap f . return</cite></li>
+<li><cite>join . fmap (fmap f) = fmap f . join</cite></li>
+</ol>
+<p>(记住，fmap是函子定义中负责转换态射的那一部分。)乍看起来，这些公理似乎看不出存在什么深意。这几条公理究竟有啥鸟含义，凭什么非要monad遵守这几条规定？下面便让我们来探索一二。</p>
+<div class="section" id="id7">
+<h3><a class="toc-backref" href="#id20">公理一</a></h3>
+<div class="figure align-right" style="width: 410px">
+<img alt="images/Monad-law-1-lists.png" src="images/Monad-law-1-lists.png" />
+<p class="caption">用 <cite>list</cite> 对公理一进行的演示. 记住在 <cite>list</cite> monad中 <cite>join</cite> 就是 <cite>concat</cite> ， <cite>fmap</cite> 就是普通的 <cite>map</cite> 。</p>
+</div>
+<p>为了方便理解这条公理，我们先用 <cite>list</cite> 作为例子。首先这条公理涉及两个函数， <cite>join . fmap join</cite> （等式左边）和 <cite>join . join</cite> (等式右边)。这两个函数的类型是什么呢？因为我们只探讨 <cite>list</cite> ，所以我们知道 <cite>join</cite> 的类型是 <cite>[[a]] -&gt; [a]</cite> ，然后可以推出他们的类型都是： <cite>[[[a]]] -&gt; [a]</cite> 。所以我们的参数是一个 <cite>list</cite> 的 <cite>list</cite> 的 <cite>list</cite> ，然后对这个三层 <cite>list</cite> 执行 <cite>fmap join</cite> ，然后再在返回结果上应用 <cite>join</cite> 。对 <cite>list</cite> 来说 <cite>fmap</cite> 就是我们熟悉的普通 <cite>map</cite> ，所以我们首先对最外层列表的每一个元素进行 <cite>join</cite> 操作，也就是将其中每一个元素坍缩成为单层 <cite>list</cite> 。这个时候我们就得到一个 <cite>list</cite> 的 <cite>list</cite> ，我们再在其上应用 <cite>join</cite> ，最终坍缩成为一个 <cite>list</cite> 。简单地说，我们先进入外层 <cite>list</cite> ，将第二层和第三层 <cite>list</cite> 坍缩成一层，然后再将这一层和最外层坍缩成一层。</p>
+<p>等式右边又是怎么样一个情况呢？我们首先对我们的三层 <cite>list</cite> 进行 <cite>join</cite> ，虽然是三层 <cite>list</cite> ，但实际上 <cite>join</cite> 操作的还是两层 <cite>list</cite> ，因为 <cite>[[[a]]]</cite> 也可以当作是一个 <cite>[[b]]</cite> ，其中 <cite>b = [a]</cite> ，所以，某种意义上说，三层 <cite>list</cite> 只是内部元素也是 <cite>list</cite> 的一个两层 <cite>list</cite> 。所以如果我们将这个 <cite>list</cite> 的 <cite>list</cite> （的 <cite>list</cite> ）应用到 <cite>join</cite> ，它会将外面两层坍缩成一层，而因为第二层的元素本身还是 <cite>list</cite> ，所以我们得到的还是一个 <cite>list</cite> 的 <cite>list</cite> ，然后我们再应用一次 <cite>join</cite> ，最终坍缩成为一个 <cite>list</cite> ，总结起来就是说，等式左边是先坍缩里面两层，然后坍缩外面一层，而等式右边则是先坍缩外面两层，然后里面一层。而这条公理告诉我们，这两个操作应该是等价的。其实也有点像是在说 <cite>join</cite> 操作需要满足结合律。</p>
+<p><cite>Maybe</cite> 也是一个 monad，因为：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">return</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="n">a</span>
+</div><div class="line" id="LC1"><span class="nf">return</span> <span class="n">x</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="n">x</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">join</span> <span class="ow">::</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="kt">Maybe</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="n">a</span>
+</div><div class="line" id="LC1"><span class="nf">join</span> <span class="kt">Nothing</span>         <span class="ow">=</span> <span class="kt">Nothing</span>
+</div><div class="line" id="LC1"><span class="nf">join</span> <span class="p">(</span><span class="kt">Just</span> <span class="kt">Nothing</span><span class="p">)</span>  <span class="ow">=</span> <span class="kt">Nothing</span>
+</div><div class="line" id="LC1"><span class="nf">join</span> <span class="p">(</span><span class="kt">Just</span> <span class="p">(</span><span class="kt">Just</span> <span class="n">x</span><span class="p">))</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="n">x</span>
+</div></pre></div>
+<p>所以如果我们有一个三层的 <cite>Maybe</cite> 类型（举例来说，它可以是 <cite>Nothing</cite>, <cite>Just Nothing</cite>, <cite>Just (Just Nothing)</cite> or <cite>Just (Just (Just x))</cite> ），公理一就告诉我们，先坍缩里面两层还是先坍缩外面两层是完全等价的。</p>
+</div>
+<div class="section" id="id8">
+<h3><a class="toc-backref" href="#id21">公理二</a></h3>
+<p>我们再来看看第二条公理， 同样我们还是用 <cite>list</cite> 做例子。第二条公理提到两个函数的类型都是： <cite>[a] -&gt; [a]</cite> 。等式左边表达的是对一个 <cite>list</cite> 进行map的函数，将每一个元素 x 转换成者有这一个元素的列表 [x]，这样我们最终就得到一个单元素列表组成的列表。然后这个两层 <cite>list</cite> 通过join函数又重新坍缩回单层 <cite>list</cite> ，右边部分，接收整个 <cite>list</cite> [x, y, z, ...]，将它转换成单元素 <cite>list</cite> [[x, y, z, ...]] ，然后又坍缩成为单层列表。这条公理的含义没那么容易一下子说清楚，不过大概就是说，当你在一个monadic值上面应用return，然后再对见过使用join另它坍缩，不管你是在外层应用return还是在内部应用return，其效果是一样的。</p>
+</div>
+<div class="section" id="id9">
+<h3><a class="toc-backref" href="#id22">公理三和公理四</a></h3>
+<p>最后两条公理就更加不言而喻了，要展现他们的真实性最简单的方法就是将他们扩展开来：</p>
+<ol class="arabic simple">
+<li><cite>\x -&gt; return (f x) = \x -&gt; fmap f (return x)</cite></li>
+<li><cite>\x -&gt; join (fmap (fmap f) x) = \x -&gt; fmap f (join x)</cite></li>
+</ol>
+</div>
+<div class="section" id="do">
+<h3><a class="toc-backref" href="#id23">应用到do语法</a></h3>
+<p>OK，前面我们已经对monad必须遵守的一些公理进行了一些直观的陈述，但是这些公理为什么如此重要？这个问题的答案当我们看到do语法的时候就清除了。我们知道do只是一个语法糖，它其实就是多个 (&gt;&gt;=) 操作的组合：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">do</span> <span class="p">{</span> <span class="n">x</span> <span class="p">}</span>                 <span class="o">--&gt;</span>  <span class="n">x</span> <span class="c1">-- test</span>
+</div><div class="line" id="LC1"><span class="kr">do</span> <span class="p">{</span> <span class="kr">let</span> <span class="p">{</span> <span class="n">y</span> <span class="ow">=</span> <span class="n">v</span> <span class="p">};</span> <span class="n">x</span> <span class="p">}</span>  <span class="o">--&gt;</span>  <span class="kr">let</span> <span class="n">y</span> <span class="ow">=</span> <span class="n">v</span> <span class="kr">in</span> <span class="kr">do</span> <span class="p">{</span> <span class="n">x</span> <span class="p">}</span>
+</div><div class="line" id="LC1"><span class="kr">do</span> <span class="p">{</span> <span class="n">v</span> <span class="ow">&lt;-</span> <span class="n">y</span><span class="p">;</span> <span class="n">x</span> <span class="p">}</span>         <span class="o">--&gt;</span>  <span class="n">y</span> <span class="o">&gt;&gt;=</span> <span class="nf">\</span><span class="n">v</span> <span class="ow">-&gt;</span> <span class="kr">do</span> <span class="p">{</span> <span class="n">x</span> <span class="p">}</span>
+</div><div class="line" id="LC1"><span class="kr">do</span> <span class="p">{</span> <span class="n">y</span><span class="p">;</span> <span class="n">x</span> <span class="p">}</span>              <span class="o">--&gt;</span>  <span class="n">y</span> <span class="o">&gt;&gt;=</span> <span class="nf">\</span><span class="kr">_</span> <span class="ow">-&gt;</span> <span class="kr">do</span> <span class="p">{</span> <span class="n">x</span> <span class="p">}</span>
+</div></pre></div>
+<p>另外，我们其实可以通过上面提到的这些公理和 (&gt;&gt;=) 的定义，对 haskell 中的 monad 公理进行证明（证明过程有的地方比较复杂，如果没有兴趣也可以直接跳过）：</p>
+<ol class="arabic">
+<li><p class="first"><cite>return x &gt;&gt;= f = f x</cite> 。证明：</p>
+<blockquote>
+<div class="highlight None"><pre><div class="line" id="LC1">  <span class="n">return</span> <span class="n">x</span> <span class="o">&gt;&gt;=</span> <span class="n">f</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="n">join</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">f</span> <span class="p">(</span><span class="n">return</span> <span class="n">x</span><span class="p">))</span> <span class="c1">-- 根据 (&gt;&gt;=) 的定义</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="n">join</span> <span class="p">(</span><span class="n">return</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">))</span>      <span class="c1">-- 根据公理三</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="p">(</span><span class="n">join</span> <span class="o">.</span> <span class="n">return</span><span class="p">)</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="n">id</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">)</span>                 <span class="c1">-- 根据公理二</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="n">f</span> <span class="n">x</span>
+</div></pre></div>
+</blockquote>
+</li>
+<li><p class="first"><cite>m &gt;&gt;= return = m</cite> 。证明：</p>
+<blockquote>
+<div class="highlight None"><pre><div class="line" id="LC1">  <span class="n">m</span> <span class="o">&gt;&gt;=</span> <span class="n">return</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="n">join</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">return</span> <span class="n">m</span><span class="p">)</span>    <span class="c1">-- 根据 (&gt;&gt;=) 的定义</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="p">(</span><span class="n">join</span> <span class="o">.</span> <span class="n">fmap</span> <span class="n">return</span><span class="p">)</span> <span class="n">m</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="n">id</span> <span class="n">m</span>                    <span class="c1">-- 根据公理二</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="n">m</span>
+</div></pre></div>
+</blockquote>
+</li>
+<li><p class="first"><cite>(m &gt;&gt;= f) &gt;&gt;= g = m &gt;&gt;= (\x -&gt; f x &gt;&gt;= g)</cite> 。证明（联想 <cite>fmap f . fmap g = fmap (f . g)</cite> ）：</p>
+<blockquote>
+<div class="highlight small"><pre><div class="line" id="LC1">  <span class="p">(</span><span class="n">m</span> <span class="o">&gt;&gt;=</span> <span class="n">f</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="p">(</span><span class="n">join</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">f</span> <span class="n">m</span><span class="p">))</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span>                          <span class="c1">-- 根据 (&gt;&gt;=) 的定义</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="n">join</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">g</span> <span class="p">(</span><span class="n">join</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">f</span> <span class="n">m</span><span class="p">)))</span>                  <span class="c1">-- 根据 (&gt;&gt;=) 的定义</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="p">(</span><span class="n">join</span> <span class="o">.</span> <span class="n">fmap</span> <span class="n">g</span><span class="p">)</span> <span class="p">(</span><span class="n">join</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">f</span> <span class="n">m</span><span class="p">))</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="p">(</span><span class="n">join</span> <span class="o">.</span> <span class="n">fmap</span> <span class="n">g</span> <span class="o">.</span> <span class="n">join</span><span class="p">)</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">f</span> <span class="n">m</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="p">(</span><span class="n">join</span> <span class="o">.</span> <span class="n">join</span> <span class="o">.</span> <span class="n">fmap</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">g</span><span class="p">))</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">f</span> <span class="n">m</span><span class="p">)</span>         <span class="c1">-- 根据公理四</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="p">(</span><span class="n">join</span> <span class="o">.</span> <span class="n">join</span> <span class="o">.</span> <span class="n">fmap</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">g</span><span class="p">)</span> <span class="o">.</span> <span class="n">fmap</span> <span class="n">f</span><span class="p">)</span> <span class="n">m</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="p">(</span><span class="n">join</span> <span class="o">.</span> <span class="n">join</span> <span class="o">.</span> <span class="n">fmap</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">g</span> <span class="o">.</span> <span class="n">f</span><span class="p">))</span> <span class="n">m</span>              <span class="c1">-- 根据函子的分配率</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="p">(</span><span class="n">join</span> <span class="o">.</span> <span class="n">join</span> <span class="o">.</span> <span class="n">fmap</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">fmap</span> <span class="n">g</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">)))</span> <span class="n">m</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="p">(</span><span class="n">join</span> <span class="o">.</span> <span class="n">fmap</span> <span class="n">join</span> <span class="o">.</span> <span class="n">fmap</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">fmap</span> <span class="n">g</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">)))</span> <span class="n">m</span> <span class="c1">-- 根据公理一</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="p">(</span><span class="n">join</span> <span class="o">.</span> <span class="n">fmap</span> <span class="p">(</span><span class="n">join</span> <span class="o">.</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">fmap</span> <span class="n">g</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">))))</span> <span class="n">m</span>    <span class="c1">-- 根据函子的分配率</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="p">(</span><span class="n">join</span> <span class="o">.</span> <span class="n">fmap</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">join</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">g</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">))))</span> <span class="n">m</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="p">(</span><span class="n">join</span> <span class="o">.</span> <span class="n">fmap</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">x</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span><span class="p">))</span> <span class="n">m</span>                <span class="c1">-- 根据 (&gt;&gt;=) 的定义</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="n">join</span> <span class="p">(</span><span class="n">fmap</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">x</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span><span class="p">)</span> <span class="n">m</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="ow">=</span> <span class="n">m</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">x</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span><span class="p">)</span>                          <span class="c1">-- 根据 (&gt;&gt;=) 的定义</span>
+</div></pre></div>
+</blockquote>
+</li>
+</ol>
+<p>这几条使用 <cite>return</cite> 和 <cite>(&gt;&gt;=)</cite> 的monad公理，可以翻译成如下的do语法糖：</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="48%" />
+<col width="52%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">无参(points-free)风格</th>
+<th class="head">do语句块</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><cite>return x &gt;&gt;= f = f x</cite></td>
+<td><cite>do { v &lt;- return x; f v } = do { f x }</cite></td>
+</tr>
+<tr><td><cite>m &gt;&gt;= return = m</cite></td>
+<td><cite>do { v &lt;- m; return v } = do { m }</cite></td>
+</tr>
+<tr><td><cite>(m &gt;&gt;= f) &gt;&gt;= g = m &gt;&gt;= (\x -&gt; f x &gt;&gt;= g)</cite></td>
+<td><div class="highlight small"><pre><div class="line" id="LC1">   <span class="kr">do</span> <span class="p">{</span> <span class="n">y</span> <span class="ow">&lt;-</span> <span class="kr">do</span> <span class="p">{</span> <span class="n">x</span> <span class="ow">&lt;-</span> <span class="n">m</span><span class="p">;</span> <span class="n">f</span> <span class="n">x</span> <span class="p">};</span>
+</div><div class="line" id="LC1">       <span class="n">g</span> <span class="n">y</span> <span class="p">}</span>
+</div><div class="line" id="LC1"><span class="ow">=</span>
+</div><div class="line" id="LC1">  <span class="kr">do</span> <span class="p">{</span> <span class="n">x</span> <span class="ow">&lt;-</span> <span class="n">m</span><span class="p">;</span>
+</div><div class="line" id="LC1">       <span class="n">y</span> <span class="ow">&lt;-</span> <span class="n">f</span> <span class="n">x</span><span class="p">;</span>
+</div><div class="line" id="LC1">       <span class="n">g</span> <span class="n">y</span> <span class="p">}</span>
+</div></pre></div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>现在，monad公理就变成了保证do语句块正常运转的规定了，如果有一个公理不满足，都会导致用户的困惑，因为do语句块的行为将和你期待的不一样。所以本质上说，monad公理其实是一份关于monad的可用性指南。</p>
+</div>
+</div>
+<div class="section" id="id10">
+<h2><a class="toc-backref" href="#id24">总结</a></h2>
+<p>在这一章中，我们一路走到现在，我们知道了范畴是什么，他们对应了haskell的哪些概念。我们介绍了包括函子在内的许多范畴论中的重要概念，同时还介绍了monad这样的高级话题，并且看到了他们对于haskell来说是多么的关键。我们没有介绍范畴论中其他一些基本概念，比如自然转换，因为就我们的目标来说并不需要。我们希望让你能对haskell背后的范畴论概念有一些直观的感受。</p>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2010-04-06_haskell_and_category_translate';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2010-04-06_haskell_and_category_translate.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2010-04-06_haskell_and_category_translate.html&title=Haskell与范畴论"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2010-04-06_haskell_and_category_translate.html&title=Haskell与范畴论"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=Haskell与范畴论&uri=http://www.yi-programmer.com/blog/2010-04-06_haskell_and_category_translate.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2010-04-06_haskell_and_category_translate.html&title=Haskell与范畴论"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2010-04-06_haskell_and_category_translate.html&it=Haskell与范畴论&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2010-04-06_haskell_and_category_translate.html&title=Haskell与范畴论&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2010-04-06_haskell_and_category_translate.html&t=Haskell与范畴论"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2010-04-06_haskell_and_category_translate.html&title=Haskell与范畴论"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=Haskell与范畴论&rurl=http://www.yi-programmer.com/blog/2010-04-06_haskell_and_category_translate.html&rcontent=http://www.yi-programmer.com/blog/2010-04-06_haskell_and_category_translate.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2010-04-06_haskell_and_category_translate.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2010-04-06_haskell_and_category_translate.html&t=Haskell与范畴论"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2010-04-06_haskell_and_category_translate.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

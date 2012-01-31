@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>惰性求值和尾递归</title>
+<meta content="尾递归 haskell lazy tail recursion" name="keywords" />
+<meta content="解释惰性求值对尾递归的影响" name="description" />
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">惰性求值和尾递归</h1>
+
+                    <p class="author">2011-04-23 黄毅</p>
+                    <p>参考： <a class="reference external" href="http://www.haskell.org/haskellwiki/Stack_overflow">HaskellWiki: Stack overflow</a></p>
+<div class="section" id="id2">
+<h2>有时候我们需要尾递归</h2>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">sum</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Int</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="kt">Int</span>
+</div><div class="line" id="LC1"><span class="nf">sum</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="mi">0</span>
+</div><div class="line" id="LC1"><span class="nf">sum</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">sum</span> <span class="n">xs</span>
+</div></pre></div>
+<p>模拟求值：</p>
+<pre class="literal-block">
+sum [1..10]
+1 + sum [2..10]
+1 + (2 + sum [3..10])
+1 + (2 + (3 + sum [4..10]))
+...
+1 + (2 + (3 + 49))
+1 + (2 + 52)
+1 + 54
+55
+</pre>
+<p>可以看出在上面这个实现中，需要占用O(n)的空间，如果是堆栈的话，就容易溢出了。</p>
+<p>解决方案第一步就是改为尾递归形式。因为尾递归形式中，递归调用是函数体的最后一步，所以进入递归调用时可以放心地把当前栈帧丢弃，所以不会有堆栈溢出的问题:</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">sum&#39;</span> <span class="n">accu</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="n">accu</span>
+</div><div class="line" id="LC1"><span class="nf">sum&#39;</span> <span class="n">accu</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">sum&#39;</span> <span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">accu</span><span class="p">)</span> <span class="n">xs</span>
+</div><div class="line" id="LC1"><span class="nf">sum</span> <span class="ow">=</span> <span class="n">sum&#39;</span> <span class="mi">0</span>
+</div></pre></div>
+<p>对于严格求值的语言，这样就够了；但是对于惰性求值的语言，还存在另一个问题，模拟求值一下就可以看得出来：</p>
+<pre class="literal-block">
+sum' 0 [1..10]
+sum' (1+0) [2..10]
+sum' (2+(1+0)) [3..10]
+sum' (3+(2+(1+0))) [4..10]
+...
+sum' (10+(9+36)) []
+sum' (10+45) []
+sum' 55 []
+55
+</pre>
+<p>因为 <cite>sum'</cite> 的第二个参数是惰性求值的，所以计算过程中还是会把这个 <a class="reference external" href="http://www.haskell.org/haskellwiki/Thunk">thunk</a> 留着，不到万不得已不会对它求值，于是依然导致O(n)的空间占用。</p>
+<p>解决这个问题也好办，给 <cite>accu</cite> 参数加一个 <a class="reference external" href="http://hackage.haskell.org/trac/haskell-prime/wiki/BangPatterns">严格求值的标记</a> 就好了：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">sum&#39;</span> <span class="o">!</span><span class="n">accu</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="n">accu</span>
+</div><div class="line" id="LC1"><span class="nf">sum&#39;</span> <span class="o">!</span><span class="n">accu</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">sum&#39;</span> <span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">accu</span><span class="p">)</span> <span class="n">xs</span>
+</div><div class="line" id="LC1"><span class="nf">sum</span> <span class="ow">=</span> <span class="n">sum&#39;</span> <span class="mi">0</span>
+</div></pre></div>
+<p>这下 sum 函数就跑得飞快了。</p>
+<p>前一个版本的 <cite>sum</cite> 是 <cite>foldr (+) 0</cite> ，后一个版本是 <cite>foldl' (+) 0</cite> 。</p>
+</div>
+<div class="section" id="id4">
+<h2>有时候我们不需要尾递归</h2>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">concat</span> <span class="ow">::</span> <span class="p">[[</span><span class="n">a</span><span class="p">]]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+</div><div class="line" id="LC1"><span class="nf">concat</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">++</span> <span class="n">concat</span> <span class="n">xs</span>
+</div></pre></div>
+<p>模拟求值：</p>
+<pre class="literal-block">
+concat [[1], [2], [3], ...]
+(1:[]) ++ concat [[2], [3], ...]
+1 : ([] ++ concat [[2], [3], ...])
+</pre>
+<p>求值完毕了。为什么？因为 (++) 的第二个参数是惰性求值的，只有当我们需要后面的元素时才会触发后续的求值。
+所以 concat 不会栈溢出，常数级空间占用，并且还有一个好处，可以处理无穷列表。</p>
+<p>另外： <cite>concat = foldr (++) []</cite></p>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2011-04-23_lazy-and-tail-recursion';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2011-04-23_lazy-and-tail-recursion.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2011-04-23_lazy-and-tail-recursion.html&title=惰性求值和尾递归"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2011-04-23_lazy-and-tail-recursion.html&title=惰性求值和尾递归"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=惰性求值和尾递归&uri=http://www.yi-programmer.com/blog/2011-04-23_lazy-and-tail-recursion.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2011-04-23_lazy-and-tail-recursion.html&title=惰性求值和尾递归"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2011-04-23_lazy-and-tail-recursion.html&it=惰性求值和尾递归&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2011-04-23_lazy-and-tail-recursion.html&title=惰性求值和尾递归&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2011-04-23_lazy-and-tail-recursion.html&t=惰性求值和尾递归"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2011-04-23_lazy-and-tail-recursion.html&title=惰性求值和尾递归"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=惰性求值和尾递归&rurl=http://www.yi-programmer.com/blog/2011-04-23_lazy-and-tail-recursion.html&rcontent=http://www.yi-programmer.com/blog/2011-04-23_lazy-and-tail-recursion.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2011-04-23_lazy-and-tail-recursion.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2011-04-23_lazy-and-tail-recursion.html&t=惰性求值和尾递归"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2011-04-23_lazy-and-tail-recursion.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>类型推导和合一算法的简单介绍</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">类型推导和合一算法的简单介绍</h1>
+
+                    <p class="author">2011-06-04 黄毅</p>
+                    <p>Hindley Milner类型系统最过瘾的就是 <a class="reference external" href="http://en.wikipedia.org/wiki/Type_inference">类型推导</a> 功能。写程序的时候可以完全忽略变量和函数的类型，由编译器自动推导类型并做类型检查。可以说是静态语言和动态语言的完美结合。本文简单介绍类型推导的过程，以及其中的关键算法： <a class="reference external" href="http://en.wikipedia.org/wiki/Unification">合一</a> 。</p>
+<p>先问一个问题， <cite>flip id</cite> 的类型是什么？我们知道 <cite>id</cite> 是原封不动地返回传给它的参数，类型是 <cite>a -&gt; a</cite> ； <cite>flip</cite> 是用来交换一个函数前两个参数的位置，类型是 <cite>(a -&gt; b -&gt; c) -&gt; b -&gt; a -&gt; c</cite> ，然而用 <cite>id</cite> 去调用 <cite>flip</cite> 返回的是个什么类型？心算起来还是有难度，幸好我们可以求助于 ghci ：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">id</span>
+</div><div class="line" id="LC1"><span class="nf">id</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+</div><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">flip</span>
+</div><div class="line" id="LC1"><span class="nf">flip</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">c</span>
+</div><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">flip</span> <span class="n">id</span>
+</div><div class="line" id="LC1"><span class="nf">flip</span> <span class="n">id</span> <span class="ow">::</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">c</span>
+</div></pre></div>
+<p>Haskell是如何算出这个结果的？这就是类型推导算法在起作用了。简单地说，类型推导过程分两部进行：1. 根据类型系统规则产生一个方程组；2.解方程组。</p>
+<p>比如上面这个问题，我们先假定 <cite>flip id</cite> 的类型是 <cite>x</cite> ，然后根据函数调用的规则以及 <cite>id</cite> 的类型，我们发现 <cite>flip</cite> 的类型应该是 <cite>(a -&gt; a) -&gt; x</cite> ，同时我们已知 <cite>flip</cite> 的类型是： <cite>(a -&gt; b -&gt; c) -&gt; b -&gt; a -&gt; c</cite> ，这两个写法必须是等价的。根据这一点，我们就能得出一个方程组，通过合一算法解方程组，我们就可以得到 <cite>x</cite> 的值。</p>
+<p>首先为了防止命名冲突，先进行必要的重命名，同时对 <cite>flip</cite> 的类型进行一点等价转换，现在两个类型便成为如下形式：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="p">(</span><span class="n">d</span> <span class="ow">-&gt;</span> <span class="n">d</span>       <span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">x</span>
+</div><div class="line" id="LC1"><span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span>
+</div></pre></div>
+<p>根据其中的对应关系，我们可以得出这些一样等式：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">d</span> <span class="ow">=</span> <span class="n">a</span>
+</div><div class="line" id="LC1"><span class="nf">d</span> <span class="ow">=</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span>
+</div><div class="line" id="LC1"><span class="nf">x</span> <span class="ow">=</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">c</span>
+</div></pre></div>
+<p>然后再通过一些等价替换就不难解出 <cite>x</cite> 的值了： <cite>b -&gt; (b -&gt; c) -&gt; c</cite> 。</p>
+<p>我用Haskell写了一个 <a class="reference external" href="https://github.com/yihuang/haskell-snippets/blob/master/Unif.hs">合一算法的简单实现</a> ，供大家学习参考，运行效果如下：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="o">*</span><span class="kt">Main</span><span class="o">&gt;</span> <span class="n">test</span> <span class="p">(</span><span class="n">f</span> <span class="p">[</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">x</span><span class="p">])</span> <span class="p">(</span><span class="n">f</span> <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">],</span> <span class="n">f</span> <span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">c</span><span class="p">]])</span>
+</div><div class="line" id="LC1"><span class="nf">f</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>  <span class="o">&lt;==&gt;</span>  <span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">),</span><span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">c</span><span class="p">))</span>
+</div><div class="line" id="LC1"><span class="nf">d</span> <span class="ow">-&gt;</span> <span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="nf">x</span> <span class="ow">-&gt;</span> <span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">),</span><span class="n">c</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="nf">a</span> <span class="ow">-&gt;</span> <span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
+</div></pre></div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2011-06-04_type-inference-and-unification';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2011-06-04_type-inference-and-unification.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2011-06-04_type-inference-and-unification.html&title=类型推导和合一算法的简单介绍"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2011-06-04_type-inference-and-unification.html&title=类型推导和合一算法的简单介绍"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=类型推导和合一算法的简单介绍&uri=http://www.yi-programmer.com/blog/2011-06-04_type-inference-and-unification.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2011-06-04_type-inference-and-unification.html&title=类型推导和合一算法的简单介绍"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2011-06-04_type-inference-and-unification.html&it=类型推导和合一算法的简单介绍&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2011-06-04_type-inference-and-unification.html&title=类型推导和合一算法的简单介绍&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2011-06-04_type-inference-and-unification.html&t=类型推导和合一算法的简单介绍"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2011-06-04_type-inference-and-unification.html&title=类型推导和合一算法的简单介绍"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=类型推导和合一算法的简单介绍&rurl=http://www.yi-programmer.com/blog/2011-06-04_type-inference-and-unification.html&rcontent=http://www.yi-programmer.com/blog/2011-06-04_type-inference-and-unification.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2011-06-04_type-inference-and-unification.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2011-06-04_type-inference-and-unification.html&t=类型推导和合一算法的简单介绍"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2011-06-04_type-inference-and-unification.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

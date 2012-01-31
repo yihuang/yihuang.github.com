@@ -1,0 +1,3 @@
+@Start
+(P(f))(S)={f(a):a \in S}
+@End

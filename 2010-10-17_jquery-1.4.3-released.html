@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>jQuery 1.4.3发布</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">jQuery 1.4.3发布</h1>
+
+                    <p class="author">2010-10-17 黄毅</p>
+                    <p><a class="reference external" href="http://api.jquery.com/category/version/1.4.3/">jQuery 1.4.3</a> 发布，这里记录一下几个重要的增强和变更。</p>
+<ul>
+<li><p class="first">使用 <a class="reference external" href="http://www.jslint.com/">JSLint</a> 控制代码风格， <a class="reference external" href="http://docs.jquery.com/JQuery_Core_Style_Guidelines">jQuery Core Style Guidelines</a></p>
+</li>
+<li><p class="first">降低内部模块之间耦合性，方便单独使用内部模块。</p>
+</li>
+<li><p class="first">CSS模块重构，提升性能和可扩展性，具体图表见原文， <cite>.css()</cite> 扩展实例： <a class="reference external" href="http://github.com/lrbabe/jquery.rotate.js">jQuery Rotate</a></p>
+</li>
+<li><p class="first"><cite>.data()</cite> 支持 <a class="reference external" href="http://ejohn.org/blog/html-5-data-attributes/">HTML 5 data- attributes</a> ，这个以前是 metadata 插件的特性，现在移到内核了。这个html5 data属性的规范虽然是新的规范，但是不需要浏览器提供任何支持，所以直接就可以开始使用了。示例：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nt">&lt;div</span> <span class="na">data-role=</span><span class="s">&quot;page&quot;</span> <span class="na">data-hidden=</span><span class="s">&quot;true&quot;</span> <span class="na">data-options=</span><span class="s">&#39;{&quot;name&quot;:&quot;John&quot;}&#39;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</div></pre></div>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="s2">&quot;role&quot;</span><span class="p">)</span> <span class="o">===</span> <span class="s2">&quot;page&quot;</span><span class="p">;</span>
+</div><div class="line" id="LC1"><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="s2">&quot;hidden&quot;</span><span class="p">)</span> <span class="o">===</span> <span class="kc">true</span><span class="p">;</span>
+</div><div class="line" id="LC1"><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">).</span><span class="nx">name</span> <span class="o">===</span> <span class="s2">&quot;John&quot;</span><span class="p">;</span>
+</div></pre></div>
+</li>
+<li><p class="first"><cite>.data(obj)</cite> 现在不是替换原对象，而是 extend 原对象，因为jQuery本身和其他插件也会在元素上存储一些数据，直接替换 data 对象的话容易出问题。</p>
+</li>
+<li><p class="first">新增 <cite>changeData</cite> 事件，使用 <cite>.data()</cite> 修改数据的时候触发， <a class="reference external" href="http://github.com/jquery/jquery-datalink">jQuery Data Linking</a> 插件大量使用该特性，自动保持对象属性和form字段之间的同步。</p>
+</li>
+<li><p class="first">新增 <cite>jQuery.type</cite></p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nx">jQuery</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="o">===</span> <span class="s2">&quot;boolean&quot;</span>
+</div><div class="line" id="LC1"><span class="nx">jQuery</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">===</span> <span class="s2">&quot;number&quot;</span>
+</div><div class="line" id="LC1"><span class="nx">jQuery</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span> <span class="o">===</span> <span class="s2">&quot;string&quot;</span>
+</div><div class="line" id="LC1"><span class="nx">jQuery</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="kd">function</span><span class="p">(){})</span> <span class="o">===</span> <span class="s2">&quot;function&quot;</span>
+</div><div class="line" id="LC1"><span class="nx">jQuery</span><span class="p">.</span><span class="nx">type</span><span class="p">([])</span> <span class="o">===</span> <span class="s2">&quot;array&quot;</span>
+</div><div class="line" id="LC1"><span class="nx">jQuery</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">())</span> <span class="o">===</span> <span class="s2">&quot;date&quot;</span>
+</div><div class="line" id="LC1"><span class="nx">jQuery</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="sr">/test/</span><span class="p">)</span> <span class="o">===</span> <span class="s2">&quot;regexp&quot;</span>
+</div></pre></div>
+</li>
+<li><p class="first">还有其他大量小修改，参考： <a class="reference external" href="http://api.jquery.com/category/version/1.4.3/">http://api.jquery.com/category/version/1.4.3/</a></p>
+</li>
+</ul>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2010-10-17_jquery-1.4.3-released';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2010-10-17_jquery-1.4.3-released.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2010-10-17_jquery-1.4.3-released.html&title=jQuery 1.4.3发布"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2010-10-17_jquery-1.4.3-released.html&title=jQuery 1.4.3发布"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=jQuery 1.4.3发布&uri=http://www.yi-programmer.com/blog/2010-10-17_jquery-1.4.3-released.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2010-10-17_jquery-1.4.3-released.html&title=jQuery 1.4.3发布"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2010-10-17_jquery-1.4.3-released.html&it=jQuery 1.4.3发布&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2010-10-17_jquery-1.4.3-released.html&title=jQuery 1.4.3发布&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2010-10-17_jquery-1.4.3-released.html&t=jQuery 1.4.3发布"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2010-10-17_jquery-1.4.3-released.html&title=jQuery 1.4.3发布"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=jQuery 1.4.3发布&rurl=http://www.yi-programmer.com/blog/2010-10-17_jquery-1.4.3-released.html&rcontent=http://www.yi-programmer.com/blog/2010-10-17_jquery-1.4.3-released.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2010-10-17_jquery-1.4.3-released.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2010-10-17_jquery-1.4.3-released.html&t=jQuery 1.4.3发布"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2010-10-17_jquery-1.4.3-released.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>
