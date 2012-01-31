@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
-<title></title>
+<title>Haskell教程</title>
 
         <meta name="viewport" contect="width=device-width"></meta>
         <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
@@ -43,16 +43,34 @@
 
             <div id="middle">
                 <div class="postdetail">
-                    
-                    <p class="author">2010-04-12 黄毅</p>
-                    <p>rss feed新鲜出炉， <a class="reference external" href="http://www.yi-programmer.com/blog/rss.xml">http://www.yi-programmer.com/blog/rss.xml</a> ，欢迎订阅。</p>
+                    <h1 class="title">Haskell教程</h1>
+
+                    <div class="section" id="core">
+<h2>Core</h2>
+<p>Haskell是门设计良好的语言，其中一个体现就是语法的简洁，甚至在简洁的语法当中，还存在一个更简洁且仍然完备的子集：核。</p>
+<p>GHC编译初期会将Haskell源程序转换成核语法，后续的代码优化和代码生成都是基于这个核语法。核语法以外的语法可以被称作语法糖，把语法糖翻译成核语法的过程就叫做&quot;desuger&quot;。</p>
+<p>了解核语法将有助你看透语法的迷雾，直达函数式编程的本质。</p>
+<p>本教程就将从这个“核”开始说起。</p>
+</div>
+<div class="section" id="id1">
+<h2>值和类型</h2>
+</div>
+<div class="section" id="data-type-and-pattern-matching">
+<h2>Data Type and Pattern Matching</h2>
+</div>
+<div class="section" id="guard">
+<h2>Guard</h2>
+</div>
+<div class="section" id="do-block">
+<h2>Do block</h2>
+</div>
 
                     <br/>
                     <div id="disqus_thread"></div>
                     <script type="text/javascript">
                         var disqus_shortname = 'yi-programmer';
-                        var disqus_identifier = '2010-04-12_';
-                        var disqus_url = 'http://www.yi-programmer.com/blog/2010-04-12_.html';
+                        var disqus_identifier = '_2011-12-07_haskell-tutorial';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/_2011-12-07_haskell-tutorial.html';
 
                         (function() {
                         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
@@ -65,22 +83,22 @@
 
                     <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
                     <p class="share-icons">
-                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2010-04-12_.html&title="><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
-                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2010-04-12_.html&title="><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
-                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=&uri=http://www.yi-programmer.com/blog/2010-04-12_.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
-                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2010-04-12_.html&title="><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
-                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2010-04-12_.html&it=&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
-                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2010-04-12_.html&title=&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
-                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2010-04-12_.html&t="><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
-                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2010-04-12_.html&title="><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
-                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=&rurl=http://www.yi-programmer.com/blog/2010-04-12_.html&rcontent=http://www.yi-programmer.com/blog/2010-04-12_.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
-                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2010-04-12_.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
-                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2010-04-12_.html&t="><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/_2011-12-07_haskell-tutorial.html&title=Haskell教程"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/_2011-12-07_haskell-tutorial.html&title=Haskell教程"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=Haskell教程&uri=http://www.yi-programmer.com/blog/_2011-12-07_haskell-tutorial.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/_2011-12-07_haskell-tutorial.html&title=Haskell教程"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/_2011-12-07_haskell-tutorial.html&it=Haskell教程&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/_2011-12-07_haskell-tutorial.html&title=Haskell教程&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/_2011-12-07_haskell-tutorial.html&t=Haskell教程"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/_2011-12-07_haskell-tutorial.html&title=Haskell教程"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=Haskell教程&rurl=http://www.yi-programmer.com/blog/_2011-12-07_haskell-tutorial.html&rcontent=http://www.yi-programmer.com/blog/_2011-12-07_haskell-tutorial.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/_2011-12-07_haskell-tutorial.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/_2011-12-07_haskell-tutorial.html&t=Haskell教程"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
                     </p>
                 </div>
                 <div class="footer">
 <hr class="footer" />
-<a class="reference external" href="src/2010-04-12_.txt">View document source</a>.
+<a class="reference external" href="src/_2011-12-07_haskell-tutorial.txt">View document source</a>.
 Generated on: 2012-01-31.
 Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
 

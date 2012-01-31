@@ -1,5 +1,116 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<rss version="2.0"><channel><title>&#31934;&#30830;&#32534;&#31243;</title><link>http://yi-programmer.com/blog/</link><description></description><lastBuildDate>Tue, 31 Jan 2012 16:11:01 GMT</lastBuildDate><generator>PyRSS2Gen-1.0.0</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>&#26080;&#39064;</title><link>http://yi-programmer.com/blog/2011-11-03_.html</link><description>&lt;p&gt;&#20889; parser &#30340;&#26102;&#20505;&#38656;&#35201;&#20889;&#36825;&#26679;&#30340;&#20195;&#30721;&#65306;&lt;/p&gt;
+<rss version="2.0"><channel><title>&#31934;&#30830;&#32534;&#31243;</title><link>http://yi-programmer.com/blog/</link><description></description><lastBuildDate>Tue, 31 Jan 2012 16:24:25 GMT</lastBuildDate><generator>PyRSS2Gen-1.0.0</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>warp&#38745;&#24577;&#25991;&#20214;&#26381;&#21153;&#22120;&#35780;&#27979;</title><link>http://yi-programmer.com/blog/2011-11-12_wai-static-app.html</link><description>&lt;div class="section" id="id1"&gt;
+&lt;h2&gt;&#23433;&#35013;&lt;/h2&gt;
+&lt;ol class="arabic"&gt;
+&lt;li&gt;&lt;p class="first"&gt;&#23433;&#35013;GHC&#21644;Cabal&#65292;&#21442;&#32771;&#65306; &lt;a class="reference external" href="http://book.realworldhaskell.org/read/installing-ghc-and-haskell-libraries.html"&gt;http://book.realworldhaskell.org/read/installing-ghc-and-haskell-libraries.html&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;&#20351;&#29992;Cabal&#23433;&#35013; &lt;a class="reference external" href="https://github.com/yesodweb/wai/tree/master/warp"&gt;Warp&lt;/a&gt; &#26381;&#21153;&#22120;&#21644; &lt;a class="reference external" href="https://github.com/yesodweb/wai/tree/master/wai-app-static"&gt;wai-app-static&lt;/a&gt; &#65292;Cabal&#23558;&#33258;&#21160;&#19979;&#36733;&#23433;&#35013;&#20381;&#36182;&#30340;&#19968;&#20123;&#24211;&#65306;&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+cabal install warp wai-app-static
+&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;&#32534;&#20889;&#25105;&#20204;&#30340;&#38745;&#24577;&#25991;&#20214;&#26381;&#21153;&#22120;&#65306;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight None"&gt;&lt;pre&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;Control.Applicative&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;$&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;Data.Maybe&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;fromMaybe&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nf"&gt;listToMaybe&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;System.Environment&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;getArgs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;Network.Wai.Handler.Warp&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;run&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;Network.Wai.Application.Static&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="nf"&gt;staticApp&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;                                      &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nf"&gt;defaultFileServerSettings&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="nf"&gt;main&lt;/span&gt; &lt;span class="ow"&gt;::&lt;/span&gt; &lt;span class="kt"&gt;IO&lt;/span&gt; &lt;span class="nb"&gt;()&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="nf"&gt;main&lt;/span&gt; &lt;span class="ow"&gt;=&lt;/span&gt; &lt;span class="kr"&gt;do&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;    &lt;span class="n"&gt;port&lt;/span&gt; &lt;span class="ow"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="n"&gt;read&lt;/span&gt; &lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;fromMaybe&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;3000&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;listToMaybe&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;$&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;getArgs&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;    &lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="n"&gt;port&lt;/span&gt; &lt;span class="o"&gt;$&lt;/span&gt; &lt;span class="n"&gt;staticApp&lt;/span&gt; &lt;span class="n"&gt;defaultFileServerSettings&lt;/span&gt;
+&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id3"&gt;
+&lt;h2&gt;&#29305;&#24615;&lt;/h2&gt;
+&lt;p&gt;&#19968;&#20010;&#23436;&#21892;&#30340;&#38745;&#24577;&#25991;&#20214;&#26381;&#21153;&#22120;&#65306;&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;&#33021;&#20197;&#39640;&#38454;&#20989;&#25968;&#30340;&#26041;&#24335;&#23450;&#21046;&#25991;&#20214;&#26597;&#25214;&#36923;&#36753;&lt;/li&gt;
+&lt;li&gt;&#26681;&#25454;&#25991;&#20214;&#25193;&#23637;&#21517;&#20135;&#29983;mimetype&lt;/li&gt;
+&lt;li&gt;304&#21709;&#24212;&#65292;&#25903;&#25345;If-Modified-Since&#65292;&#25903;&#25345;If-None-Match&#21305;&#37197;&#25991;&#20214;&#21704;&#24076;&#20540;&lt;/li&gt;
+&lt;li&gt;&#30446;&#24405;&#26411;&#23614;&#33258;&#21160;&#28155;&#21152;'/' &#65292;&#33258;&#21160;&#26597;&#25214;&#21487;&#37197;&#32622;&#30340;index&#25991;&#20214;&#31561;&#31561;&#12290;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id4"&gt;
+&lt;h2&gt;&#24615;&#33021;&lt;/h2&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&#29615;&#22659;&#65306;Thinkpad X61, T8100 &#21452;&#26680;&#65292;Linux 2.6.38&#65292;GHC 7.2.1&lt;/li&gt;
+&lt;li&gt;&#32534;&#35793;&#36873;&#39033;&#65306; &lt;tt class="docutils literal"&gt;ghc &lt;span class="pre"&gt;-O3&lt;/span&gt; &lt;span class="pre"&gt;-threaded&lt;/span&gt; Main.hs&lt;/tt&gt;&lt;/li&gt;
+&lt;li&gt;&#25191;&#34892;&#36873;&#39033;&#65306; &lt;tt class="docutils literal"&gt;./Main +RTS &lt;span class="pre"&gt;-N1&lt;/span&gt; &lt;span class="pre"&gt;-qa&lt;/span&gt;&lt;/tt&gt;&lt;/li&gt;
+&lt;li&gt;&#23545;&#29031;nginx&#65306;worker 1, sendfile on&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&#22240;&#20026;&#25105;&#36825;&#20010;&#30772;&#26412;&#21482;&#26377;&#20004;&#20010;&#26680;&#65292;&#19968;&#20010;&#29992;&#26469;&#36816;&#34892; &lt;cite&gt;ab&lt;/cite&gt; &#65292;&#19968;&#20010;&#21487;&#20197;&#29992;&#26469;&#36816;&#34892;web server&#65292;&#25152;&#20197;&#19978;&#38754;&#37117;&#21482;&#37197;&#32622;&#19968;&#20010;worker&#36827;&#31243;&#12290;&lt;/p&gt;
+&lt;p&gt;&#27979;&#35797;&#21629;&#20196;&#65306; &lt;tt class="docutils literal"&gt;ab &lt;span class="pre"&gt;-c&lt;/span&gt; 100 &lt;span class="pre"&gt;-n&lt;/span&gt; 100000 &lt;span class="pre"&gt;-r&lt;/span&gt; &lt;span class="pre"&gt;http://localhost:3000/test.html&lt;/span&gt;&lt;/tt&gt;
+&#27979;&#35797;6&#27425;&#65292;&#24179;&#22343;&#27599;&#31186;&#35831;&#27714;&#25968;&#20998;&#21035;&#20026;&#65306;&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+1 7174.23
+2 6946.33
+3 6120.31
+4 6819.33
+5 7373.51
+6 6776.65
+&lt;/pre&gt;
+&lt;p&gt;&#23545;&#27604;nginx&#65306;&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+1 13543
+2 13601.69
+3 13512.38
+4 13654.39
+5 13680.97
+6 13630.64
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div class="section" id="warp-pong-test"&gt;
+&lt;h2&gt;warp pong test&lt;/h2&gt;
+&lt;p&gt;&#39034;&#20415;&#20877;&#27979;&#19979;warp&#65292;&#25226;&#38745;&#24577;&#25991;&#20214;app&#21435;&#25481;&#65292;&#25442;&#19978;&#19968;&#20010;&#26368;&#31616;&#21333;&#30340;app&#65306;&lt;/p&gt;
+&lt;div class="highlight None"&gt;&lt;pre&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="cm"&gt;{-# LANGUAGE OverloadedStrings #-}&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;Control.Applicative&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;$&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;Data.Maybe&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;fromMaybe&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nf"&gt;listToMaybe&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;System.Environment&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;getArgs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;Network.HTTP.Types&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;Network.Wai&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;Network.Wai.Handler.Warp&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;run&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;Blaze.ByteString.Builder&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;fromByteString&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="nf"&gt;pong&lt;/span&gt; &lt;span class="ow"&gt;::&lt;/span&gt; &lt;span class="kt"&gt;Application&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="nf"&gt;pong&lt;/span&gt; &lt;span class="n"&gt;req&lt;/span&gt; &lt;span class="ow"&gt;=&lt;/span&gt; &lt;span class="n"&gt;return&lt;/span&gt; &lt;span class="o"&gt;$&lt;/span&gt; &lt;span class="kt"&gt;ResponseBuilder&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;                      &lt;span class="n"&gt;statusOK&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;                      &lt;span class="p"&gt;[(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Content-Type&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;text/plain&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;                      &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fromByteString&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="nf"&gt;main&lt;/span&gt; &lt;span class="ow"&gt;::&lt;/span&gt; &lt;span class="kt"&gt;IO&lt;/span&gt; &lt;span class="nb"&gt;()&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="nf"&gt;main&lt;/span&gt; &lt;span class="ow"&gt;=&lt;/span&gt; &lt;span class="kr"&gt;do&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;    &lt;span class="n"&gt;port&lt;/span&gt; &lt;span class="ow"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="n"&gt;read&lt;/span&gt; &lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;fromMaybe&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;3000&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;listToMaybe&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;$&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;getArgs&lt;/span&gt;
+&lt;/div&gt;&lt;div class="line" id="LC1"&gt;    &lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="n"&gt;port&lt;/span&gt; &lt;span class="n"&gt;pong&lt;/span&gt;
+&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&#30456;&#21516;&#26465;&#20214;&#19979;&#27979;&#35797;&#65292;&#24179;&#22343;&#27599;&#31186;&#35831;&#27714;&#25968;&#20026;&#65306;&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+1 22184.93
+2 22232.89
+3 22150.83
+4 22189.02
+5 22267.33
+6 22125.08
+&lt;/pre&gt;
+&lt;p&gt;nginx&#30340;&#35805;&#65292;&#22909;&#20687;&#27809;&#26377;&#21150;&#27861;&#26500;&#36896;&#19968;&#20010;&#31561;&#20215;&#27979;&#35797;&#26696;&#20363;&#65292;&#25105;&#37197;&#32622;&#20102;&#19968;&#20010;&#26368;&#31616;&#21333;&#30340;server block&#65306;&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+server {
+    server_name localhost;
+    location = / {
+    }
+}
+&lt;/pre&gt;
+&lt;p&gt;&#28982;&#21518;&#27979;&#35797; &lt;a class="reference external" href="http://localhost/"&gt;http://localhost/&lt;/a&gt; &#36825;&#20010; 404 &#30340;&#21709;&#24212;&#65292;&#32467;&#26524;&#36319;&#19978;&#38754;nginx&#36820;&#22238;&#38745;&#24577;&#25991;&#20214;&#30340;&#32467;&#26524;&#31867;&#20284;&#12290;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id5"&gt;
+&lt;h2&gt;&#32467;&#35770;&lt;/h2&gt;
+&lt;p&gt;warp pong &#27979;&#35797;&#32467;&#26524;&#24456;&#24778;&#20154;&#65292;&#30475;&#26469; static app &#36824;&#26377;&#19981;&#23567;&#30340;&#20248;&#21270;&#31354;&#38388;&#30340;&#12290;nginx&#20027;&#35201;&#26159;&#29992;&#26469;&#20570;&#20010;&#23545;&#29031;&#65292;&#27809;&#30475;&#36807;nginx&#20195;&#30721;&#65292;&#19981;&#19968;&#23450;&#20844;&#24179;&#12290;&#26399;&#24453;&#22823;&#23478;&#22312;&#19981;&#21516;&#29615;&#22659;&#19979;&#21435;&#27979;&#35797;&#27979;&#35797;&#65292;&#30475;&#32467;&#26524;&#22914;&#20309;&#12290;&lt;/p&gt;
+&lt;/div&gt;
+</description><guid isPermaLink="true">http://yi-programmer.com/blog/2011-11-12_wai-static-app.html</guid><pubDate>Sat, 12 Nov 2011 00:00:00 GMT</pubDate></item><item><title>&#26080;&#39064;</title><link>http://yi-programmer.com/blog/2011-11-03_.html</link><description>&lt;p&gt;&#20889; parser &#30340;&#26102;&#20505;&#38656;&#35201;&#20889;&#36825;&#26679;&#30340;&#20195;&#30721;&#65306;&lt;/p&gt;
 &lt;div class="highlight None"&gt;&lt;pre&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="nf"&gt;takeTill&lt;/span&gt; &lt;span class="n"&gt;pred&lt;/span&gt;
 &lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;&#20854;&#20013; &lt;cite&gt;pred&lt;/cite&gt; &#26159;&#20010;&#21028;&#21035;&#20989;&#25968;&#65292;&#31614;&#21517;&#20026;&#65306; &lt;cite&gt;Char -&amp;gt; Bool&lt;/cite&gt; &#12290; &lt;cite&gt;takeTill&lt;/cite&gt; &#30340;&#20316;&#29992;&#23601;&#26159;&#19968;&#30452;&#35299;&#26512;&#21040; &lt;cite&gt;pred&lt;/cite&gt; &#36820;&#22238; &lt;cite&gt;True&lt;/cite&gt; &#20026;&#27490;&#12290;&lt;/p&gt;
@@ -60,7 +171,20 @@
 &lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="nf"&gt;liftA2&lt;/span&gt; &lt;span class="n"&gt;op&lt;/span&gt; &lt;span class="n"&gt;fa&lt;/span&gt; &lt;span class="n"&gt;fb&lt;/span&gt; &lt;span class="ow"&gt;=&lt;/span&gt; &lt;span class="n"&gt;op&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;$&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;fa&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;*&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;fb&lt;/span&gt;
 &lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;&#32469;&#20102;&#19968;&#22280;&#65292;&#26368;&#21518;&#36824;&#26159;&#27809;&#36867;&#20986;Haskell&#26368;&#22522;&#26412;&#30340;&#26694;&#26694;&#12290;&lt;/p&gt;
-</description><guid isPermaLink="true">http://yi-programmer.com/blog/2011-11-03_.html</guid><pubDate>Thu, 03 Nov 2011 00:00:00 GMT</pubDate></item><item><title>&#31867;&#22411;&#25512;&#23548;&#21644;&#21512;&#19968;&#31639;&#27861;&#30340;&#31616;&#21333;&#20171;&#32461;</title><link>http://yi-programmer.com/blog/2011-06-04_type-inference-and-unification.html</link><description>&lt;p&gt;Hindley Milner&#31867;&#22411;&#31995;&#32479;&#26368;&#36807;&#30270;&#30340;&#23601;&#26159; &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Type_inference"&gt;&#31867;&#22411;&#25512;&#23548;&lt;/a&gt; &#21151;&#33021;&#12290;&#20889;&#31243;&#24207;&#30340;&#26102;&#20505;&#21487;&#20197;&#23436;&#20840;&#24573;&#30053;&#21464;&#37327;&#21644;&#20989;&#25968;&#30340;&#31867;&#22411;&#65292;&#30001;&#32534;&#35793;&#22120;&#33258;&#21160;&#25512;&#23548;&#31867;&#22411;&#24182;&#20570;&#31867;&#22411;&#26816;&#26597;&#12290;&#21487;&#20197;&#35828;&#26159;&#38745;&#24577;&#35821;&#35328;&#21644;&#21160;&#24577;&#35821;&#35328;&#30340;&#23436;&#32654;&#32467;&#21512;&#12290;&#26412;&#25991;&#31616;&#21333;&#20171;&#32461;&#31867;&#22411;&#25512;&#23548;&#30340;&#36807;&#31243;&#65292;&#20197;&#21450;&#20854;&#20013;&#30340;&#20851;&#38190;&#31639;&#27861;&#65306; &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Unification"&gt;&#21512;&#19968;&lt;/a&gt; &#12290;&lt;/p&gt;
+</description><guid isPermaLink="true">http://yi-programmer.com/blog/2011-11-03_.html</guid><pubDate>Thu, 03 Nov 2011 00:00:00 GMT</pubDate></item><item><title>Haskell Type Class &#20171;&#32461;</title><link>http://yi-programmer.com/blog/2011-10-15_typeclass.html</link><description>&lt;p&gt;&#20889;&#31243;&#24207;&#27809;&#21861;&#28789;&#24863;&#20102;&#65292;&#19981;&#22914;&#20889;&#28857;&#21338;&#23458;&#21543;&#12290;
+typeclass &#20316;&#20026; haskell &#19968;&#22823;&#26631;&#24535;&#24615;&#29305;&#24615;&#65292;&#36824;&#26159;&#24456;&#20540;&#24471;&#20171;&#32461;&#20171;&#32461;&#30340;&#12290;&lt;/p&gt;
+&lt;div class="contents topic" id="id1"&gt;
+&lt;p class="topic-title first"&gt;&#30446;&#24405;&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;a class="reference internal" href="http://yi-programmer.com/blog/2011-10-15_typeclass.html#id2" id="id7"&gt;&#39044;&#22791;&#30693;&#35782;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="http://yi-programmer.com/blog/2011-10-15_typeclass.html#id3" id="id8"&gt;&#22810;&#24577;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="http://yi-programmer.com/blog/2011-10-15_typeclass.html#id4" id="id9"&gt;&#36820;&#22238;&#20540;&#37325;&#36733;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="http://yi-programmer.com/blog/2011-10-15_typeclass.html#id5" id="id10"&gt;&#24120;&#37327;&#37325;&#36733;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="http://yi-programmer.com/blog/2011-10-15_typeclass.html#id6" id="id11"&gt;&#25277;&#35937;&#25509;&#21475;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</description><guid isPermaLink="true">http://yi-programmer.com/blog/2011-10-15_typeclass.html</guid><pubDate>Sat, 15 Oct 2011 00:00:00 GMT</pubDate></item><item><title>&#29664;&#19977;&#35282;&#25216;&#26415;&#27801;&#40857;&#20171;&#32461;Haskell Web&#24320;&#21457;</title><link>http://yi-programmer.com/blog/2011-09-24_haskell-web-introduce.html</link><description>&lt;p&gt;2011&#24180;09&#24180;17&#26085;&#65292;&#20877;&#27425;&#36305;&#21040;&#29664;&#19977;&#35282;&#25216;&#26415;&#27801;&#40857;&#24573;&#24736;Haskell&#65292;&#36825;&#27425;&#26159;&#24191;&#24030;&#65292;&#20391;&#37325;Haskell&#26381;&#21153;&#22120;&#31471;&#20197;&#21450;Web&#24320;&#21457;&#20013;&#30340;&#23454;&#29992;&#21151;&#33021;&#12290; &lt;a class="reference external" href="http://techparty.org/"&gt;&#27801;&#40857;&#27963;&#21160;&#24635;&#32467;&lt;/a&gt;&lt;/p&gt;
+&lt;div style="width:425px" id="__ss_9364009"&gt; &lt;strong style="display:block;margin:12px 0 4px"&gt;&lt;a href="http://www.slideshare.net/cngump/haskell-web" title="&#36208;&#39532;&#35266;&#33457;&#8212; Haskell Web &#24320;&#21457;" target="_blank"&gt;&#36208;&#39532;&#35266;&#33457;&#8212; Haskell Web &#24320;&#21457;&lt;/a&gt;&lt;/strong&gt; &lt;iframe src="http://www.slideshare.net/slideshow/embed_code/9364009" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"&gt;&lt;/iframe&gt; &lt;div style="padding:5px 0 12px"&gt; View more &lt;a href="http://www.slideshare.net/" target="_blank"&gt;presentations&lt;/a&gt; from &lt;a href="http://www.slideshare.net/cngump" target="_blank"&gt;Gump Law&lt;/a&gt; &lt;/div&gt; &lt;/div&gt;</description><guid isPermaLink="true">http://yi-programmer.com/blog/2011-09-24_haskell-web-introduce.html</guid><pubDate>Sat, 24 Sep 2011 00:00:00 GMT</pubDate></item><item><title>&#31867;&#22411;&#25512;&#23548;&#21644;&#21512;&#19968;&#31639;&#27861;&#30340;&#31616;&#21333;&#20171;&#32461;</title><link>http://yi-programmer.com/blog/2011-06-04_type-inference-and-unification.html</link><description>&lt;p&gt;Hindley Milner&#31867;&#22411;&#31995;&#32479;&#26368;&#36807;&#30270;&#30340;&#23601;&#26159; &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Type_inference"&gt;&#31867;&#22411;&#25512;&#23548;&lt;/a&gt; &#21151;&#33021;&#12290;&#20889;&#31243;&#24207;&#30340;&#26102;&#20505;&#21487;&#20197;&#23436;&#20840;&#24573;&#30053;&#21464;&#37327;&#21644;&#20989;&#25968;&#30340;&#31867;&#22411;&#65292;&#30001;&#32534;&#35793;&#22120;&#33258;&#21160;&#25512;&#23548;&#31867;&#22411;&#24182;&#20570;&#31867;&#22411;&#26816;&#26597;&#12290;&#21487;&#20197;&#35828;&#26159;&#38745;&#24577;&#35821;&#35328;&#21644;&#21160;&#24577;&#35821;&#35328;&#30340;&#23436;&#32654;&#32467;&#21512;&#12290;&#26412;&#25991;&#31616;&#21333;&#20171;&#32461;&#31867;&#22411;&#25512;&#23548;&#30340;&#36807;&#31243;&#65292;&#20197;&#21450;&#20854;&#20013;&#30340;&#20851;&#38190;&#31639;&#27861;&#65306; &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Unification"&gt;&#21512;&#19968;&lt;/a&gt; &#12290;&lt;/p&gt;
 &lt;p&gt;&#20808;&#38382;&#19968;&#20010;&#38382;&#39064;&#65292; &lt;cite&gt;flip id&lt;/cite&gt; &#30340;&#31867;&#22411;&#26159;&#20160;&#20040;&#65311;&#25105;&#20204;&#30693;&#36947; &lt;cite&gt;id&lt;/cite&gt; &#26159;&#21407;&#23553;&#19981;&#21160;&#22320;&#36820;&#22238;&#20256;&#32473;&#23427;&#30340;&#21442;&#25968;&#65292;&#31867;&#22411;&#26159; &lt;cite&gt;a -&amp;gt; a&lt;/cite&gt; &#65307; &lt;cite&gt;flip&lt;/cite&gt; &#26159;&#29992;&#26469;&#20132;&#25442;&#19968;&#20010;&#20989;&#25968;&#21069;&#20004;&#20010;&#21442;&#25968;&#30340;&#20301;&#32622;&#65292;&#31867;&#22411;&#26159; &lt;cite&gt;(a -&amp;gt; b -&amp;gt; c) -&amp;gt; b -&amp;gt; a -&amp;gt; c&lt;/cite&gt; &#65292;&#28982;&#32780;&#29992; &lt;cite&gt;id&lt;/cite&gt; &#21435;&#35843;&#29992; &lt;cite&gt;flip&lt;/cite&gt; &#36820;&#22238;&#30340;&#26159;&#20010;&#20160;&#20040;&#31867;&#22411;&#65311;&#24515;&#31639;&#36215;&#26469;&#36824;&#26159;&#26377;&#38590;&#24230;&#65292;&#24184;&#22909;&#25105;&#20204;&#21487;&#20197;&#27714;&#21161;&#20110; ghci &#65306;&lt;/p&gt;
 &lt;div class="highlight None"&gt;&lt;pre&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="kt"&gt;Prelude&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="kt"&gt;:&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="n"&gt;id&lt;/span&gt;
 &lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="nf"&gt;id&lt;/span&gt; &lt;span class="ow"&gt;::&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="ow"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;

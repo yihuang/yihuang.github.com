@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>Haskell Type Class 介绍</title>
+<meta content="haskell type class functional programming fp" name="keywords" />
+<meta content="introduction to haskell type class" name="description" />
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="新浪微博" href="http://weibo.com/1897911954" class=""><img src="images/icons/weibo.png" alt="新浪微博"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">Haskell Type Class 介绍</h1>
+
+                    <p class="author">2011-10-15 黄毅</p>
+                    <p>写程序没啥灵感了，不如写点博客吧。
+typeclass 作为 haskell 一大标志性特性，还是很值得介绍介绍的。</p>
+<div class="contents topic" id="id1">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id2" id="id7">预备知识</a></li>
+<li><a class="reference internal" href="#id3" id="id8">多态</a></li>
+<li><a class="reference internal" href="#id4" id="id9">返回值重载</a></li>
+<li><a class="reference internal" href="#id5" id="id10">常量重载</a></li>
+<li><a class="reference internal" href="#id6" id="id11">抽象接口</a></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id7">预备知识</a></h2>
+<ul class="simple">
+<li>函数类型签名的语法 <cite>foo :: Int -&gt; Int -&gt; Bool</cite></li>
+<li>函数定义的语法 <cite>foo a b = ...</cite></li>
+<li>函数调用的语法 <cite>foo 1 2</cite></li>
+</ul>
+<p>不研究haskell的朋友如果觉得后面还有哪里不清楚的地方，可以反馈给我，我在预备知识里进行补充。</p>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id8">多态</a></h2>
+<p>先多说几句：函数重载有一个更学术的名字，叫ad-hoc多态，是说函数可以针对不同的参数类型和返回值类型有不同的实现，比如比较函数 <cite>==</cite> ，针对 <cite>Int</cite> 和 <cite>String</cite> 的实现肯定是不同的。注意这里还可以针对返回值类型进行重载，之所以单独说这个是因为似乎主流语言都不怎么支持，其实还是很有用的。</p>
+<p>而泛型的学术名称叫做参数化多态，是说函数的类型签名中可以包含类型变量，使用时类型变量会被替换成具体类型，而针对不同具体类型的函数体是一模一样的。比如 <cite>replicate</cite> 的签名：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">replicate</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+</div><div class="line" id="LC1"><span class="nf">replicate</span> <span class="mi">0</span> <span class="kr">_</span> <span class="ow">=</span> <span class="kt">[]</span>
+</div><div class="line" id="LC1"><span class="nf">replicate</span> <span class="n">n</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">a</span> <span class="kt">:</span> <span class="n">replicate</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">a</span>
+</div></pre></div>
+<p>它的作用是把一个值重复N次构成一个列表，不管这个值具体是什么类型， <cite>replicate</cite> 的实现算法是完全相同的。所以我们用一个类型变量 <cite>a</cite> 来表示这个值的类型，意思也就是说它可以是任何类型。</p>
+<p>类型变量 <cite>a</cite> 表示这个参数可以是任意类型，同时也约束该函数的实现不能对这个参数具体是什么类型做任何假定，也就是说函数不能对这个参数做任何操作，因为任何操作都隐含着这样一个假定，就是该参数的类型支持该操作，比如对这个参数做加法操作就意味着该参数的类型必须支持加法操作，而既然该参数可以是任意类型，它当然可以是某个不支持加法操作的类型，这样就矛盾了。所以不允许对它进行任何操作。</p>
+<p>这其实是一个很强的约束。所以当你在haskell中看到一个类型签名为： <cite>a -&gt; [a]</cite> 的函数，你就可以毫无悬念地推断出这个函数可能的几种实现：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">foo</span> <span class="n">a</span> <span class="ow">=</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+</div><div class="line" id="LC1"><span class="nf">foo</span> <span class="n">a</span> <span class="ow">=</span> <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">]</span>
+</div><div class="line" id="LC1"><span class="nf">foo</span> <span class="n">a</span> <span class="ow">=</span> <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">]</span>
+</div><div class="line" id="LC1"><span class="o">...</span>
+</div></pre></div>
+<p>因为类型不允许该函数对它的参数做任何操作，所以该函数的实现也就不可能逃出上面这些模式，所以你只要看着这个函数签名就可以肯定地说：这个函数的实现就是把一个值重复N次构造一个列表出来，不过具体它会重复多少次，暂时还说不准。</p>
+<p>所以当我们赋予类型以强制的约束力，类型的表达能力就发挥出来了，我们光看着函数的签名就可以获得丰富的关于函数实现的信息。
+当然前提还是函数签名本身定义得够精确，如果上面这个 <cite>foo</cite> 的类型是 <cite>Int -&gt; [Int]</cite> 的话，就没那么容易确定它的行为了，因为它可以对它的参数进行各种数值运算。</p>
+<p>所以haskell程序员有一个“怪癖”，那就是喜欢根据类型签名去找函数实现，而且他们还真的做了这么一个搜索引擎来干这个事情：hoogle和hayoo，hoogle索引了一些常用的库，而hayoo索引了hackage上所有库。</p>
+<p>比如写程序写着写着发现需要把一个列表根据某个条件拆分成两个列表，本能会告诉我们这样一个通用功能极可能已经有可重用的实现，于是我们根据我们的需求写一个尽量精确的类型签名： <cite>(a -&gt; Bool) -&gt; [a] -&gt; ([a], [a])</cite> ，第一个参数是一个用来表达分拆条件的函数，我们希望这个函数把返回 <cite>True</cite> 的元素放一个列表，返回 <cite>False</cite> 的元素放另一个列表，然后把两个列表组成元组返回，当然，至于分别放哪一个列表，我们并不关心。把这个类型签名放到hoogle搜一下，只出现三个结果，都来自标准库： <cite>break</cite> 、 <cite>span</cite> 、 <cite>partition</cite> ，然后通过进一步考察，我们发现他们功能分别如下：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">break</span>     <span class="p">(</span><span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+</div><div class="line" id="LC1"><span class="nf">span</span>      <span class="p">(</span><span class="o">&lt;</span> <span class="mi">4</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+</div><div class="line" id="LC1"><span class="nf">partition</span> <span class="p">(</span><span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+</div></pre></div>
+<p>显然， <cite>partition</cite> 就是我们要找的函数。</p>
+<p>扯远了，回到重载上来。比如我们希望比较函数 <cite>==</cite> 可以适用于各种不同类型，显然参数化多态无能为力，因为不可能存在一个通用的算法能实现不同类型的比较操作。</p>
+<p>我们可以先定义一个抽象接口，然后让具体类型去分别完成不同的实现。</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">class</span> <span class="kt">Eq</span> <span class="n">a</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="o">==</span><span class="p">)</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+</div></pre></div>
+<p>意思是说所有属于 <cite>Eq</cite> 这个typeclass的类型都支持 <cite>==</cite> 操作，或者说：如果类型 <cite>a</cite> 属于typeclass <cite>Eq</cite> 的话，那就可以对 <cite>a</cite> 做 <cite>==</cite> 操作。</p>
+<p>然后我们希望实现整数的比较操作，我们就定义一个针对整数的 <cite>Eq</cite> 实例，在里面实现针对整数的比较操作：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Eq</span> <span class="kt">Int</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="o">==</span><span class="p">)</span> <span class="ow">=</span> <span class="n">compareInt</span>
+</div></pre></div>
+<p><cite>compareInt</cite> 的类型签名毫无悬念，必须是 <cite>Int -&gt; Int -&gt; Bool</cite> 了。因为这是编译器实现的基本操作，所以我们没法写出更具体的实现。</p>
+<p>而 <cite>==</cite> 本身的类型签名则是： <cite>Eq a =&gt; a -&gt; a -&gt; Bool</cite> ，可以读作：对于所有属于typeclass <cite>Eq</cite> 的类型 <cite>a</cite> ，接收两个同为类型 <cite>a</cite> 的参数，返回一个 <cite>Bool</cite> 值。关键字 <cite>=&gt;</cite> 前面的部分叫做类型约束。</p>
+<p>更进一步，结合typeclass和参数化多态，我们还可以为多态类型（泛型类型）实现通用的比较操作，比如二元组：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">instance</span> <span class="p">(</span><span class="kt">Eq</span> <span class="n">a</span><span class="p">,</span> <span class="kt">Eq</span> <span class="n">b</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Eq</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">b1</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="n">b2</span><span class="p">)</span> <span class="ow">=</span> <span class="n">a1</span><span class="o">==</span><span class="n">a2</span> <span class="o">&amp;&amp;</span> <span class="n">b1</span><span class="o">==</span><span class="n">b2</span>
+</div></pre></div>
+<p>意思是说，如果 <cite>a</cite> 、 <cite>b</cite> 类型都实现了比较操作，那它们组成的元组也能实现比较操作，实现方式就是元组的两个元素分别进行比较然后and一下。</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Eq</span> <span class="n">a</span> <span class="ow">=&gt;</span> <span class="kt">Eq</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="kt">[]</span>     <span class="o">==</span> <span class="kt">[]</span>     <span class="ow">=</span> <span class="kt">True</span>
+</div><div class="line" id="LC1">    <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">y</span><span class="kt">:</span><span class="n">ys</span><span class="p">)</span> <span class="ow">=</span> <span class="n">x</span><span class="o">==</span><span class="n">y</span> <span class="o">&amp;&amp;</span> <span class="n">xs</span><span class="o">==</span><span class="n">ys</span>
+</div><div class="line" id="LC1">    <span class="kr">_</span>      <span class="o">==</span> <span class="kr">_</span>      <span class="ow">=</span> <span class="kt">False</span>
+</div></pre></div>
+<p>这个是利用递归实现了列表的比较操作，我就不多加解释了，haskell的语法这么简洁，我感觉就算没接触过haskell的同学应该也能看出代码的含义，这一点我还期待大家的反馈。</p>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id9">返回值重载</a></h2>
+<p>再来一个需求，我们处理外部输入的时候，需要把字符串解析成特定的类型，比如 <cite>readInt :: String -&gt; Int</cite> 、 <cite>readBool :: String -&gt; Bool</cite> ，同样我们可以写一个typeclass和ad-hoc多态类型的函数，与传统函数重载不同的是，这个函数在使用时将根据它的返回值类型的不同选择不同的实现：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">class</span> <span class="kt">Read</span> <span class="n">a</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">read</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Read</span> <span class="kt">Int</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">read</span> <span class="ow">=</span> <span class="n">readInt</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Read</span> <span class="kt">Bool</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">read</span> <span class="ow">=</span> <span class="n">readBool</span>
+</div></pre></div>
+<p><cite>read</cite> 的函数签名是 <cite>Read a =&gt; String -&gt; a</cite> 意思是说它可以把字符串转换成任何属于typeclass <cite>Read</cite> 的类型。使用时可以使用显式类型申明，比如 <cite>(read &quot;1&quot;) :: Int</cite> ，或者让类型推导推出 <cite>read</cite> 的具体类型，从而选择一个确定的实现。举个例子，有个服务器程序可以通过命令行参数指定绑定端口号，可以使用 <cite>read</cite> 函数把字符串类型的命令行参数解析成整型的端口号：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">startServer</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="nb">()</span>
+</div><div class="line" id="LC1"><span class="nf">startServer</span> <span class="n">port</span> <span class="ow">=</span> <span class="o">...</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
+</div><div class="line" id="LC1">    <span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="ow">&lt;-</span> <span class="n">getArgs</span>
+</div><div class="line" id="LC1">    <span class="n">startServer</span> <span class="p">(</span><span class="n">read</span> <span class="n">s</span><span class="p">)</span>
+</div></pre></div>
+<p>haskell的类型推导机制可以自动得出 <cite>read</cite> 在这个上下文中的具体类型应该是 <cite>String -&gt; Int</cite> ，从而选择 <cite>readInt</cite> 作为实现。</p>
+<p>同样，我们也可以基于 <cite>read</cite> 继续构造其他多态函数，比如 <cite>readLn :: Read a =&gt; IO a</cite> ，它的功能就是从标准输入读一行内容并转换成任何需要的类型，转换失败的情况会抛出异常。</p>
+</div>
+<div class="section" id="id5">
+<h2><a class="toc-backref" href="#id10">常量重载</a></h2>
+<p>考虑到常量可以看做是零参数的函数，加上可以基于函数返回值进行重载，那么重载常量也就是理所当然的了。标准库有一个很有用的typeclass就属于这种情况：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">class</span> <span class="kt">Bounded</span> <span class="n">a</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">minBound</span><span class="p">,</span> <span class="n">maxBound</span> <span class="ow">::</span> <span class="n">a</span>
+</div></pre></div>
+<p>表示属于typeclass <cite>Bounded</cite> 的类型都定义了上界和下界。通过显式指定类型来查看常见的实现：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">maxBound</span> <span class="ow">::</span> <span class="kt">Int</span>
+</div><div class="line" id="LC1"><span class="mi">2147483647</span>
+</div><div class="line" id="LC1"><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">minBound</span> <span class="ow">::</span> <span class="kt">Int</span>
+</div><div class="line" id="LC1"><span class="o">-</span><span class="mi">2147483648</span>
+</div><div class="line" id="LC1"><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">maxBound</span> <span class="ow">::</span> <span class="kt">Word</span>
+</div><div class="line" id="LC1"><span class="mi">4294967295</span>
+</div><div class="line" id="LC1"><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">minBound</span> <span class="ow">::</span> <span class="kt">Word</span>
+</div><div class="line" id="LC1"><span class="mi">0</span>
+</div><div class="line" id="LC1"><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">minBound</span> <span class="ow">::</span> <span class="kt">Char</span>
+</div><div class="line" id="LC1"><span class="sc">&#39;</span><span class="se">\NUL</span><span class="sc">&#39;</span>
+</div><div class="line" id="LC1"><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">maxBound</span> <span class="ow">::</span> <span class="kt">Char</span>
+</div><div class="line" id="LC1"><span class="sc">&#39;</span><span class="se">\1114111</span><span class="sc">&#39;</span>
+</div></pre></div>
+<p>另外一个常见的模式就是，经常需要为某个类型提供一个默认值，同样我们可以通过typeclass定义一个可重载的常量。</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">class</span> <span class="kt">Default</span> <span class="n">a</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">def</span> <span class="ow">::</span> <span class="n">a</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Default</span> <span class="kt">PortNumber</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">def</span> <span class="ow">=</span> <span class="kt">PortNumber</span> <span class="mi">8000</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Default</span> <span class="kt">HostName</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">def</span> <span class="ow">=</span> <span class="kt">HostName</span> <span class="s">&quot;localhost&quot;</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Default</span> <span class="kt">Config</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">def</span> <span class="ow">=</span> <span class="kt">Config</span> <span class="p">{</span> <span class="n">hostName</span> <span class="ow">=</span> <span class="n">def</span>
+</div><div class="line" id="LC1">                 <span class="p">,</span> <span class="n">portNumber</span> <span class="ow">=</span> <span class="n">def</span>
+</div><div class="line" id="LC1">                 <span class="p">}</span>
+</div></pre></div>
+<p>这样，假设有一个函数根据配置项启动一个server的话： <cite>start :: Config -&gt; IO ()</cite> ，使用 <cite>start def</cite> 就会使用默认配置项启动这个server。</p>
+</div>
+<div class="section" id="id6">
+<h2><a class="toc-backref" href="#id11">抽象接口</a></h2>
+<p>因为一个 typeclass 可以包括多个函数，所以typeclass也可提供类似OO语言中抽象接口的功能。typeclass就是接口，instance就是实现，这个大家都很熟，就不多说了。</p>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2011-10-15_typeclass';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2011-10-15_typeclass.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2011-10-15_typeclass.html&title=Haskell Type Class 介绍"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2011-10-15_typeclass.html&title=Haskell Type Class 介绍"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=Haskell Type Class 介绍&uri=http://www.yi-programmer.com/blog/2011-10-15_typeclass.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2011-10-15_typeclass.html&title=Haskell Type Class 介绍"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2011-10-15_typeclass.html&it=Haskell Type Class 介绍&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2011-10-15_typeclass.html&title=Haskell Type Class 介绍&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2011-10-15_typeclass.html&t=Haskell Type Class 介绍"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2011-10-15_typeclass.html&title=Haskell Type Class 介绍"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=Haskell Type Class 介绍&rurl=http://www.yi-programmer.com/blog/2011-10-15_typeclass.html&rcontent=http://www.yi-programmer.com/blog/2011-10-15_typeclass.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2011-10-15_typeclass.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2011-10-15_typeclass.html&t=Haskell Type Class 介绍"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2011-10-15_typeclass.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

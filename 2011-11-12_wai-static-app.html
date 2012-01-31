@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>warp静态文件服务器评测</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="新浪微博" href="http://weibo.com/1897911954" class=""><img src="images/icons/weibo.png" alt="新浪微博"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">warp静态文件服务器评测</h1>
+
+                    <p class="author">2011-11-12 黄毅</p>
+                    <div class="section" id="id1">
+<h2>安装</h2>
+<ol class="arabic">
+<li><p class="first">安装GHC和Cabal，参考： <a class="reference external" href="http://book.realworldhaskell.org/read/installing-ghc-and-haskell-libraries.html">http://book.realworldhaskell.org/read/installing-ghc-and-haskell-libraries.html</a></p>
+</li>
+<li><p class="first">使用Cabal安装 <a class="reference external" href="https://github.com/yesodweb/wai/tree/master/warp">Warp</a> 服务器和 <a class="reference external" href="https://github.com/yesodweb/wai/tree/master/wai-app-static">wai-app-static</a> ，Cabal将自动下载安装依赖的一些库：</p>
+<pre class="literal-block">
+cabal install warp wai-app-static
+</pre>
+</li>
+<li><p class="first">编写我们的静态文件服务器：</p>
+</li>
+</ol>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Control.Applicative</span> <span class="p">(</span> <span class="p">(</span><span class="o">&lt;$&gt;</span><span class="p">)</span> <span class="p">)</span>
+</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Data.Maybe</span> <span class="p">(</span><span class="nf">fromMaybe</span><span class="p">,</span> <span class="nf">listToMaybe</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">System.Environment</span> <span class="p">(</span><span class="nf">getArgs</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Network.Wai.Handler.Warp</span> <span class="p">(</span><span class="nf">run</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Network.Wai.Application.Static</span> <span class="p">(</span> <span class="nf">staticApp</span>
+</div><div class="line" id="LC1">                                      <span class="p">,</span> <span class="nf">defaultFileServerSettings</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">main</span> <span class="ow">::</span> <span class="kt">IO</span> <span class="nb">()</span>
+</div><div class="line" id="LC1"><span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
+</div><div class="line" id="LC1">    <span class="n">port</span> <span class="ow">&lt;-</span> <span class="n">read</span> <span class="o">.</span> <span class="n">fromMaybe</span> <span class="s">&quot;3000&quot;</span> <span class="o">.</span> <span class="n">listToMaybe</span> <span class="o">&lt;$&gt;</span> <span class="n">getArgs</span>
+</div><div class="line" id="LC1">    <span class="n">run</span> <span class="n">port</span> <span class="o">$</span> <span class="n">staticApp</span> <span class="n">defaultFileServerSettings</span>
+</div></pre></div>
+</div>
+<div class="section" id="id3">
+<h2>特性</h2>
+<p>一个完善的静态文件服务器：</p>
+<ol class="arabic simple">
+<li>能以高阶函数的方式定制文件查找逻辑</li>
+<li>根据文件扩展名产生mimetype</li>
+<li>304响应，支持If-Modified-Since，支持If-None-Match匹配文件哈希值</li>
+<li>目录末尾自动添加'/' ，自动查找可配置的index文件等等。</li>
+</ol>
+</div>
+<div class="section" id="id4">
+<h2>性能</h2>
+<ul class="simple">
+<li>环境：Thinkpad X61, T8100 双核，Linux 2.6.38，GHC 7.2.1</li>
+<li>编译选项： <tt class="docutils literal">ghc <span class="pre">-O3</span> <span class="pre">-threaded</span> Main.hs</tt></li>
+<li>执行选项： <tt class="docutils literal">./Main +RTS <span class="pre">-N1</span> <span class="pre">-qa</span></tt></li>
+<li>对照nginx：worker 1, sendfile on</li>
+</ul>
+<p>因为我这个破本只有两个核，一个用来运行 <cite>ab</cite> ，一个可以用来运行web server，所以上面都只配置一个worker进程。</p>
+<p>测试命令： <tt class="docutils literal">ab <span class="pre">-c</span> 100 <span class="pre">-n</span> 100000 <span class="pre">-r</span> <span class="pre">http://localhost:3000/test.html</span></tt>
+测试6次，平均每秒请求数分别为：</p>
+<pre class="literal-block">
+1 7174.23
+2 6946.33
+3 6120.31
+4 6819.33
+5 7373.51
+6 6776.65
+</pre>
+<p>对比nginx：</p>
+<pre class="literal-block">
+1 13543
+2 13601.69
+3 13512.38
+4 13654.39
+5 13680.97
+6 13630.64
+</pre>
+</div>
+<div class="section" id="warp-pong-test">
+<h2>warp pong test</h2>
+<p>顺便再测下warp，把静态文件app去掉，换上一个最简单的app：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="cm">{-# LANGUAGE OverloadedStrings #-}</span>
+</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Control.Applicative</span> <span class="p">(</span> <span class="p">(</span><span class="o">&lt;$&gt;</span><span class="p">)</span> <span class="p">)</span>
+</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Data.Maybe</span> <span class="p">(</span><span class="nf">fromMaybe</span><span class="p">,</span> <span class="nf">listToMaybe</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">System.Environment</span> <span class="p">(</span><span class="nf">getArgs</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Network.HTTP.Types</span>
+</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Network.Wai</span>
+</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Network.Wai.Handler.Warp</span> <span class="p">(</span><span class="nf">run</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Blaze.ByteString.Builder</span> <span class="p">(</span><span class="nf">fromByteString</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">pong</span> <span class="ow">::</span> <span class="kt">Application</span>
+</div><div class="line" id="LC1"><span class="nf">pong</span> <span class="n">req</span> <span class="ow">=</span> <span class="n">return</span> <span class="o">$</span> <span class="kt">ResponseBuilder</span>
+</div><div class="line" id="LC1">                      <span class="n">statusOK</span>
+</div><div class="line" id="LC1">                      <span class="p">[(</span><span class="s">&quot;Content-Type&quot;</span><span class="p">,</span> <span class="s">&quot;text/plain&quot;</span><span class="p">)]</span>
+</div><div class="line" id="LC1">                      <span class="p">(</span><span class="n">fromByteString</span> <span class="s">&quot;pong&quot;</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">main</span> <span class="ow">::</span> <span class="kt">IO</span> <span class="nb">()</span>
+</div><div class="line" id="LC1"><span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
+</div><div class="line" id="LC1">    <span class="n">port</span> <span class="ow">&lt;-</span> <span class="n">read</span> <span class="o">.</span> <span class="n">fromMaybe</span> <span class="s">&quot;3000&quot;</span> <span class="o">.</span> <span class="n">listToMaybe</span> <span class="o">&lt;$&gt;</span> <span class="n">getArgs</span>
+</div><div class="line" id="LC1">    <span class="n">run</span> <span class="n">port</span> <span class="n">pong</span>
+</div></pre></div>
+<p>相同条件下测试，平均每秒请求数为：</p>
+<pre class="literal-block">
+1 22184.93
+2 22232.89
+3 22150.83
+4 22189.02
+5 22267.33
+6 22125.08
+</pre>
+<p>nginx的话，好像没有办法构造一个等价测试案例，我配置了一个最简单的server block：</p>
+<pre class="literal-block">
+server {
+    server_name localhost;
+    location = / {
+    }
+}
+</pre>
+<p>然后测试 <a class="reference external" href="http://localhost/">http://localhost/</a> 这个 404 的响应，结果跟上面nginx返回静态文件的结果类似。</p>
+</div>
+<div class="section" id="id5">
+<h2>结论</h2>
+<p>warp pong 测试结果很惊人，看来 static app 还有不小的优化空间的。nginx主要是用来做个对照，没看过nginx代码，不一定公平。期待大家在不同环境下去测试测试，看结果如何。</p>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2011-11-12_wai-static-app';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2011-11-12_wai-static-app.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2011-11-12_wai-static-app.html&title=warp静态文件服务器评测"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2011-11-12_wai-static-app.html&title=warp静态文件服务器评测"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=warp静态文件服务器评测&uri=http://www.yi-programmer.com/blog/2011-11-12_wai-static-app.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2011-11-12_wai-static-app.html&title=warp静态文件服务器评测"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2011-11-12_wai-static-app.html&it=warp静态文件服务器评测&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2011-11-12_wai-static-app.html&title=warp静态文件服务器评测&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2011-11-12_wai-static-app.html&t=warp静态文件服务器评测"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2011-11-12_wai-static-app.html&title=warp静态文件服务器评测"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=warp静态文件服务器评测&rurl=http://www.yi-programmer.com/blog/2011-11-12_wai-static-app.html&rcontent=http://www.yi-programmer.com/blog/2011-11-12_wai-static-app.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2011-11-12_wai-static-app.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2011-11-12_wai-static-app.html&t=warp静态文件服务器评测"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2011-11-12_wai-static-app.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>
