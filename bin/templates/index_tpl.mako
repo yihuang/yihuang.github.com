@@ -27,7 +27,7 @@
                     ${article.content}
                 </div>
                 % endfor
-                <p class="more"><a href="/blog/list.html">查看全部文章>></a></p>
+                <p class="more"><a href="list.html">查看全部文章>></a></p>
             </div>
         </div>
         <hr>

@@ -36,6 +36,6 @@ if m:
 
 content = listtpl.render(c=parts, cfg=config, date=datestr, url='http://www.yi-programmer.com/blog/%s.html'%basename, identifier=basename)
 
-destname = os.path.join('./html/',basename+'.html')
+destname = os.path.join('../',basename+'.html')
 open(destname, 'w').write(content)
 print destname

@@ -32,7 +32,7 @@
 
     takeTill (\c -> inClass ">=" c || isSpace c)
 
-也不麻烦，只不过对于患有代码洁癖的我来说，视觉上还不太给力。于是，我继续重构如下： 
+也不麻烦，只不过对于患有 `代码洁癖 <http://www.douban.com/group/purecoding/>`_ 的我来说，视觉上还不太给力。于是，我继续重构如下： 
 
 .. code-block:: haskell
 
@@ -62,14 +62,14 @@
 
 大功告成，正当我准备好好欣赏一下最终的产物 `fn` 的时候，却突然发现， `fn` 的作用不就是把 `b` 层面的二元函数提升到 `(a -> b)` 层面么，正如 `||` 和 `||.` 都是或操作，只不过一个作用在 `Bool` 值层面，一个作用在 `a -> Bool` 判别函数层面。如此通用的概念，我意识到我很可能重造轮子了。
 
-于是我请lambdabot大神帮我诊断一下： 
+于是我请 `lambdabot <http://www.haskell.org/haskellwiki/Lambdabot>`_ mm帮我诊断一下： 
 
 .. code-block:: haskell
 
     <huangyi> @pl fn op g k a = g a `op` k a
     <lambdabot> fn = liftM2
 
-果然，lambdabot告诉我， `fn` 其实就是 `liftM2` 。 `liftM2` 是专门用来把二元函数提升到 `Monad` 中去的，而 `((->) a)` 正是 `Monad` 的实例。 
+果然，小mm告诉我， `fn` 其实就是 `liftM2` 。 `liftM2` 是专门用来把二元函数提升到 `Monad` 中去的，而 `((->) a)` 正是 `Monad` 的实例。 
 
 .. code-block:: haskell
 

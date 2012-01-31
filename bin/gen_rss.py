@@ -26,7 +26,7 @@ def render_rss():
             ]
     )
 
-    rss_path = 'html/rss.xml'
+    rss_path = '../rss.xml'
     rss.write_xml(open(rss_path, 'w'))
     print 'generated feeds', rss_path
 
@@ -42,7 +42,7 @@ def render_list():
     listtpl = loader.get_template('list_tpl.mako')
     sorted_group = sorted(date_group.items(), key=lambda (k,v):k, reverse=True)
     html = listtpl.render(date_group=sorted_group, cfg=config)
-    open('html/list.html', 'w').write(html)
+    open('../list.html', 'w').write(html)
     print 'generated list page'
 
 render_list()

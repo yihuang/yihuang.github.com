@@ -11,9 +11,9 @@ links=[
     u'<a href="http://9.douban.com/subject/9361637/" target="_blank">豆瓣九点</a>',
 ]
 nav_icons = [
-    (u'首页', '/blog/', 'images/icons/home.png', ''),
-    (u'文章列表', '/blog/list.html', 'images/icons/blog.png', ''),
-    (u'订阅', '/blog/rss.xml', 'images/icons/about.png', ''),
+    (u'首页', 'index.html', 'images/icons/home.png', ''),
+    (u'文章列表', 'list.html', 'images/icons/blog.png', ''),
+    (u'订阅', 'rss.xml', 'images/icons/about.png', ''),
 ]
 link_icons = [
     (u'Github', 'https://github.com/yihuang/', 'images/icons/github.png', ''),

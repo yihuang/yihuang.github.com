@@ -43,7 +43,7 @@ def system(cmd):
 
 class Tex_to_images(object):
     """Feeds math to ``tex_to_images.prl``.  Always goes through ppm."""
-    def __init__(self, dir='html/imgmath', srcdir='imgmath/', options='-s 1.5',
+    def __init__(self, dir='../imgmath', srcdir='imgmath/', options='-s 1.5',
                  converter='pnmtopng', extension='.png'):
         try:
             os.mkdir(dir)
