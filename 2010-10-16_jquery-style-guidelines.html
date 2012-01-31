@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>jQuery编码规范</title>
+<meta content="jQuery核心模块的编码规范，用在自己的javascript项目里也不错，就是有几点和python的编码规范不一致，比如鼓励用tab缩进，也许是担心js空格太多增大文件大小。" name="description" />
+<meta content="jquery javascript coding style guideline" name="keywords" />
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">jQuery编码规范</h1>
+
+                    <p class="author">2010-10-16 黄毅</p>
+                    <p>原文： <a class="reference external" href="http://docs.jquery.com/JQuery_Core_Style_Guidelines">http://docs.jquery.com/JQuery_Core_Style_Guidelines</a></p>
+<p>jQuery核心模块的编码规范，用在自己的javascript项目里也不错，就是有几点和python的编码规范不一致，比如鼓励用tab缩进，也许是担心js空格太多增大文件大小。</p>
+<div class="contents topic" id="id1">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id2" id="id12">空格</a></li>
+<li><a class="reference internal" href="#id3" id="id13">等价判断</a></li>
+<li><a class="reference internal" href="#id4" id="id14">代码块</a></li>
+<li><a class="reference internal" href="#id5" id="id15">函数调用</a></li>
+<li><a class="reference internal" href="#id6" id="id16">数组和对象</a></li>
+<li><a class="reference internal" href="#id7" id="id17">赋值</a></li>
+<li><a class="reference internal" href="#id8" id="id18">类型检查</a></li>
+<li><a class="reference internal" href="#id9" id="id19">正则表达式</a></li>
+<li><a class="reference internal" href="#id10" id="id20">字符串</a></li>
+<li><a class="reference internal" href="#id11" id="id21">节点</a></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id12">空格</a></h2>
+<ul>
+<li><p class="first">使用tab进行缩进</p>
+</li>
+<li><p class="first">代码中多用点空格</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="c1">// 错:</span>
+</div><div class="line" id="LC1"><span class="k">if</span><span class="p">(</span><span class="nx">blah</span><span class="o">===</span><span class="s2">&quot;foo&quot;</span><span class="p">){</span>
+</div><div class="line" id="LC1">  <span class="nx">foo</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span><span class="s2">&quot;baz&quot;</span><span class="p">,{</span><span class="nx">zoo</span><span class="o">:</span><span class="mi">1</span><span class="p">});</span>
+</div><div class="line" id="LC1"><span class="p">}</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="c1">// 对:</span>
+</div><div class="line" id="LC1"><span class="k">if</span> <span class="p">(</span> <span class="nx">blah</span> <span class="o">===</span> <span class="s2">&quot;foo&quot;</span> <span class="p">)</span> <span class="p">{</span>
+</div><div class="line" id="LC1">  <span class="nx">foo</span><span class="p">(</span> <span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="s2">&quot;baz&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">zoo</span><span class="o">:</span> <span class="mi">1</span><span class="p">}</span> <span class="p">);</span>
+</div><div class="line" id="LC1"><span class="p">}</span>
+</div></pre></div>
+</li>
+<li><p class="first">左花括号前面一定要有空格</p>
+</li>
+<li><p class="first">行内不要使用tab</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+</div><div class="line" id="LC1">  <span class="nx">c</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="c1">// yay</span>
+</div><div class="line" id="LC1">  <span class="nx">b</span>   <span class="o">=</span> <span class="kc">false</span><span class="p">;</span> <span class="c1">// grrr</span>
+</div></pre></div>
+</li>
+<li><p class="first">空行不要有空格</p>
+</li>
+<li><p class="first">行尾不要有空格</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id13">等价判断</a></h2>
+<p>尽量使用严格的等价判断符 <cite>===</cite> ，尽量不用 <cite>==</cite> 。</p>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id14">代码块</a></h2>
+<ul>
+<li><p class="first"><cite>if/else/for/while/try</cite> 要使用花括号，且要换行。</p>
+</li>
+<li><p class="first">代码块一定要用花括号括起来：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="c1">// 错:</span>
+</div><div class="line" id="LC1"><span class="k">if</span> <span class="p">(</span> <span class="kc">true</span> <span class="p">)</span>
+</div><div class="line" id="LC1">   <span class="nx">blah</span><span class="p">();</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="c1">// 对:</span>
+</div><div class="line" id="LC1"><span class="k">if</span> <span class="p">(</span> <span class="kc">true</span> <span class="p">)</span> <span class="p">{</span>
+</div><div class="line" id="LC1">   <span class="nx">blah</span><span class="p">();</span>
+</div><div class="line" id="LC1"><span class="p">}</span>
+</div></pre></div>
+</li>
+</ul>
+<p>不要把语句和判断条件放在同一行：</p>
+<blockquote>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="c1">// 错:</span>
+</div><div class="line" id="LC1"><span class="k">if</span> <span class="p">(</span> <span class="kc">true</span> <span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</div><div class="line" id="LC1"><span class="k">if</span> <span class="p">(</span> <span class="kc">true</span> <span class="p">)</span> <span class="nx">blah</span><span class="p">();</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="c1">// 对:</span>
+</div><div class="line" id="LC1"><span class="k">if</span> <span class="p">(</span> <span class="kc">true</span> <span class="p">)</span> <span class="p">{</span>
+</div><div class="line" id="LC1">   <span class="k">return</span><span class="p">;</span>
+</div><div class="line" id="LC1"><span class="p">}</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="k">if</span> <span class="p">(</span> <span class="kc">true</span> <span class="p">)</span> <span class="p">{</span>
+</div><div class="line" id="LC1">   <span class="nx">blah</span><span class="p">();</span>
+</div><div class="line" id="LC1"><span class="p">}</span>
+</div></pre></div>
+</blockquote>
+<ul>
+<li><p class="first"><cite>else/else if/catch</cite> 要和花括号在同一行：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="k">if</span> <span class="p">(</span> <span class="nx">blah</span> <span class="p">)</span> <span class="p">{</span>
+</div><div class="line" id="LC1">   <span class="nx">baz</span><span class="p">();</span>
+</div><div class="line" id="LC1"><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</div><div class="line" id="LC1">   <span class="nx">baz2</span><span class="p">();</span>
+</div><div class="line" id="LC1"><span class="p">}</span>
+</div></pre></div>
+<p>例外： <cite>else if</cite> 的情况， <cite>else</cite> 就不要加花括号了：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span> <span class="nx">test</span> <span class="p">)</span> <span class="p">{</span>
+</div><div class="line" id="LC1">  <span class="nx">blah</span><span class="p">();</span>
+</div><div class="line" id="LC1"><span class="p">}</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="c1">// 没必要：</span>
+</div><div class="line" id="LC1"><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</div><div class="line" id="LC1">  <span class="k">if</span> <span class="p">(</span> <span class="nx">test</span> <span class="p">)</span> <span class="p">{</span>
+</div><div class="line" id="LC1">    <span class="nx">blah</span><span class="p">();</span>
+</div><div class="line" id="LC1">  <span class="p">}</span>
+</div><div class="line" id="LC1"><span class="p">}</span>
+</div></pre></div>
+</li>
+<li><p class="first">不要使用三元操作符取代 <cite>if/else</cite> 语句。</p>
+</li>
+<li><p class="first">不要使用 <cite>object &amp;&amp; object.method()</cite> 取代 <cite>if/else</cite> 语句，除非在条件判断中。</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id5">
+<h2><a class="toc-backref" href="#id15">函数调用</a></h2>
+<ul>
+<li><p class="first">参数两边要加一个空格</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nx">foo</span><span class="p">(</span> <span class="kc">true</span> <span class="p">);</span>
+</div><div class="line" id="LC1"><span class="nx">foo</span><span class="p">(</span> <span class="s2">&quot;blah&quot;</span> <span class="p">);</span>
+</div></pre></div>
+<p>例外：如果已经在函数调用中的话，里面的函数调用可以不加空格：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nx">foo</span><span class="p">(</span> <span class="nx">bar</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="p">);</span>
+</div></pre></div>
+<p>例外：函数，对象，数组字面量，如果是唯一参数的话，可以紧贴括号：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nx">foo</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="p">});</span>
+</div><div class="line" id="LC1"><span class="nx">foo</span><span class="p">([</span>   <span class="p">]);</span>
+</div><div class="line" id="LC1"><span class="nx">foo</span><span class="p">({</span>   <span class="p">});</span>
+</div></pre></div>
+</li>
+<li><p class="first">空函数调用不需要加空格：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nx">foo</span><span class="p">();</span>
+</div></pre></div>
+</li>
+<li><p class="first">逗号和冒号后面一定要跟空格</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id6">
+<h2><a class="toc-backref" href="#id16">数组和对象</a></h2>
+<ul>
+<li><p class="first">空对象和数组不需要填入空格：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="p">[]</span>
+</div><div class="line" id="LC1"><span class="p">{}</span>
+</div></pre></div>
+</li>
+<li><p class="first">逗号和冒号后面一定要跟空格</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id7">
+<h2><a class="toc-backref" href="#id17">赋值</a></h2>
+<ul class="simple">
+<li>赋值语句一定要跟分号。</li>
+<li>分号后面一定要换行。</li>
+</ul>
+</div>
+<div class="section" id="id8">
+<h2><a class="toc-backref" href="#id18">类型检查</a></h2>
+<ul class="simple">
+<li>String: <cite>typeof object === &quot;string&quot;</cite></li>
+<li>Number: <cite>typeof object === &quot;number&quot;</cite></li>
+<li>Boolean: <cite>typeof object === &quot;boolean&quot;</cite></li>
+<li>Object: <cite>typeof object === &quot;object&quot;</cite></li>
+<li>Plain Object: <a class="reference external" href="http://api.jquery.com/jQuery.isPlainObject/">jQuery.isPlainObject(object)</a></li>
+<li>Function: <a class="reference external" href="http://api.jquery.com/jQuery.isFunction/">jQuery.isFunction(object)</a></li>
+<li>Array: <a class="reference external" href="http://api.jquery.com/jQuery.isArray/">jQuery.isArray(object)</a></li>
+<li>Element: <cite>object.nodeType</cite></li>
+<li>null: <cite>object === null</cite></li>
+<li>null or undefined: <cite>object == null</cite></li>
+<li>undefined:</li>
+</ul>
+<blockquote>
+<ul class="simple">
+<li>Global Variables: <cite>typeof variable === &quot;undefined&quot;</cite></li>
+<li>Local Variables: <cite>variable === undefined</cite></li>
+<li>Properties: <cite>object.prop === undefined</cite></li>
+</ul>
+</blockquote>
+</div>
+<div class="section" id="id9">
+<h2><a class="toc-backref" href="#id19">正则表达式</a></h2>
+<p>只准用 <cite>.test()</cite> 和 <cite>.exec()</cite> 。不准用 <cite>&quot;string&quot;.match()</cite> 。</p>
+</div>
+<div class="section" id="id10">
+<h2><a class="toc-backref" href="#id20">字符串</a></h2>
+<p>字符串一定要用双引号，不能用单引号。</p>
+</div>
+<div class="section" id="id11">
+<h2><a class="toc-backref" href="#id21">节点</a></h2>
+<ul class="simple">
+<li>使用 <cite>.nodeName</cite> 而非 <cite>.tagName</cite></li>
+<li>使用 <cite>.nodeType</cite> 来判断节点的类型（不要用 <cite>.nodeName</cite> ）</li>
+<li>不要手动往节点上挂自定义的属性，一定要使用 <cite>.data()</cite> 。</li>
+</ul>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2010-10-16_jquery-style-guidelines';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2010-10-16_jquery-style-guidelines.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2010-10-16_jquery-style-guidelines.html&title=jQuery编码规范"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2010-10-16_jquery-style-guidelines.html&title=jQuery编码规范"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=jQuery编码规范&uri=http://www.yi-programmer.com/blog/2010-10-16_jquery-style-guidelines.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2010-10-16_jquery-style-guidelines.html&title=jQuery编码规范"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2010-10-16_jquery-style-guidelines.html&it=jQuery编码规范&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2010-10-16_jquery-style-guidelines.html&title=jQuery编码规范&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2010-10-16_jquery-style-guidelines.html&t=jQuery编码规范"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2010-10-16_jquery-style-guidelines.html&title=jQuery编码规范"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=jQuery编码规范&rurl=http://www.yi-programmer.com/blog/2010-10-16_jquery-style-guidelines.html&rcontent=http://www.yi-programmer.com/blog/2010-10-16_jquery-style-guidelines.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2010-10-16_jquery-style-guidelines.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2010-10-16_jquery-style-guidelines.html&t=jQuery编码规范"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2010-10-16_jquery-style-guidelines.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

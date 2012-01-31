@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>指称语义学习笔记1</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">指称语义学习笔记1</h1>
+
+                    <p class="author">2010-04-26 黄毅</p>
+                    <p>资料：</p>
+<ul class="simple">
+<li>很haskell <a class="reference external" href="http://en.wikibooks.org/wiki/Haskell/Denotational_semantics">http://en.wikibooks.org/wiki/Haskell/Denotational_semantics</a></li>
+<li>很数学 <a class="reference external" href="http://zh.wikipedia.org/zh-cn">http://zh.wikipedia.org/zh-cn</a>/指称语义</li>
+</ul>
+<p>什么是程序的语义？程序语义就是说一个程序的含义，拿到一个程序，如何说出它究竟是什么含义。通常作为程序员，我们习惯在大脑中模拟程序的运行，通过运行过程中内存结构的变化来理解一个程序的语义，比如 <cite>c=a+b</cite> 这个表达式的含义就是从 <cite>a</cite> <cite>b</cite> 两个单元取数据相加并存放到 <cite>c</cite> 这个单元。只是这种对语义的描述方法不严谨，比如我们继续追问单元是什么，寄存器呢还是内存单元，等。如果这样一直追问下去，要成功解释一个程序的语义，得把编译器的实现都拿出来才有把握准确描述。</p>
+<p>而语义学就是研究描述程序含义的形式化的方法。正如我们使用BNF这种语言来描述程序设计语言的语法，语义学也希望用一套形式化的语言来描述程序设计语言的语义。</p>
+<p>指称语义是描述语义的一种方式，它把程序看作是从一个数学对象（即所谓的指称）到另一个数学对象的映射（因为我个人只对集合的概念有感觉，所以我通常就把这个数学对象当作集合了）。比如 <cite>c:int = a:int + b:int</cite> 就是集合 <cite>(int,int)→int</cite> 的映射，如果要继续追问， <cite>int</cite> 是什么， <cite>int</cite> 就是整数集合， <cite>+</cite> 就是整数的加法，这下就比较放心了，因为我们这就靠上了数学这座山。</p>
+<p>实际上，这时候我们就能看出纯函数式语言和命令式语言的差异来了，比如 Integer-&gt;Integer 这样一个函数，利用指称语义，我们可以说它就是从整数集合到整数集合的一个函数，但且慢，如果这是个命令式的语言呢，它的实现里面可能会去修改一些全局变量，也可能执行IO操作，简单说它是整数到整数的函数并不能完全描述它的含义。所以要描述一个命令式语言的语义，最终你发现不得不从它具体一步一步的执行过程去理解。而纯函数式语言，通常是可以抛开其执行过程去谈它的语义的。事实上，函数式语言也确实存在多种求值策略（call-by-value，call-by-name，call-by-need），对应不同的执行方式。对于命令式语言有另一种形式语义与其对应，叫操作语义，不过这个就不是本文的谈论对象了。</p>
+<p>实际上，haskell98的语义就完全是采用指称语义的方式来描述的。</p>
+<p>到这里，对于指称语义是什么就有了大概的了解了，不过深入一点看，我们会发现一点问题。上面我们把程序的函数直接当作是集合之间的函数来理解，但是我们看下面这个函数的定义：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">shaves</span> <span class="ow">::</span> <span class="kt">Integer</span> <span class="ow">-&gt;</span> <span class="kt">Integer</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+</div><div class="line" id="LC1"><span class="mi">1</span> <span class="p">`</span><span class="n">shaves</span><span class="p">`</span> <span class="mi">1</span> <span class="ow">=</span> <span class="kt">True</span>
+</div><div class="line" id="LC1"><span class="mi">2</span> <span class="p">`</span><span class="n">shaves</span><span class="p">`</span> <span class="mi">2</span> <span class="ow">=</span> <span class="kt">False</span>
+</div><div class="line" id="LC1"><span class="mi">0</span> <span class="p">`</span><span class="n">shaves</span><span class="p">`</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">not</span> <span class="p">(</span><span class="n">x</span> <span class="p">`</span><span class="n">shaves</span><span class="p">`</span> <span class="n">x</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="kr">_</span> <span class="p">`</span><span class="n">shaves</span><span class="p">`</span> <span class="kr">_</span> <span class="ow">=</span> <span class="kt">False</span>
+</div></pre></div>
+<p>这就是传说中的理发师悖论在haskell代码中的呈现，如果说 <cite>shaves</cite> 是函数映射的话， <cite>shaves 0 0</cite> 要映射到哪里去。这说明我们前面介绍的对函数的解释方式还是存在漏洞。</p>
+<p>要解决这个问题，需要给所有类型引入一个 <cite>undefined</cite> 的值，这样我们就可以说 <cite>shaves 0 0</cite> 是 <cite>undefined</cite> 了。</p>
+<p>未完待续...</p>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2010-04-26_denotion-semantics';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2010-04-26_denotion-semantics.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2010-04-26_denotion-semantics.html&title=指称语义学习笔记1"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2010-04-26_denotion-semantics.html&title=指称语义学习笔记1"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=指称语义学习笔记1&uri=http://www.yi-programmer.com/blog/2010-04-26_denotion-semantics.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2010-04-26_denotion-semantics.html&title=指称语义学习笔记1"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2010-04-26_denotion-semantics.html&it=指称语义学习笔记1&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2010-04-26_denotion-semantics.html&title=指称语义学习笔记1&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2010-04-26_denotion-semantics.html&t=指称语义学习笔记1"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2010-04-26_denotion-semantics.html&title=指称语义学习笔记1"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=指称语义学习笔记1&rurl=http://www.yi-programmer.com/blog/2010-04-26_denotion-semantics.html&rcontent=http://www.yi-programmer.com/blog/2010-04-26_denotion-semantics.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2010-04-26_denotion-semantics.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2010-04-26_denotion-semantics.html&t=指称语义学习笔记1"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2010-04-26_denotion-semantics.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

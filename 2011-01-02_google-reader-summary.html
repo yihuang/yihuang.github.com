@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>python 工具</title>
+<meta content="python haskell google reader" name="keywords" />
+<meta content="google reader中haskell目录下面的东西看得人心情抑郁，因为看不懂，就算看懂了也不知道能干嘛，有啥好处。python目录就不一样了，随便喵喵也能收获一堆实用的好东东。汇总几个今天看到的。" name="description" />
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">python 工具</h1>
+
+                    <p class="author">2011-01-02 黄毅</p>
+                    <p>google reader中haskell目录下面的东西看得人心情抑郁，因为看不懂，就算看懂了也不知道能干嘛，有啥好处。python目录下就不一样，随便喵喵也能收获一堆实用的东东。汇总两个，凑出2011第一篇文章。</p>
+<div class="contents topic" id="id1">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#virtualenvwrapper" id="id3">virtualenvwrapper</a></li>
+<li><a class="reference internal" href="#python-me" id="id4">python -me</a></li>
+</ul>
+</div>
+<div class="section" id="virtualenvwrapper">
+<h2><a class="toc-backref" href="#id3">virtualenvwrapper</a></h2>
+<p>首先， <a class="reference external" href="http://pypi.python.org/pypi/virtualenv">virtualenv</a> 是用来建立一个python的隔离环境的。 <a class="reference external" href="http://www.doughellmann.com/docs/virtualenvwrapper/">virtualenvwrapper</a> 顾名思义，就是在 <a class="reference external" href="http://pypi.python.org/pypi/virtualenv">virtualenv</a> 的基础上扩展了几个方便的命令。管理一堆 <a class="reference external" href="http://pypi.python.org/pypi/virtualenv">virtualenv</a> 环境的时候挺有用。</p>
+<pre class="literal-block">
+&gt; easy_install virtualenvwrapper
+安装...
+&gt; mkdir $HOME/env
+&gt; export WORKON_HOME=$HOME/env
+&gt; source virtualenvwrapper.sh
+后面两句可以加入 .bashrc ，WORKON_HOME 默认为 $HOME/.virtualenvs
+&gt; mkvirtualenv test1
+(test1)&gt; mkvirtualenv test2
+(test2)&gt; workon
+test1
+test2
+(test2)&gt; workon test1
+(test1)&gt; $ lssitepackages
+easy-install.pth     setuptools-0.6c11-py2.5.egg
+pip-0.8.1-py2.5.egg  setuptools.pth
+</pre>
+</div>
+<div class="section" id="python-me">
+<h2><a class="toc-backref" href="#id4">python -me</a></h2>
+<p>不知您是否也像我一样经常干这样的事情：想把python当计算器用，却直接执行 <cite>python -c &quot;1+1&quot;</cite> ，发现不对时才记得加上个 <cite>print</cite> ；又或是想看看当前环境使用的 <a class="reference external" href="http://www.djangoproject.com">django</a> 是哪个，进入python shell，输入 <cite>import django;print django.__file__</cite> 。</p>
+<p>至少我是经常干这样的事情，惭愧的是从来没想过把它自动化一下，不过现在有人帮我做了 ;-) 就是这个叫 <a class="reference external" href="http://pypi.python.org/pypi/e">e</a> 的库。看起来，利用 <cite>python -m</cite> 参数，还是能做挺多有意思的事情的。</p>
+<pre class="literal-block">
+$ python -me 1+1 2+2
+2
+4
+$ python -me os
+/home/yihuang/.virtualenvs/test/lib/python2.5/os.py
+$ python -me sys.path
+[......]
+</pre>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2011-01-02_google-reader-summary';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2011-01-02_google-reader-summary.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2011-01-02_google-reader-summary.html&title=python 工具"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2011-01-02_google-reader-summary.html&title=python 工具"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=python 工具&uri=http://www.yi-programmer.com/blog/2011-01-02_google-reader-summary.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2011-01-02_google-reader-summary.html&title=python 工具"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2011-01-02_google-reader-summary.html&it=python 工具&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2011-01-02_google-reader-summary.html&title=python 工具&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2011-01-02_google-reader-summary.html&t=python 工具"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2011-01-02_google-reader-summary.html&title=python 工具"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=python 工具&rurl=http://www.yi-programmer.com/blog/2011-01-02_google-reader-summary.html&rcontent=http://www.yi-programmer.com/blog/2011-01-02_google-reader-summary.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2011-01-02_google-reader-summary.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2011-01-02_google-reader-summary.html&t=python 工具"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2011-01-02_google-reader-summary.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

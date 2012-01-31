@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>Core Animation编程指南 - 简介</title>
+<meta content="苹果官方文档的翻译： Core Animation Programming Guide - Introduction" name="description" />
+<meta content="cocoa animation architecture introduction 翻译" name="keywords" />
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">Core Animation编程指南 - 简介</h1>
+
+                    <p class="author">2010-06-14 黄毅</p>
+                    <p><a class="reference external" href="http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/WhatisCoreAnimation.html#//apple_ref/doc/uid/TP40004689-SW1">原文</a></p>
+<p>Core Animation是一个Objc类库，用于处理图像渲染，投射和动画。</p>
+<p>它提供以下功能：</p>
+<ul class="simple">
+<li>通过简单的编程模型提供高性能的合成效果。</li>
+<li>基于熟悉的视图抽象，可以使用树状的对象体系创建复杂的用户界面</li>
+<li>轻量的数据结构。可以同时对上百个层进行展示和动画。</li>
+<li>抽象的动画接口，能够让动画运行在独立的线程。一旦动画配制完毕并启动后，Core Animation将负责它的运行和桢速。</li>
+<li>提升应用程序性能。程序只需要在变化时重画。将应用程序在resize时需要做的处理降到最低并提供layout服务层，Core Animation让你不再需要手动处理桢速。</li>
+<li>灵活的layout管理器模型，自带的管理器能让你指定层和其兄弟层的相对位置和大小。</li>
+</ul>
+<p>使用 Core Animation，开发者不再需要底层图形接口就可以创建高性能的动态用户界面了。</p>
+<div class="contents topic" id="id2">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id3" id="id7">Core Animation类体系</a></li>
+<li><a class="reference internal" href="#calayer" id="id8">CALayer</a></li>
+<li><a class="reference internal" href="#id4" id="id9">动画和时间函数</a></li>
+<li><a class="reference internal" href="#layout" id="id10">Layout管理类</a></li>
+<li><a class="reference internal" href="#id6" id="id11">事务管理类</a></li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id7">Core Animation类体系</a></h2>
+<div class="center-figure figure align-right">
+<img alt="images/lk_class_hierarchy.jpg" src="images/lk_class_hierarchy.jpg" />
+<p class="caption">Core Animation类图</p>
+</div>
+<p>Core Animation的类可分为以下几组：</p>
+<ul class="simple">
+<li>提供展示的内容的Layer类</li>
+<li>Animation 和 timing 类</li>
+<li>Layout 和 constraint 类</li>
+<li>将多个修改合成一个原子更新操作的事务类</li>
+</ul>
+<p>基本的 Core Animatin 类包含在 Quartz Core 框架中，也有另外的layer类在其他框架中定义。下图展示了 Core Animation 的类体系。</p>
+</div>
+<div class="section" id="calayer">
+<h2><a class="toc-backref" href="#id8">CALayer</a></h2>
+<p><cite>CALayer</cite> 是Core Animation的基础，它的作用类似于 <cite>NSView</cite> 。每一个 <cite>CALayer</cite> 可以拥有一个父层和多个子层，由此形成一个树状结构的体系，叫做 layer tree。</p>
+<p>层从后往前的顺序进行渲染，子层基于和父层相对的局部坐标系统。还可以对层进行矩阵转换以实现复杂的展示效果（ <a class="reference external" href="http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/Layers.html#//apple_ref/doc/uid/TP40006082-SW1">详情</a> ）。</p>
+<p>在 <cite>CALayer</cite> 中，除了继承还有多种方式可以为它提供显示的内容，这一点有别于其他视图类（ <a class="reference external" href="http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/ProvidingCALayerContent.html#//apple_ref/doc/uid/TP40006642-SW1">详情</a> ）：</p>
+<ul class="simple">
+<li>把层的 content 属性设置为Core Graphics image，或者代理</li>
+<li>提供代理对Core Graphics image context进行画图</li>
+<li>设置层公用的一些可视化属性，比如背景色，透明度等（ <a class="reference external" href="http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/LayerVisProps.html#//apple_ref/doc/uid/TP40006074-SW1">详情</a> ）</li>
+<li>Subclassing CALayer and implementing any of the above techniques in a more encapsulated manner.</li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id9">动画和时间函数</a></h2>
+<p>层的很多可视属性都可以产生隐式动画，这些属性称为可动画属性，修改层的可动画属性自动就会产生从当前值变化到目标值的动画，比如设置层的hidden属性为YES，就会产生一个淡出的动画。大部分可动画属性都有默认的动画，这些动画也是可以定制的。 <a class="reference external" href="http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/AnimProps.html#//apple_ref/doc/uid/TP40005942-SW1">可动画属性列表</a></p>
+<p>可动画属性也可以进行显式动画，要创建显式动画你可以创建Core Animation动画类的实例并指定视觉效果，显式动画不会修改层对象的属性值，它仅仅是展示动画效果而已。</p>
+<p>Core Animation既提供基本动画也提供关键桢动画，你可以对层的整个内容进行动画也可以对部分属性进行动画。所有动画类都继承自抽象类 <cite>CAAnimation</cite> 。 <cite>CAAnimation</cite> 遵守 <cite>CAMediaTiming</cite> 协议，可以对动画进行简单的时长，速度，重复次数控制。它还遵守 <cite>CAAction</cite> 协议，可以让动画在层触发action时启动（ <a class="reference external" href="http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/Actions.html#//apple_ref/doc/uid/TP40006095-SW1">详情</a> ）。</p>
+<p>动画类还定义了描述动画速度的基于简单bezier曲线的时间函数。比如ease-out时间函数会让动画在快结束的时候减速。</p>
+<p>Core Animation提供了许多或具体或抽象的动画类（ <a class="reference external" href="http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/AnimatingLayers.html#//apple_ref/doc/uid/TP40006085-SW1">详情</a> ）：</p>
+<ul class="simple">
+<li><cite>CATransition</cite> 提供作用于整个层的转换效果。你还可以通过自定义的Core Image filter扩展转换效果。</li>
+<li><cite>CAAnimationGroup</cite> 可以打包多个动画对象并让他们同时执行。</li>
+<li><cite>CAPropertyAnimation</cite> 支持基于属性关键路径的动画。</li>
+<li><cite>CABasicAnimation</cite> 对属性做简单的插值</li>
+<li><cite>CAKeyframeAnimation</cite> 对关键桢动画提供支持。指定需要动画属性的关键路径，一个表示每一个阶段对应的值的数组，还有一个关键桢时间和时间函数的数组。动画运行时，依次设置每一个值的指定插值。</li>
+</ul>
+<p><a class="reference external" href="http://developer.apple.com/mac/library/documentation/cocoa/conceptual/Animation_Types_Timing/Introduction/Introduction.html#//apple_ref/doc/uid/TP40006166">详情</a></p>
+</div>
+<div class="section" id="layout">
+<h2><a class="toc-backref" href="#id10">Layout管理类</a></h2>
+<p>Mac OS X 的 Core Animation 还提供更灵活的机制可以让你自己编写自定义的 layout 管理器。</p>
+<p>Core Animation 的 <cite>CAConstraint</cite> 类是个layout管理器，它根据你指定的约束条件对子层进行排列。每一个约束条件（封装在 <cite>CAConstraint</cite> 类的实例中）描述层和兄弟层或父层之间的几何属性的关系。</p>
+<p><a class="reference external" href="http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/Layout.html#//apple_ref/doc/uid/TP40006084-SW1">详情</a></p>
+</div>
+<div class="section" id="id6">
+<h2><a class="toc-backref" href="#id11">事务管理类</a></h2>
+<p>对可动画属性的任何修改都应该在事务中完成。 <cite>CATransition</cite> 类负责将多个动画操作打包成原子更新操作然后执行。支持嵌套事务。</p>
+<p>Core Animation&nbsp;支持两种事务：隐式和显式。在当前没有事务的情况下对可动画属性进行修改会自动创建一个隐式的事务，在当前线程下一次迭代时自动提交。要创建显式事务，在对层进行修改之前给 <cite>CATransition</cite> 类发一个 <cite>begin</cite> 消息，修改后再发一个 <cite>commit</cite> 消息。</p>
+<p><a class="reference external" href="http://developer.apple.com/mac/library/documentation/cocoa/conceptual/CoreAnimation_guide/Articles/Transactions.html#//apple_ref/doc/uid/TP40006096-SW1">详情</a></p>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2010-06-14_core-animation-introduction';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2010-06-14_core-animation-introduction.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2010-06-14_core-animation-introduction.html&title=Core Animation编程指南 - 简介"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2010-06-14_core-animation-introduction.html&title=Core Animation编程指南 - 简介"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=Core Animation编程指南 - 简介&uri=http://www.yi-programmer.com/blog/2010-06-14_core-animation-introduction.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2010-06-14_core-animation-introduction.html&title=Core Animation编程指南 - 简介"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2010-06-14_core-animation-introduction.html&it=Core Animation编程指南 - 简介&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2010-06-14_core-animation-introduction.html&title=Core Animation编程指南 - 简介&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2010-06-14_core-animation-introduction.html&t=Core Animation编程指南 - 简介"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2010-06-14_core-animation-introduction.html&title=Core Animation编程指南 - 简介"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=Core Animation编程指南 - 简介&rurl=http://www.yi-programmer.com/blog/2010-06-14_core-animation-introduction.html&rcontent=http://www.yi-programmer.com/blog/2010-06-14_core-animation-introduction.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2010-06-14_core-animation-introduction.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2010-06-14_core-animation-introduction.html&t=Core Animation编程指南 - 简介"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2010-06-14_core-animation-introduction.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

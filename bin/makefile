@@ -17,8 +17,8 @@ detail : $(detailpages)
 index : $(indexpage) $(listpage)
 
 $(indexpage) $(listpage) : $(texts) templates/index_tpl.mako templates/list_tpl.mako $(comm_dep)
-	ls -1r $(root)src/*.txt | python gen_list.py
-	ls -1r $(root)src/*.txt | python gen_rss.py
+	ls -1r $(root)src/*.txt | grep -v "^_" | python gen_list.py
+	ls -1r $(root)src/*.txt | grep -v "^_" | python gen_rss.py
 
 clean :
 	rm $(root)*.html

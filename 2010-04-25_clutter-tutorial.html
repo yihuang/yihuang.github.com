@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>pyclutter简易教程</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">pyclutter简易教程</h1>
+
+                    <p class="author">2010-04-25 黄毅</p>
+                    <p><a class="reference external" href="http://clutter-project.org/">clutter</a> 是一个动画GUI库，基于OpenGL图形加速，设计良好的api，基于GObject体系，和gtk环境良好整好。gnome3.0新的window manager mutter 就是基于这个库开发。</p>
+<p>linux 上 3D window manager 由来已久，但是除了游戏，大部分应用程序本身仍然还是使用2D进行渲染。clutter就是希望能够给应用程序提供一个易用的接口，使用3D效果创建新一代的UI。</p>
+<p>好用的接口总是让人心旷神怡的， <a class="reference external" href="http://processing.org/">processing</a> 已经让我惊艳过一次，这次 clutter 也不例外。下面就开始我们的 clutter 之旅吧。</p>
+<p>因为 clutter 的概念和接口都比较简单，本教程文字介绍并不多，主要通过代码展示clutter的基本概念。里面的代码和截图都是在我的电脑上实地跑出来的。</p>
+<p>代码目录： <a class="reference external" href="code/clutter-tutorial/">code/clutter-tutorial/</a></p>
+<div class="contents topic" id="id1">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id2" id="id7">安装</a></li>
+<li><a class="reference internal" href="#id3" id="id8">第一个窗口</a></li>
+<li><a class="reference internal" href="#id4" id="id9">基本元素</a></li>
+<li><a class="reference internal" href="#id5" id="id10">动起来</a></li>
+<li><a class="reference internal" href="#id6" id="id11">组合动画</a></li>
+<li><a class="reference internal" href="#texture" id="id12">Texture</a></li>
+<li><a class="reference internal" href="#json" id="id13">使用json作为动画的配置文件</a></li>
+<li><a class="reference internal" href="#animation-behaivour" id="id14">Animation 和 Behaivour 介绍</a></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id7">安装</a></h2>
+<p>如果你已经是ubuntu10.04的用户，那么clutter已经自带，你只需要再安装一个 pyclutter 的包即可。其他用户可到如下网站下去安装相应的库和相关的依赖：</p>
+<ul class="simple">
+<li>clutter: <a class="reference external" href="http://clutter-project.org/download.html">http://clutter-project.org/download.html</a></li>
+<li>pyclutter: <a class="reference external" href="http://www.clutter-project.org/sources/pyclutter/">http://www.clutter-project.org/sources/pyclutter/</a></li>
+</ul>
+<p>其他资源：</p>
+<ul class="simple">
+<li>pyclutter的api文档： <a class="reference external" href="http://www.clutter-project.org/docs/pyclutter/stable/">http://www.clutter-project.org/docs/pyclutter/stable/</a></li>
+<li>programming clutter教程： <a class="reference external" href="http://www.openismus.com/documents/clutter_tutorial/1.0/docs/tutorial/html/index.html">http://www.openismus.com/documents/clutter_tutorial/1.0/docs/tutorial/html/index.html</a></li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id8">第一个窗口</a></h2>
+<div class="figure align-right">
+<img alt="images/clutter-tutorial/Screenshot-simple.png" src="images/clutter-tutorial/Screenshot-simple.png" />
+<p class="caption">运行结果</p>
+</div>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="c">#!/usr/bin/python</span>
+</div><div class="line" id="LC1"><span class="kn">import</span> <span class="nn">clutter</span>
+</div><div class="line" id="LC1"><span class="n">stage</span> <span class="o">=</span> <span class="n">clutter</span><span class="o">.</span><span class="n">Stage</span><span class="p">()</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;simple&#39;</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">set_size</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="mi">256</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">clutter</span><span class="o">.</span><span class="n">color_from_string</span><span class="p">(</span><span class="s">&#39;black&#39;</span><span class="p">))</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&quot;destroy&quot;</span><span class="p">,</span> <span class="n">clutter</span><span class="o">.</span><span class="n">main_quit</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">clutter</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</div></pre></div>
+<p>首先我们创建了一个 Stage 对象。这里先解释一下什么是 Stage 对象。</p>
+<p>在clutter中最重要的一个概念就是 Actor，它是 clutter 处理的基本元素，Actor可以有子Actor，也就是说Actor构成一个树状结构。
+而Stage就是这棵树的根节点。在运行的时候，Stage也就代表了整个窗口。</p>
+<p>在代码中，我们设置了窗口的标题，大小和背景色，并绑定了一个 destroy 的事件，这样我们点击窗口的关闭按钮时，程序可以正常退出。</p>
+<p>下面，我们在这个窗口中展示一些具体内容。</p>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id9">基本元素</a></h2>
+<p>这个代码向窗口中添加了一个蓝色的矩形。</p>
+<div class="figure align-right">
+<img alt="images/clutter-tutorial/Screenshot-sqare.png" src="images/clutter-tutorial/Screenshot-sqare.png" />
+<p class="caption">运行结果</p>
+</div>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="c">#!/usr/bin/python</span>
+</div><div class="line" id="LC1"><span class="kn">import</span> <span class="nn">clutter</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">stage</span> <span class="o">=</span> <span class="n">clutter</span><span class="o">.</span><span class="n">Stage</span><span class="p">()</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;sqare&#39;</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">clutter</span><span class="o">.</span><span class="n">color_from_string</span><span class="p">(</span><span class="s">&#39;black&#39;</span><span class="p">))</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">set_size</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">sqare</span> <span class="o">=</span> <span class="n">clutter</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">()</span>
+</div><div class="line" id="LC1"><span class="n">sqare</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">clutter</span><span class="o">.</span><span class="n">color_from_string</span><span class="p">(</span><span class="s">&#39;blue&#39;</span><span class="p">))</span>
+</div><div class="line" id="LC1"><span class="n">sqare</span><span class="o">.</span><span class="n">set_size</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="n">sqare</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sqare</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&quot;destroy&quot;</span><span class="p">,</span> <span class="n">clutter</span><span class="o">.</span><span class="n">main_quit</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">clutter</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</div></pre></div>
+</div>
+<div class="section" id="id5">
+<h2><a class="toc-backref" href="#id10">动起来</a></h2>
+<p>下面我们来加点有意思的东西：动画。下面的代码可以让多个矩形以不同的速度进行旋转。而且我们顺便加了个鼠标点击事件可以让你通过点击对某个图形进行隐藏。</p>
+<div class="figure align-right">
+<img alt="images/clutter-tutorial/Screenshot-rotate.png" src="images/clutter-tutorial/Screenshot-rotate.png" />
+<p class="caption">运行结果</p>
+</div>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="c">#!/usr/bin/python</span>
+</div><div class="line" id="LC1"><span class="c"># coding: utf-8</span>
+</div><div class="line" id="LC1"><span class="kn">import</span> <span class="nn">clutter</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="k">def</span> <span class="nf">create_sqare</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+</div><div class="line" id="LC1">    <span class="n">sqare</span> <span class="o">=</span> <span class="n">clutter</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">()</span>
+</div><div class="line" id="LC1">    <span class="n">sqare</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="n">sqare</span><span class="o">.</span><span class="n">set_size</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="c"># 设置锚点的相对坐标，position将以锚点为基准，</span>
+</div><div class="line" id="LC1">    <span class="c"># 旋转的时候也以锚点为中心</span>
+</div><div class="line" id="LC1">    <span class="n">sqare</span><span class="o">.</span><span class="n">set_anchor_point</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">75</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="n">sqare</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="n">stage</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sqare</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="k">return</span> <span class="n">sqare</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">stage</span> <span class="o">=</span> <span class="n">clutter</span><span class="o">.</span><span class="n">Stage</span><span class="p">()</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;rotate&#39;</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">clutter</span><span class="o">.</span><span class="n">color_from_string</span><span class="p">(</span><span class="s">&#39;#000000&#39;</span><span class="p">))</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">set_size</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;#ccffffaa&#39;</span><span class="p">,</span> <span class="s">&#39;#ffffccaa&#39;</span><span class="p">,</span> <span class="s">&#39;#ffccffaa&#39;</span><span class="p">,</span> <span class="s">&#39;#ffff00aa&#39;</span><span class="p">,</span> <span class="s">&#39;#00ffffaa&#39;</span><span class="p">]</span>
+</div><div class="line" id="LC1"><span class="n">sqares</span> <span class="o">=</span> <span class="p">[</span><span class="n">create_sqare</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">clutter</span><span class="o">.</span><span class="n">color_from_string</span><span class="p">(</span><span class="n">color</span><span class="p">))</span> <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">]</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">rotate</span> <span class="o">=</span> <span class="mi">0</span>
+</div><div class="line" id="LC1"><span class="k">def</span> <span class="nf">on_new_frame</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span><span class="n">event</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div><div class="line" id="LC1">    <span class="k">global</span> <span class="n">rotate</span>
+</div><div class="line" id="LC1">    <span class="n">rotate</span> <span class="o">+=</span> <span class="mf">0.3</span>
+</div><div class="line" id="LC1">    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">sqare</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sqares</span><span class="p">):</span>
+</div><div class="line" id="LC1">        <span class="c"># 围绕Z轴和X轴进行旋转，哈哈，看到3D效果了吧</span>
+</div><div class="line" id="LC1">        <span class="c"># 你也可以尝试只围绕 Z 轴旋转，那就是在平面上进行旋转了</span>
+</div><div class="line" id="LC1">        <span class="n">sqare</span><span class="o">.</span><span class="n">set_rotation</span><span class="p">(</span><span class="n">clutter</span><span class="o">.</span><span class="n">Z_AXIS</span><span class="p">,</span> <span class="n">rotate</span><span class="o">*</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</div><div class="line" id="LC1">        <span class="n">sqare</span><span class="o">.</span><span class="n">set_rotation</span><span class="p">(</span><span class="n">clutter</span><span class="o">.</span><span class="n">X_AXIS</span><span class="p">,</span> <span class="n">rotate</span><span class="o">*</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="c"># timeline是clutter动画接口的核心</span>
+</div><div class="line" id="LC1"><span class="n">timeline</span> <span class="o">=</span> <span class="n">clutter</span><span class="o">.</span><span class="n">Timeline</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="c"># 每进入一帧，将调用回调函数</span>
+</div><div class="line" id="LC1"><span class="n">timeline</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&#39;new-frame&#39;</span><span class="p">,</span> <span class="n">on_new_frame</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="c"># 动画循环播放</span>
+</div><div class="line" id="LC1"><span class="n">timeline</span><span class="o">.</span><span class="n">set_loop</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="n">timeline</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="k">def</span> <span class="nf">on_button_press</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div><div class="line" id="LC1">    <span class="c"># 如果觉得方框太多，点击即可隐藏</span>
+</div><div class="line" id="LC1">    <span class="n">selected</span> <span class="o">=</span> <span class="n">stage</span><span class="o">.</span><span class="n">get_actor_at_pos</span><span class="p">(</span><span class="n">clutter</span><span class="o">.</span><span class="n">PICK_ALL</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="k">if</span> <span class="n">selected</span><span class="o">!=</span><span class="n">stage</span><span class="p">:</span>
+</div><div class="line" id="LC1">        <span class="n">selected</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&quot;destroy&quot;</span><span class="p">,</span> <span class="n">clutter</span><span class="o">.</span><span class="n">main_quit</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&quot;button-press-event&quot;</span><span class="p">,</span> <span class="n">on_button_press</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">clutter</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</div></pre></div>
+</div>
+<div class="section" id="id6">
+<h2><a class="toc-backref" href="#id11">组合动画</a></h2>
+<p>多创建复杂动画的时候，将逻辑全都塞在一个 timeline 的回调函数里面未免显得臃肿，下面介绍clutter提供的多个timeline并行运行的机制。下面的代码可以让图形在旋转的同时进行缩放。</p>
+<div class="figure align-right">
+<img alt="images/clutter-tutorial/Screenshot-complex.png" src="images/clutter-tutorial/Screenshot-complex.png" />
+<p class="caption">运行结果</p>
+</div>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="c">#!/usr/bin/python</span>
+</div><div class="line" id="LC1"><span class="c"># coding: utf-8</span>
+</div><div class="line" id="LC1"><span class="kn">import</span> <span class="nn">clutter</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="k">def</span> <span class="nf">create_sqare</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+</div><div class="line" id="LC1">    <span class="n">sqare</span> <span class="o">=</span> <span class="n">clutter</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">()</span>
+</div><div class="line" id="LC1">    <span class="n">sqare</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="n">sqare</span><span class="o">.</span><span class="n">set_size</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="n">sqare</span><span class="o">.</span><span class="n">set_anchor_point</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">75</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="n">sqare</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="n">stage</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sqare</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="k">return</span> <span class="n">sqare</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">stage</span> <span class="o">=</span> <span class="n">clutter</span><span class="o">.</span><span class="n">Stage</span><span class="p">()</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;complex&#39;</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">clutter</span><span class="o">.</span><span class="n">color_from_string</span><span class="p">(</span><span class="s">&#39;#000000&#39;</span><span class="p">))</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">set_size</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;#ccffffaa&#39;</span><span class="p">,</span> <span class="s">&#39;#ffffccaa&#39;</span><span class="p">,</span> <span class="s">&#39;#ffccffaa&#39;</span><span class="p">,</span> <span class="s">&#39;#ffff00aa&#39;</span><span class="p">,</span> <span class="s">&#39;#00ffffaa&#39;</span><span class="p">]</span>
+</div><div class="line" id="LC1"><span class="n">sqares</span> <span class="o">=</span> <span class="p">[</span><span class="n">create_sqare</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">clutter</span><span class="o">.</span><span class="n">color_from_string</span><span class="p">(</span><span class="n">color</span><span class="p">))</span> <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">]</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">rotate</span> <span class="o">=</span> <span class="mi">0</span>
+</div><div class="line" id="LC1"><span class="k">def</span> <span class="nf">on_rotate_frame</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span><span class="n">event</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div><div class="line" id="LC1">    <span class="k">global</span> <span class="n">rotate</span>
+</div><div class="line" id="LC1">    <span class="n">rotate</span> <span class="o">+=</span> <span class="mf">0.3</span>
+</div><div class="line" id="LC1">    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">sqare</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sqares</span><span class="p">):</span>
+</div><div class="line" id="LC1">        <span class="n">sqare</span><span class="o">.</span><span class="n">set_rotation</span><span class="p">(</span><span class="n">clutter</span><span class="o">.</span><span class="n">Z_AXIS</span><span class="p">,</span> <span class="n">rotate</span><span class="o">*</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</div><div class="line" id="LC1">        <span class="n">sqare</span><span class="o">.</span><span class="n">set_rotation</span><span class="p">(</span><span class="n">clutter</span><span class="o">.</span><span class="n">X_AXIS</span><span class="p">,</span> <span class="n">rotate</span><span class="o">*</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">scale</span> <span class="o">=</span> <span class="mi">0</span>
+</div><div class="line" id="LC1"><span class="n">speed</span> <span class="o">=</span> <span class="mf">0.1</span>
+</div><div class="line" id="LC1"><span class="k">def</span> <span class="nf">on_scale_frame</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span><span class="n">event</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div><div class="line" id="LC1">    <span class="k">global</span> <span class="n">scale</span><span class="p">,</span><span class="n">speed</span>
+</div><div class="line" id="LC1">    <span class="n">scale</span> <span class="o">+=</span> <span class="n">speed</span>
+</div><div class="line" id="LC1">    <span class="k">if</span> <span class="n">scale</span><span class="o">&gt;</span><span class="mf">1.0</span><span class="p">:</span>
+</div><div class="line" id="LC1">        <span class="n">scale</span> <span class="o">=</span> <span class="mf">1.0</span>
+</div><div class="line" id="LC1">        <span class="n">speed</span> <span class="o">=</span> <span class="o">-</span><span class="n">speed</span>
+</div><div class="line" id="LC1">    <span class="k">elif</span> <span class="n">scale</span><span class="o">&lt;</span><span class="mf">0.0</span><span class="p">:</span>
+</div><div class="line" id="LC1">        <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.0</span>
+</div><div class="line" id="LC1">        <span class="n">speed</span> <span class="o">=</span> <span class="o">-</span><span class="n">speed</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1">    <span class="n">scale_amount</span> <span class="o">=</span> <span class="n">scale</span><span class="o">+</span><span class="mf">1.0</span>
+</div><div class="line" id="LC1">    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">sqare</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sqares</span><span class="p">):</span>
+</div><div class="line" id="LC1">        <span class="c"># 设置缩放，两个参数代表方框平面上两个维度上的缩放</span>
+</div><div class="line" id="LC1">        <span class="n">sqare</span><span class="o">.</span><span class="n">set_scale</span><span class="p">(</span><span class="n">scale_amount</span><span class="p">,</span> <span class="n">scale_amount</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">rotate_timeline</span> <span class="o">=</span> <span class="n">clutter</span><span class="o">.</span><span class="n">Timeline</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="n">rotate_timeline</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&#39;new-frame&#39;</span><span class="p">,</span> <span class="n">on_rotate_frame</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">scale_timeline</span> <span class="o">=</span> <span class="n">clutter</span><span class="o">.</span><span class="n">Timeline</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="n">scale_timeline</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&#39;new-frame&#39;</span><span class="p">,</span> <span class="n">on_scale_frame</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="c"># score 对象用来管理多个timeline对象的组合</span>
+</div><div class="line" id="LC1"><span class="c"># 组合方式可以是并行，也可以是串行</span>
+</div><div class="line" id="LC1"><span class="n">score</span> <span class="o">=</span> <span class="n">clutter</span><span class="o">.</span><span class="n">Score</span><span class="p">()</span>
+</div><div class="line" id="LC1"><span class="n">score</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rotate_timeline</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="c"># 两个timeline并行执行</span>
+</div><div class="line" id="LC1"><span class="n">score</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scale_timeline</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="n">score</span><span class="o">.</span><span class="n">set_loop</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="n">score</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="k">def</span> <span class="nf">on_button_press</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div><div class="line" id="LC1">    <span class="c"># 如果觉得方框太多，点击即可隐藏</span>
+</div><div class="line" id="LC1">    <span class="n">selected</span> <span class="o">=</span> <span class="n">stage</span><span class="o">.</span><span class="n">get_actor_at_pos</span><span class="p">(</span><span class="n">clutter</span><span class="o">.</span><span class="n">PICK_ALL</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="k">if</span> <span class="n">selected</span><span class="o">!=</span><span class="n">stage</span><span class="p">:</span>
+</div><div class="line" id="LC1">        <span class="n">selected</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&quot;destroy&quot;</span><span class="p">,</span> <span class="n">clutter</span><span class="o">.</span><span class="n">main_quit</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="n">stage</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&quot;button-press-event&quot;</span><span class="p">,</span> <span class="n">on_button_press</span><span class="p">)</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="n">clutter</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</div></pre></div>
+</div>
+<div class="section" id="texture">
+<h2><a class="toc-backref" href="#id12">Texture</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="json">
+<h2><a class="toc-backref" href="#id13">使用json作为动画的配置文件</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="animation-behaivour">
+<h2><a class="toc-backref" href="#id14">Animation 和 Behaivour 介绍</a></h2>
+<p>TODO</p>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2010-04-25_clutter-tutorial';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2010-04-25_clutter-tutorial.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2010-04-25_clutter-tutorial.html&title=pyclutter简易教程"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2010-04-25_clutter-tutorial.html&title=pyclutter简易教程"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=pyclutter简易教程&uri=http://www.yi-programmer.com/blog/2010-04-25_clutter-tutorial.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2010-04-25_clutter-tutorial.html&title=pyclutter简易教程"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2010-04-25_clutter-tutorial.html&it=pyclutter简易教程&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2010-04-25_clutter-tutorial.html&title=pyclutter简易教程&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2010-04-25_clutter-tutorial.html&t=pyclutter简易教程"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2010-04-25_clutter-tutorial.html&title=pyclutter简易教程"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=pyclutter简易教程&rurl=http://www.yi-programmer.com/blog/2010-04-25_clutter-tutorial.html&rcontent=http://www.yi-programmer.com/blog/2010-04-25_clutter-tutorial.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2010-04-25_clutter-tutorial.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2010-04-25_clutter-tutorial.html&t=pyclutter简易教程"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2010-04-25_clutter-tutorial.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

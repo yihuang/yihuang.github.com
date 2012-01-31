@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>List Monad</title>
+<meta content="haskell list monad" name="keywords" />
+<meta content="之前看得比较多的是IO Monad，在那里，Monad主要是用来保证IO操作的顺序执行。但实际上Monad本身只是一个形式，除了表达代码的顺序执行，我们可以赋予它任何我们想要的含义。当我们考察 List Monad 的时候就能看到使用 Monad 这种形式可以表达的另一种含义。" name="description" />
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">List Monad</h1>
+
+                    <p class="author">2010-12-26 黄毅</p>
+                    <p>之前看得比较多的是IO Monad，在那里，Monad主要是用来保证IO操作的顺序执行。但实际上Monad本身只是一个形式，除了表达代码的顺序执行，我们可以赋予它任何我们想要的含义。当我们考察 List Monad 的时候就能看到使用 Monad 这种形式可以表达的另一种含义。</p>
+<div class="contents topic" id="id1">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#newtype-l" id="id2">newtype L</a></li>
+<li><a class="reference internal" href="#instance-monad" id="id3">instance Monad</a></li>
+<li><a class="reference internal" href="#do-notation-and-list-comprehension" id="id4">Do-notation and List comprehension</a></li>
+<li><a class="reference internal" href="#monad" id="id5">自定义Monad语义</a></li>
+</ul>
+</div>
+<div class="section" id="newtype-l">
+<h2><a class="toc-backref" href="#id2">newtype L</a></h2>
+<p>为了说明问题，我们不妨实现一个自己的 List Monad，为了不和内置的list类型冲突，我们定义一个类似的类型 <cite>L</cite> ：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">newtype</span> <span class="kt">L</span> <span class="n">a</span> <span class="ow">=</span> <span class="kt">L</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+</div></pre></div>
+</div>
+<div class="section" id="instance-monad">
+<h2><a class="toc-backref" href="#id3">instance Monad</a></h2>
+<p>我们先模仿一下内置的List Monad的实现：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">concatMapL</span><span class="ow">::</span><span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">L</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">L</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">L</span> <span class="n">b</span>
+</div><div class="line" id="LC1"><span class="nf">concatMapL</span> <span class="n">f</span> <span class="p">(</span><span class="kt">L</span> <span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">L</span> <span class="o">$</span> <span class="n">concatMap</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span><span class="ow">-&gt;</span><span class="kr">let</span> <span class="kt">L</span> <span class="n">l</span> <span class="ow">=</span> <span class="n">f</span> <span class="n">x</span> <span class="kr">in</span> <span class="n">l</span><span class="p">)</span> <span class="n">xs</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Monad</span> <span class="kt">L</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">l</span> <span class="o">&gt;&gt;=</span> <span class="n">f</span> <span class="ow">=</span> <span class="n">concatMapL</span> <span class="n">f</span> <span class="n">l</span>
+</div><div class="line" id="LC1">    <span class="n">return</span> <span class="n">x</span> <span class="ow">=</span> <span class="kt">L</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+</div><div class="line" id="LC1">    <span class="n">fail</span> <span class="n">s</span> <span class="ow">=</span> <span class="kt">L</span> <span class="kt">[]</span>
+</div></pre></div>
+<p>如果您是像我一样的初学者，应该对 <cite>concatMap</cite> 也不太熟悉，其定义是：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">concatMap</span> <span class="n">f</span> <span class="ow">=</span> <span class="n">concat</span> <span class="o">.</span> <span class="n">map</span> <span class="n">f</span>
+</div></pre></div>
+<p>就是对列表每个元素执行些操作，再把结果组合起来，形成一个新的list。 <cite>concatMapL</cite> 为了 <cite>L</cite> 类型简单对其包装了一下。</p>
+<p>了解了List Monad的含义以后，我们可以在ghci中把玩一下：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span><span class="o">&gt;&gt;=</span><span class="p">(</span><span class="nf">\</span><span class="n">x</span><span class="ow">-&gt;</span><span class="p">[</span><span class="n">x</span><span class="o">*</span><span class="mi">2</span><span class="p">])</span>
+</div><div class="line" id="LC1"><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span>
+</div><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span><span class="ow">-&gt;</span> <span class="p">[</span><span class="sc">&#39;a&#39;</span><span class="p">,</span><span class="sc">&#39;b&#39;</span><span class="p">,</span><span class="sc">&#39;c&#39;</span><span class="p">]</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">y</span><span class="ow">-&gt;</span><span class="p">[(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)])</span> <span class="p">)</span>
+</div><div class="line" id="LC1"><span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="sc">&#39;a&#39;</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="sc">&#39;b&#39;</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="sc">&#39;c&#39;</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="sc">&#39;a&#39;</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="sc">&#39;b&#39;</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="sc">&#39;c&#39;</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="sc">&#39;a&#39;</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="sc">&#39;b&#39;</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="sc">&#39;c&#39;</span><span class="p">)]</span>
+</div></pre></div>
+<p>一个单层循环，一个两层循环。</p>
+</div>
+<div class="section" id="do-notation-and-list-comprehension">
+<h2><a class="toc-backref" href="#id4">Do-notation and List comprehension</a></h2>
+<p>我们把这两个循环用 do-notation 改写后会变成这样：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">do</span>
+</div><div class="line" id="LC1">    <span class="n">x</span><span class="ow">&lt;-</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+</div><div class="line" id="LC1">    <span class="n">return</span> <span class="n">x</span><span class="o">*</span><span class="mi">2</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">do</span>
+</div><div class="line" id="LC1">    <span class="n">x</span><span class="ow">&lt;-</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+</div><div class="line" id="LC1">    <span class="n">y</span><span class="ow">&lt;-</span><span class="p">[</span><span class="sc">&#39;a&#39;</span><span class="p">,</span><span class="sc">&#39;b&#39;</span><span class="p">,</span><span class="sc">&#39;c&#39;</span><span class="p">]</span>
+</div><div class="line" id="LC1">    <span class="n">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+</div></pre></div>
+<p>有意思的是，这个形式看起来和 list comprehension 多么类似：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="p">[</span> <span class="n">x</span><span class="o">*</span><span class="mi">2</span> <span class="o">|</span> <span class="n">x</span><span class="ow">&lt;-</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="p">]</span>
+</div><div class="line" id="LC1"><span class="p">[</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="o">|</span> <span class="n">x</span><span class="ow">&lt;-</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">y</span><span class="ow">&lt;-</span><span class="p">[</span><span class="sc">&#39;a&#39;</span><span class="p">,</span><span class="sc">&#39;b&#39;</span><span class="p">,</span><span class="sc">&#39;c&#39;</span><span class="p">]</span> <span class="p">]</span>
+</div></pre></div>
+<p>可以看出两种语法是存在同构关系的，据说老版本的haskell也曾经让 list comprehension 的语法支持任意的 Monad 实例，现在也还有一个 <a class="reference external" href="http://hackage.haskell.org/trac/ghc/ticket/4370">ticket</a> 在要求这个东西，把它叫做“Monad Comprehension”。如果是这样的话，意味着我们的L类型或者IO类型都可以写这样的代码：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="p">[</span> <span class="n">x</span><span class="o">*</span><span class="mi">2</span> <span class="o">|</span> <span class="n">x</span><span class="ow">&lt;-</span><span class="kt">L</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="p">]</span>
+</div><div class="line" id="LC1"><span class="p">[</span> <span class="n">length</span> <span class="n">x</span> <span class="o">|</span> <span class="n">x</span><span class="ow">&lt;-</span><span class="n">getContents</span> <span class="p">]</span>
+</div></pre></div>
+</div>
+<div class="section" id="monad">
+<h2><a class="toc-backref" href="#id5">自定义Monad语义</a></h2>
+<p>前面说了，Monad只是一种形式，具体语义由实现定义，自带的List Monad的语义我们当然修改不了，不过我们自己的L类型的语义，我们还是可以改来玩玩的。</p>
+<p>那么一个简单的改法就是不做循环，只取第一个元素进行操作：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Monad</span> <span class="kt">L</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="kt">L</span> <span class="kt">[]</span> <span class="o">&gt;&gt;=</span> <span class="n">f</span> <span class="ow">=</span> <span class="kt">L</span> <span class="kt">[]</span>
+</div><div class="line" id="LC1">    <span class="kt">L</span> <span class="n">x</span> <span class="o">&gt;&gt;=</span> <span class="n">f</span> <span class="ow">=</span> <span class="n">f</span> <span class="p">(</span><span class="n">head</span> <span class="n">x</span><span class="p">)</span>
+</div><div class="line" id="LC1">    <span class="n">return</span> <span class="n">x</span> <span class="ow">=</span> <span class="kt">L</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+</div><div class="line" id="LC1">    <span class="n">fail</span> <span class="n">s</span> <span class="ow">=</span> <span class="kt">L</span> <span class="kt">[]</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">do</span> <span class="n">x</span> <span class="ow">&lt;-</span> <span class="kt">L</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">10</span><span class="p">]</span>
+</div><div class="line" id="LC1">   <span class="n">y</span> <span class="ow">&lt;-</span> <span class="kt">L</span> <span class="p">[</span><span class="sc">&#39;a&#39;</span><span class="p">,</span> <span class="sc">&#39;b&#39;</span><span class="p">,</span> <span class="sc">&#39;c&#39;</span><span class="p">]</span>
+</div><div class="line" id="LC1">   <span class="n">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="c1">-- L [(1, &#39;a&#39;)]</span>
+</div></pre></div>
+<p>当然，这个改法比较无聊，不过正好用来结束这无聊的一天了。</p>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2010-12-26_list-monad';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2010-12-26_list-monad.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2010-12-26_list-monad.html&title=List Monad"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2010-12-26_list-monad.html&title=List Monad"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=List Monad&uri=http://www.yi-programmer.com/blog/2010-12-26_list-monad.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2010-12-26_list-monad.html&title=List Monad"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2010-12-26_list-monad.html&it=List Monad&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2010-12-26_list-monad.html&title=List Monad&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2010-12-26_list-monad.html&t=List Monad"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2010-12-26_list-monad.html&title=List Monad"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=List Monad&rurl=http://www.yi-programmer.com/blog/2010-12-26_list-monad.html&rcontent=http://www.yi-programmer.com/blog/2010-12-26_list-monad.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2010-12-26_list-monad.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2010-12-26_list-monad.html&t=List Monad"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2010-12-26_list-monad.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

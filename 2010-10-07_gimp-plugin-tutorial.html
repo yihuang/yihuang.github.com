@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>使用Python编写GIMP插件</title>
+<meta content="几乎耗了一天时间在GIMP上面。编写了一个 插件_ 用于实现 `这个效果 &lt;http://mrdoob.com/projects/harmony/#shaded&gt;`_ ，使用这个 插件_ 后就可以对任意的路径应用这个效果。GIMP方面的文档还是比较缺的，简单总结一下，也算是今天一大收获了。" name="description" />
+<meta content="gimp python plugin shaded" name="keywords" />
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">使用Python编写GIMP插件</h1>
+
+                    <p class="author">2010-10-07 黄毅</p>
+                    <img alt="images/gimp-plugin/demo.png" class="align-center" src="images/gimp-plugin/demo.png" />
+<p>几乎耗了一天时间在 <a class="reference external" href="http://www.gimp.org/">GIMP</a> 上面。编写了一个 <a class="reference external" href="http://github.com/yihuang/harmony-gimp-plugin">插件</a> 用于实现 <a class="reference external" href="http://mrdoob.com/projects/harmony/#shaded">这个效果</a> ，使用这个插件可以对任意的路径应用这个效果。</p>
+<p><a class="reference external" href="http://www.gimp.org/">GIMP</a> 方面的文档还是比较缺的，简单总结一下，也算是今天一大收获了。</p>
+<div class="contents topic" id="id2">
+<p class="topic-title first">目录</p>
+<ul class="simple">
+<li><a class="reference internal" href="#gimp" id="id6">GIMP的插件在哪里</a></li>
+<li><a class="reference internal" href="#pdb-procedure-database" id="id7">使用PDB(Procedure DataBase)</a></li>
+<li><a class="reference internal" href="#gimp-python" id="id8">GIMP-Python提供的其他接口</a></li>
+</ul>
+</div>
+<div class="section" id="gimp">
+<h2><a class="toc-backref" href="#id6">GIMP的插件在哪里</a></h2>
+<ul class="simple">
+<li>编辑-》首选项-》文件夹-》插件，其中有一个目录列表，就是GIMP查找插件的地方。</li>
+<li><a class="reference external" href="http://www.gimp.org/">GIMP</a> 支持 <a class="reference external" href="http://www.gimp.org/docs/scheme_plugin/">schema</a> 和 <a class="reference external" href="http://www.gimp.org/docs/python/index.html">python</a> 两种语言编写插件。 <a class="reference external" href="http://www.gimp.org/docs/scheme_plugin/">schema</a> 的支持是内置的， <a class="reference external" href="http://www.gimp.org/docs/python/index.html">python</a> 好像不是这样，linux上的 <a class="reference external" href="http://www.gimp.org/">GIMP</a> 当然没问题，windows上的版本貌似默认就不支持，需要自行安装python相关的包，这一点没有验证。</li>
+<li>滤镜-》Python-Fu-》Console 是一个python的交互环境，在里面可以用Python操作GIMP的接口，实时看到效果，是个练兵的好去处。</li>
+<li>上面提到的系统插件目录里面有大量插件可以研究学习，GIMP网站也有一个插件库 <a class="reference external" href="http://registry.gimp.org/">http://registry.gimp.org/</a></li>
+</ul>
+</div>
+<div class="section" id="pdb-procedure-database">
+<h2><a class="toc-backref" href="#id7">使用PDB(Procedure DataBase)</a></h2>
+<ul class="simple">
+<li>这个 <a class="reference external" href="http://authors.phptr.com/essential/gimp/appE/index.html">PDB</a> 不是python那个调试器，它的全称是Procedure DataBase，是GIMP中心的函数接口注册点，GIMP把核心功能接口注册到这里供脚本调用，脚本也把自己的功能接口注册到这里供GIMP或其他脚本调用。要做到多语言脚本之间的交互，这个机制是必须的。</li>
+<li>帮助-》过程浏览器，通过这个对话框可以查看所有PDB接口的文档。</li>
+<li>python插件通过 <cite>gimpfu.pdb</cite> 模块对PDB接口进行调用，比如 <cite>pdb.gimp_edit_fill(...)</cite> ，如果在GIMP的python-fu console里面的话可直接引用这个模块。</li>
+</ul>
+<p>通过调用pdb接口，我们就可以把一些常用操作序列写成脚本批量处理。</p>
+</div>
+<div class="section" id="gimp-python">
+<h2><a class="toc-backref" href="#id8">GIMP-Python提供的其他接口</a></h2>
+<p>除了直接使用pdb接口， <a class="reference external" href="http://www.gimp.org/docs/python/index.html">GIMP-python</a> 还做了一些封装，方便使用。</p>
+<p>需要看例子的话，也可以看看我刚写的这个 <a class="reference external" href="http://github.com/yihuang/harmony-gimp-plugin">插件</a> ，有注释 ;-)</p>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2010-10-07_gimp-plugin-tutorial';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2010-10-07_gimp-plugin-tutorial.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2010-10-07_gimp-plugin-tutorial.html&title=使用Python编写GIMP插件"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2010-10-07_gimp-plugin-tutorial.html&title=使用Python编写GIMP插件"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=使用Python编写GIMP插件&uri=http://www.yi-programmer.com/blog/2010-10-07_gimp-plugin-tutorial.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2010-10-07_gimp-plugin-tutorial.html&title=使用Python编写GIMP插件"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2010-10-07_gimp-plugin-tutorial.html&it=使用Python编写GIMP插件&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2010-10-07_gimp-plugin-tutorial.html&title=使用Python编写GIMP插件&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2010-10-07_gimp-plugin-tutorial.html&t=使用Python编写GIMP插件"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2010-10-07_gimp-plugin-tutorial.html&title=使用Python编写GIMP插件"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=使用Python编写GIMP插件&rurl=http://www.yi-programmer.com/blog/2010-10-07_gimp-plugin-tutorial.html&rcontent=http://www.yi-programmer.com/blog/2010-10-07_gimp-plugin-tutorial.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2010-10-07_gimp-plugin-tutorial.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2010-10-07_gimp-plugin-tutorial.html&t=使用Python编写GIMP插件"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2010-10-07_gimp-plugin-tutorial.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

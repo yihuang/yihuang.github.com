@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>git 和 mercurial 的区别</title>
+<meta content="git 和 mercurial 的区别" name="description" />
+<meta content="git mercurial dvcs 区别" name="keyword" />
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="/blog/"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">git 和 mercurial 的区别</h1>
+
+                    <p class="author">2010-07-18 黄毅</p>
+                    <p><a class="reference external" href="http://git-scm.com/">git</a> 和 <a class="reference external" href="http://mercurial.selenic.com/">mercurial</a> 都是分布式版本控制系统，大部分概念和使用方式都是相当接近的。</p>
+<p>本文主要描述两点我认为最重要的两点区别，其他更详细的区别可以参考这两个链接 <a class="footnote-reference" href="#id6" id="id1">[1]</a> <a class="footnote-reference" href="#id7" id="id2">[2]</a> ：</p>
+<ol class="arabic simple">
+<li>在commit(<a class="reference external" href="http://mercurial.selenic.com/">mercurial</a> 里面叫做changeset)对象存储方式上， <a class="reference external" href="http://git-scm.com/">git</a> 存储的是文件和目录的snapshot <a class="footnote-reference" href="#id8" id="id3">[3]</a> ， <a class="reference external" href="http://mercurial.selenic.com/">mercurial</a> 存储的与前一个commit之间的diff <a class="footnote-reference" href="#id9" id="id4">[4]</a> 。这点区别大部分时候对于使用者是透明的，但是对于大点的项目来说还是很容易产生可观察到的差异的，比如 <a class="reference external" href="http://git-scm.com/">git</a> 的方式会占用更多的空间， <a class="reference external" href="http://mercurial.selenic.com/">mercurial</a> 的方式在执行很多操作的时候性能更低。可以说 <a class="reference external" href="http://git-scm.com/">git</a> 的方式也是一种空间换时间的做法。另外， <a class="reference external" href="http://git-scm.com/">git</a> 针对空间问题也专门提供了一个 <a class="reference external" href="http://www.kernel.org/pub/software/scm/git/docs/git-gc.html">git gc</a> 命令，可以扫描出内容相似的文件改用 diff 方式进行存储，需要手动执行；而 <a class="reference external" href="http://mercurial.selenic.com/">mercurial</a> 也会按照一定的间隔采用 snapshot 方式存储commit数据，也可以部分优化性能问题。</li>
+</ol>
+<p>值得一提的是， <a class="reference external" href="http://git-scm.com/">git</a> 存储方式的灵活性让它实际上可以看做是一个带有版本控制功能的文件系统 <a class="footnote-reference" href="#id10" id="id5">[5]</a> ，所以一些 <a class="reference external" href="http://git-scm.com/">git</a> 控把 <a class="reference external" href="http://git-scm.com/">git</a> 看做是一个基础平台，而版本控制系统只是其中附带的一个应用，虽然就我所知除了版本控制系统也没有其他引人注目的应用。</p>
+<ol class="arabic simple">
+<li>在分支的处理方式上， <a class="reference external" href="http://git-scm.com/">git</a> 把分支看做是对分支上最近一个commit的引用，当在分支上创建新的commit时，这个引用也相应地移动。使用 <a class="reference external" href="http://www.kernel.org/pub/software/scm/git/docs/git-branch.html">git branch</a> 命令你可以快速地创建切换任意分支。 <a class="reference external" href="http://mercurial.selenic.com/">mercurial</a> 中并没有显示的分支的概念，当从其他地方pull过来新的commit时， <a class="reference external" href="http://mercurial.selenic.com/">mercurial</a> 会自动产生隐式的分支，然后你再把他们merge到一起。那么 <a class="reference external" href="http://mercurial.selenic.com/">mercurial</a> 中你要创建自己的分支怎么办呢，也简单，另外建个目录重新 clone 一份即可，就是比 <a class="reference external" href="http://git-scm.com/">git</a> 的方式慢一些。</li>
+</ol>
+<p>另外，在线 <a class="reference external" href="http://git-scm.com/">git</a> 服务有 <a class="reference external" href="http://github.com/">http://github.com/</a> ，在线 <a class="reference external" href="http://mercurial.selenic.com/">mercurial</a> 服务有 <a class="reference external" href="https://bitbucket.org/">https://bitbucket.org/</a> 。</p>
+<table class="docutils footnote" frame="void" id="id6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://mercurial.selenic.com/wiki/GitConcepts">http://mercurial.selenic.com/wiki/GitConcepts</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td><a class="reference external" href="http://rg03.wordpress.com/2009/04/07/mercurial-vs-git/">http://rg03.wordpress.com/2009/04/07/mercurial-vs-git/</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id8" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td><a class="reference external" href="http://book.git-scm.com/1_the_git_object_model.html">http://book.git-scm.com/1_the_git_object_model.html</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id9" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[4]</a></td><td><a class="reference external" href="http://mercurial.selenic.com/wiki/GitConcepts#History_model">http://mercurial.selenic.com/wiki/GitConcepts#History_model</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id10" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[5]</a></td><td><a class="reference external" href="http://marc.info/?l=linux-kernel&amp;m=111314792424707">http://marc.info/?l=linux-kernel&amp;m=111314792424707</a></td></tr>
+</tbody>
+</table>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2010-07-18_git-vs-mercurial';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2010-07-18_git-vs-mercurial.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2010-07-18_git-vs-mercurial.html&title=git 和 mercurial 的区别"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2010-07-18_git-vs-mercurial.html&title=git 和 mercurial 的区别"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=git 和 mercurial 的区别&uri=http://www.yi-programmer.com/blog/2010-07-18_git-vs-mercurial.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2010-07-18_git-vs-mercurial.html&title=git 和 mercurial 的区别"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2010-07-18_git-vs-mercurial.html&it=git 和 mercurial 的区别&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2010-07-18_git-vs-mercurial.html&title=git 和 mercurial 的区别&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2010-07-18_git-vs-mercurial.html&t=git 和 mercurial 的区别"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2010-07-18_git-vs-mercurial.html&title=git 和 mercurial 的区别"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=git 和 mercurial 的区别&rurl=http://www.yi-programmer.com/blog/2010-07-18_git-vs-mercurial.html&rcontent=http://www.yi-programmer.com/blog/2010-07-18_git-vs-mercurial.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2010-07-18_git-vs-mercurial.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2010-07-18_git-vs-mercurial.html&t=git 和 mercurial 的区别"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2010-07-18_git-vs-mercurial.txt">View document source</a>.
+Generated on: 2012-01-31.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>
