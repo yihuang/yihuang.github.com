@@ -3,7 +3,7 @@
     <head>
         ${c.html_head%c.encoding}
         <meta name="viewport" contect="width=device-width"></meta>
-        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="rss.xml" />
         <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
         <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
         <link type="text/css" rel="stylesheet" href="css/pygments.css"/>

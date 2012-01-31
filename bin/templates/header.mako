@@ -1,5 +1,5 @@
 <div id="header">
-    <a href="/blog/"><h1>${cfg.blogname}</h1></a>
+    <a href="index.html"><h1>${cfg.blogname}</h1></a>
     <div class="nav-icons">
         <p class="nav">
             % for name,url,src,class_ in cfg.nav_icons:

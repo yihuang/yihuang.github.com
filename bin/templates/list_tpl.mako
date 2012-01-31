@@ -4,7 +4,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="viewport" contect="width=device-width"></meta>
         <meta name="KEYWords" contect="黃毅 yihuang codeplayer python haskell web"></meta>
-        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="/blog/rss.xml" />
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="rss.xml" />
         <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
     </head>
