@@ -1,2 +1,2 @@
 #!/bin/sh
-vim src/`date +%Y-%m-%d`_$1.txt
+vim ../src/_`date +%Y-%m-%d`_$1.txt
