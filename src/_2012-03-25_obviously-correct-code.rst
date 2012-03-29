@@ -221,10 +221,63 @@ TODO some maybe usage.
   > fromMaybe 0 (lookup 'a' [])
   0
 
-抽象(续) - Monad
-=================
+抽象(续)
+=========
 
-TODO
+什么是Monad？
+
+Monad是重载 - 形式 vs 含义
+===========================
+
+* ``a+b`` 的含义 ?
+
+* 可能是 ``1+2`` 
+
+* 也可能是 ``"hello"+"world"``
+
+Monad重载的命令式语句的含义
+===========================
+
+List Monad (list comprehension的另一种形式)
+
+::
+
+    do a <- [1..10]
+       b <- [1..10]
+       guard $ a+b>10
+       return (a, b)
+
+Monad重载的命令式语句的含义
+===========================
+
+State Monad
+
+::
+
+    do 
+        TODO
+
+Monad重载的命令式语句的含义
+===========================
+
+Coroutine Monad
+
+::
+
+    do TODO
+
+Monad重载的命令式语句的含义
+===========================
+
+IO Monad
+
+::
+
+    do name <- readInput
+       printf "hello %s" name
+
+形式与内容
+==========
 
 GHC - 工业级Haskell实现
 =======================
