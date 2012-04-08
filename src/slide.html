@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.8.1: http://docutils.sourceforge.net/" />
+<meta name="version" content="S5 1.1" />
+<title>编写显然正确的代码</title>
+<meta name="author" content="yihuang" />
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 7056 2011-06-17 10:50:48Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+<!-- configuration parameters -->
+<meta name="defaultView" content="slideshow" />
+<meta name="controlVis" content="hidden" />
+<!-- style sheet links -->
+<script src="ui/default/slides.js" type="text/javascript"></script>
+<link rel="stylesheet" href="ui/default/slides.css"
+      type="text/css" media="projection" id="slideProj" />
+<link rel="stylesheet" href="ui/default/outline.css"
+      type="text/css" media="screen" id="outlineStyle" />
+<link rel="stylesheet" href="ui/default/print.css"
+      type="text/css" media="print" id="slidePrint" />
+<link rel="stylesheet" href="ui/default/opera.css"
+      type="text/css" media="projection" id="operaFix" />
+
+<style type="text/css">
+#currentSlide {display: none;}
+</style>
+</head>
+<body>
+<div class="layout">
+<div id="controls"></div>
+<div id="currentSlide"></div>
+<div id="header">
+
+</div>
+<div id="footer">
+<h1>编写显然正确的代码</h1>
+
+</div>
+</div>
+<div class="presentation">
+<div class="slide" id="slide0">
+<h1 class="title">编写显然正确的代码</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>yihuang</td></tr>
+<tr class="field"><th class="docinfo-name">email:</th><td class="field-body"><a class="reference external" href="mailto:yi.codeplayer&#64;gmail.com">yi.codeplayer&#64;gmail.com</a></td>
+</tr>
+<tr class="field"><th class="docinfo-name">blog:</th><td class="field-body"><a class="reference external" href="http://yi-programmer.com/">http://yi-programmer.com/</a></td>
+</tr>
+<tr class="field"><th class="docinfo-name">github:</th><td class="field-body"><a class="reference external" href="http://github.com/yihuang">http://github.com/yihuang</a></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class="slide" id="history">
+<h1>History</h1>
+<p>TODO 头像</p>
+<p>Can Programming Be Liberated from the von Neumann Style?</p>
+<blockquote>
+by John Backus 1978</blockquote>
+</div>
+<div class="slide" id="von-neumann-models">
+<h1>Von Neumann models</h1>
+<ul class="simple">
+<li><strong>Foundations:</strong> complex, bulky, not useful.</li>
+<li><strong>History sensitivity:</strong> have storage, history sensitive</li>
+<li><strong>Semantics:</strong> state transition with complex states.</li>
+<li><strong>Program clarity:</strong> can be moderately clear, and not very useful conceptually.</li>
+</ul>
+</div>
+<div class="slide" id="the-rise-of-haskell">
+<h1>The rise of Haskell</h1>
+<ul class="simple">
+<li><strong>September 1987.</strong> Initial meeting at FPCA.</li>
+<li><strong>1 April 1990.</strong> Version 1.0 Report was published.</li>
+<li><strong>May 1996.</strong> Version 1.3 Report with Monadic I/O.</li>
+<li><strong>February 1999</strong> Haskell 98 Report was published.</li>
+<li><strong>July 2010</strong> Haskell 2010 Report was published.</li>
+</ul>
+</div>
+<div class="slide" id="haskell-is-lazy">
+<h1>Haskell is lazy</h1>
+<ul class="simple">
+<li>non-strict semantics and lazy evaluation.</li>
+<li>good for modularization (参考《why fp》).</li>
+<li>incompatiable with side-effects.</li>
+<li>pros: has runtime overhead.</li>
+<li>pros: hard to predict the space behaviour.</li>
+</ul>
+</div>
+<div class="slide" id="id2">
+<h1>Haskell is lazy</h1>
+<p>模拟追及问题</p>
+<pre class="literal-block">
+let a = iterate ((`mod` 360) . (+1)) 0
+    -- [0, 1, 2, 3, 4...]
+    b = iterate ((`mod` 360) . (+2)) 1
+    -- [1, 3, 5, 7, 9...]
+    collides = zipWith (==) a b
+    -- [False, False, ..., True, ...]
+in  elemIndex True collides
+    -- Just 359
+</pre>
+</div>
+<div class="slide" id="haskell-is-pure">
+<h1>Haskell is pure</h1>
+<ul class="simple">
+<li>good for correctness.</li>
+<li>good for compiler optimization.</li>
+<li>good for parallelization.</li>
+</ul>
+</div>
+<div class="slide" id="haskell-has-type-classes">
+<h1>Haskell has type classes</h1>
+<p>TODO</p>
+</div>
+<div class="slide" id="id3">
+<h1>代码质量</h1>
+<ul class="simple">
+<li>抽象</li>
+<li>健壮</li>
+</ul>
+</div>
+<div class="slide" id="id4">
+<h1>抽象 - 函数组合</h1>
+<ul>
+<li><p class="first"><cite>(.)</cite> 函数管道</p>
+<pre class="literal-block">
+(.) :: (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+(f . g) x = f (g x)
+</pre>
+<pre class="literal-block">
+   /--------------------\
+   |   /---\    /---\   |
+&lt;&lt;-c---c---b----b---a---a-&lt;&lt;-
+   |   \---/    \---/   |
+   \--------------------/
+</pre>
+</li>
+</ul>
+</div>
+<div class="slide" id="id5">
+<h1>感受组合的能力</h1>
+<pre class="literal-block">
+&gt; ( (==0) . (`mod` 2) ) 4
+True
+&gt; filter ((==0) . (`mod` 2)) [1..10]
+[2,4,6,8,10]
+</pre>
+</div>
+<div class="slide" id="case-study">
+<h1>Case study</h1>
+<p>来自微博的问题：</p>
+<blockquote>
+找出一个锯齿数组里长度大于5的子数组
+在符合要求的子数组里的数据里找出所有偶数
+如果数据小于10的话乘以2,大于10的除以2
+最后统计符合要求的数据的和</blockquote>
+</div>
+<div class="slide" id="id6">
+<h1>Case study</h1>
+<p>TODO 需要更直观地展示每一步数据转换的过程，以及与自然语言描述的对应。</p>
+<pre class="literal-block">
+sum' = sum
+       . map (\x -&gt; if x&lt;10 then x*2 else x `div` 2)
+       . filter ((==0) . (`mod` 2))
+       . concat
+       . filter ((&gt;5) . length)
+</pre>
+</div>
+<div class="slide" id="id7">
+<h1>担心性能？</h1>
+<pre class="literal-block">
+ghc -O -ddump-simpl foo.hs
+</pre>
+</div>
+<div class="slide" id="id8">
+<h1>担心性能？</h1>
+<pre class="literal-block">
+(==0) . (`mod` 2)
+</pre>
+<p>优化后</p>
+<pre class="literal-block">
+\x -&gt; case modInt#  x 2 of
+        0 -&gt; True
+        _ -&gt; False
+</pre>
+</div>
+<div class="slide" id="id9">
+<h1>担心性能？</h1>
+<pre class="literal-block">
+  map (\x -&gt; x*x)
+. filter ((==0) . (`mod` 2))
+</pre>
+<pre class="literal-block">
+go xs = case xs of
+    []   -&gt; []
+    x:xs -&gt;
+      case modInt# x 2 of
+        0 -&gt; (x*x) : go xs
+        _ -&gt; go xs
+</pre>
+</div>
+<div class="slide" id="id10">
+<h1>函数组合 - 继续</h1>
+<pre class="literal-block">
+&gt; :t (||)
+Bool -&gt; Bool -&gt; Bool
+&gt; let (||^) = liftA2 (||)
+&gt; :t (||^)
+(a -&gt; Bool) -&gt; (a -&gt; Bool) -&gt; (a -&gt; Bool)
+&gt; filter ((&lt;3) ||^ (&gt;8)) [1..10]
+[1,2,9,10]
+</pre>
+</div>
+<div class="slide" id="id11">
+<h1>静态类型系统</h1>
+<ul class="simple">
+<li>能排除错误的程序，同时允许正确的程序的表达，精确性。</li>
+</ul>
+<p>TODO 图表 (正确的程序 与 类型正确的程序 之间的交集)</p>
+</div>
+<div class="slide" id="case-study-lookup">
+<h1>Case study - lookup</h1>
+<pre class="literal-block">
+lookup :: k -&gt; Map k v -&gt; ?
+</pre>
+</div>
+<div class="slide" id="id12">
+<h1>假想</h1>
+<pre class="literal-block">
+lookup :: k -&gt; Map k v -&gt; v
+
+process :: v -&gt; something
+
+&gt; process (lookup k m)
+**crash**
+</pre>
+</div>
+<div class="slide" id="id13">
+<h1>Case study - lookup</h1>
+<pre class="literal-block">
+lookup :: k -&gt; Map k v -&gt; Maybe v
+</pre>
+</div>
+<div class="slide" id="maybe">
+<h1>Maybe - 总有些事情是我们没有把握的</h1>
+<pre class="literal-block">
+data Maybe a = Just a | Nothing
+</pre>
+</div>
+<div class="slide" id="id14">
+<h1>Maybe - 总有些事情是我们没有把握的</h1>
+<pre class="literal-block">
+process :: a -&gt; something
+
+&gt; process (lookup k m)
+**type error**
+</pre>
+</div>
+<div class="slide" id="id15">
+<h1>Maybe - 总有些事情是我们没有把握的</h1>
+<pre class="literal-block">
+fromMaybe :: a -&gt; Maybe a -&gt; a
+fromMaybe _ (Just a) = a
+fromMaybe a Nothing  = a
+
+&gt; process (fromMaybe 0 (lookup k m))
+**typing ok**
+</pre>
+</div>
+<div class="slide" id="monad">
+<h1>抽象之Monad</h1>
+<ul class="simple">
+<li>什么是Monad</li>
+<li>隐喻：Monad是重载</li>
+<li>重载：相同形式，不同含义</li>
+<li><tt class="docutils literal">a+b</tt> 的含义？ <tt class="docutils literal">1+2</tt> 还是 <tt class="docutils literal"><span class="pre">&quot;foo&quot;+&quot;bar&quot;</span></tt></li>
+</ul>
+</div>
+<div class="slide" id="id16">
+<h1>重载命令式语句</h1>
+<p>语句 vs 表达式</p>
+</div>
+<div class="slide" id="id17">
+<h1>Monad重载的命令式语句的含义</h1>
+<p>List Monad (list comprehension的另一种形式)</p>
+<pre class="literal-block">
+do a &lt;- [1..10]
+   b &lt;- [1..10]
+   guard $ a+b&gt;10
+   return (a, b)
+</pre>
+</div>
+<div class="slide" id="id18">
+<h1>Monad重载的命令式语句的含义</h1>
+<p>State Monad</p>
+<pre class="literal-block">
+do
+    TODO
+</pre>
+</div>
+<div class="slide" id="id19">
+<h1>Monad重载的命令式语句的含义</h1>
+<p>Coroutine Monad</p>
+<pre class="literal-block">
+do TODO
+</pre>
+</div>
+<div class="slide" id="id20">
+<h1>Monad重载的命令式语句的含义</h1>
+<p>IO Monad</p>
+<pre class="literal-block">
+do name &lt;- readInput
+   printf &quot;hello %s&quot; name
+</pre>
+</div>
+<div class="slide" id="ghc-haskell">
+<h1>GHC - 工业级Haskell实现</h1>
+<ul class="simple">
+<li>支持Haskell 2010以及大量扩展功能</li>
+<li>强大的优化能力，能够跨模块优化
+[<a class="reference external" href="http://shootout.alioth.debian.org/">http://shootout.alioth.debian.org/</a>]</li>
+<li>完美的并发和并行实现，包括M-N微线程和STM实现</li>
+<li>跨平台支持 (Windows, Linux, Mac, 有非官方的iOS的支持)</li>
+<li>Profiling支持，包括time/allocation以及多种heap profiling。</li>
+</ul>
+</div>
+<div class="slide" id="id21">
+<h1>其他实现</h1>
+<ul class="simple">
+<li>UHC 有字节码解释器和Javascript后端。</li>
+<li>其他 [<a class="reference external" href="http://www.haskell.org/haskellwiki/Implementations">http://www.haskell.org/haskellwiki/Implementations</a>]</li>
+</ul>
+</div>
+<div class="slide" id="q-a">
+<h1>Q &amp; A</h1>
+</div>
+</div>
+</body>
+</html>

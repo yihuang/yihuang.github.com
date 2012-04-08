@@ -7,80 +7,91 @@
 :blog: http://yi-programmer.com/
 :github: http://github.com/yihuang
 
-代码质量的两个方面
+History
+========
+
+TODO 头像
+
+Can Programming Be Liberated from the von Neumann Style?
+
+	by John Backus 1978
+
+
+Von Neumann models
 ==================
 
-* 抽象
-* 健壮
+* **Foundations:** complex, bulky, not useful.
 
-代码质量的两个方面
-==================
+* **History sensitivity:** have storage, history sensitive
 
-* 抽象
+* **Semantics:** state transition with complex states.
 
-  ::
-  
-      机器 -|---|-----------------------|---- 人类
-           汇编 C                    Haskell  抽象
+* **Program clarity:** can be moderately clear, and not very useful conceptually.
 
-* 健壮
+The rise of Haskell
+=====================
 
-代码质量的两个方面
-==================
+* **September 1987.** Initial meeting at FPCA.
 
-* 抽象
+* **1 April 1990.** Version 1.0 Report was published.
 
-  ::
-  
-      机器 -|---|-----------------------|---- 人类
-           汇编 C                    Haskell  抽象
+* **May 1996.** Version 1.3 Report with Monadic I/O.
 
-* 健壮
+* **February 1999** Haskell 98 Report was published.
 
-  * 静态类型系统
+* **July 2010** Haskell 2010 Report was published.
 
-    * 精确表达约束
-    * 机器自动保证
+Haskell is lazy
+================
 
-抽象与性能
-==========
+* non-strict semantics and lazy evaluation.
+
+* good for modularization (参考《why fp》).
+
+* incompatiable with side-effects.
+
+* pros: has runtime overhead.
+
+* pros: hard to predict the space behaviour.
+
+Haskell is lazy
+================
+
+模拟追及问题
 
 ::
 
-    机器 -|---|-----------------------|---- 人类
-         汇编 C                    Haskell  抽象
+    let a = iterate ((`mod` 360) . (+1)) 0
+        -- [0, 1, 2, 3, 4...]
+        b = iterate ((`mod` 360) . (+2)) 1
+        -- [1, 3, 5, 7, 9...]
+        collides = zipWith (==) a b
+        -- [False, False, ..., True, ...]
+    in  elemIndex True collides
+        -- Just 359
 
-* pros: 编译器拥有更多的代码优化的手段
+Haskell is pure
+================
 
-* pros: 更好的profile工具
+* good for correctness.
 
-* pros: 程序并行化等其他手动很难控制的优化
+* good for compiler optimization.
 
-* cons: 程序代码与执行代码之间不够透明
+* good for parallelization.
 
-What is Haskell
+Haskell has type classes
+=========================
+
+TODO
+
+代码质量
+========
+
+* 抽象
+* 健壮
+
+抽象 - 函数组合
 ===============
-
-.. figure:: images/if_haskell_is_car.jpg
-
-    Figure: Photo from "If programming languages were cars" blog post
-    http://machinegestalt.posterous.com/if-programming-languages-were-cars
-
-What is Haskell
-===============
-
-* Pure Lazy Functional
-* Static Strongly Typing
-
-History Of Haskell
-===================
-
-.. figure:: images/haskell-path.png
-
-    Photo from "A taste of haskell" by simonpj.
-
-抽象之 - 函数组合
-=================
 
 * `(.)` 函数管道
 
@@ -167,13 +178,23 @@ TODO 需要更直观地展示每一步数据转换的过程，以及与自然语
             0 -> (x*x) : go xs
             _ -> go xs
 
-抽象之 - FRP
-=============
+函数组合 - 继续
+===============
 
-TODO
+::
+
+  > :t (||)
+  Bool -> Bool -> Bool
+  > let (||^) = liftA2 (||)
+  > :t (||^)
+  (a -> Bool) -> (a -> Bool) -> (a -> Bool)
+  > filter ((<3) ||^ (>8)) [1..10]
+  [1,2,9,10]
 
 静态类型系统
 ============
+
+* 能排除错误的程序，同时允许正确的程序的表达，精确性。
 
 TODO 图表 (正确的程序 与 类型正确的程序 之间的交集)
 
@@ -292,27 +313,23 @@ IO Monad
 GHC - 工业级Haskell实现
 =======================
 
-* 强大的代码优化能力
+* 支持Haskell 2010以及大量扩展功能
 
-* 眼花缭乱的高级类型系统扩展
+* 强大的优化能力，能够跨模块优化
+  [http://shootout.alioth.debian.org/]
 
-* 完美 M-N 微线程实现和线程同步机制
+* 完美的并发和并行实现，包括M-N微线程和STM实现
 
-* 基于微线程的IO
+* 跨平台支持 (Windows, Linux, Mac, 有非官方的iOS的支持)
 
-* 强大的并行支持
+* Profiling支持，包括time/allocation以及多种heap profiling。
 
-第三方库
+其他实现
 ========
 
-* TODO
+* UHC 有字节码解释器和Javascript后端。
 
-Haskell并非完美
-===============
-
-* record语法还有待完善
-
-* 调试以及性能评估
+* 其他 [http://www.haskell.org/haskellwiki/Implementations]
 
 Q & A
 ======
