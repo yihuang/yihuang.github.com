@@ -118,11 +118,15 @@ img.incremental {visibility: hidden;}
 li:after {content: " [" attr(class) "]"; color: #F88;}
 div:before {content: "[" attr(class) "]"; color: #F88;}
 */
-ul.code-list {list-style:none; margin:0; padding:0 }
+ul.code-list {list-style:none;}
 ul.code-list li {margin:0; padding: 10px;}
 
 ul.big {font-family: sans-serif; font-weight: normal; font-size: 120%;}
 ul.big li{margin:0; padding: 20px; margin:20px;}
-.hugehuge {font-family: sans-serif; font-weight: bolder; font-size: 250%;}
+ul.middle {font-family: sans-serif; font-weight: normal; font-size: 110%;}
+ul.middle li{margin:0; padding: 10px; margin:10px;}
+.hugehuge, pre.hugehuge {font-family: sans-serif; font-weight: bolder; font-size: 250%;}
 
 .center {margin-top:10%;}
+.buttom {margin-top:10%;}
+.nomargin {margin:0;}

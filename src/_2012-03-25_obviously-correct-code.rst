@@ -12,16 +12,18 @@ History
 
 TODO 头像
 
-.. class:: huge
+.. class:: center huge
 
 Can Programming Be Liberated from the von Neumann Style?
 
-	  by John Backus 1978
+.. class:: right
 
+by John Backus 1978
 
 Von Neumann models
 ==================
 
+.. class:: middle
 .. class:: incremental
 
 * **Foundations:** complex, bulky, not useful.
@@ -35,6 +37,7 @@ Von Neumann models
 The rise of Haskell
 =====================
 
+.. class:: middle
 .. class:: incremental
 
 * **September 1987.** Initial meeting at FPCA.
@@ -50,6 +53,7 @@ The rise of Haskell
 Haskell is lazy
 ================
 
+.. class:: middle
 .. class:: incremental
 
 * **Cons:** good for modularization (参考《why fp》).
@@ -77,10 +81,12 @@ Haskell is lazy
         -- Just 359
 
 Haskell is pure
-================
+===============
 
-.. class:: incremental
 .. class:: big
+.. class:: incremental
+
+* no side-effects.
 
 * **Good** for correctness.
 
@@ -88,10 +94,28 @@ Haskell is pure
 
 * **Good** for parallelization.
 
+Haskell is pure
+================
+
+.. class:: center huge
+.. code-block:: haskell
+
+    print :: String -> IO ()
+
+.. class:: code-list
+
+* ``IO`` is a type constructor, like generics.
+
+* Type system will prevent ``IO`` appeares in pure code.
+
+* So, ``IO`` allows effects, but not **side-** effects.
+
 Haskell has type classes
 =========================
 
 * like interface but better.
+
+* TODO
 
 代码质量
 ========
@@ -100,7 +124,7 @@ Haskell has type classes
 .. class:: center
 
   抽象
-  
+
 .. class:: huge
 .. class:: center
 
@@ -148,7 +172,7 @@ Haskell has type classes
   
 *  .. code-block:: haskell
 
-    [2,4,6,8,10]
+    [2, 4, 6, 8, 10]
 
 Case study
 ==========
@@ -156,8 +180,11 @@ Case study
 来自微博的问题：
 
  在二维数组里找长度大于5的子数组
+
  在符合要求的子数组里找所有偶数
- 如果数据小于10的话乘以2,大于10的除以2
+
+ 如果数据小于10则乘以2,大于10除以2
+
  最后统计符合要求的数据的和
 
 Case study
@@ -176,9 +203,13 @@ TODO 需要更直观地展示每一步数据转换的过程，以及与自然语
 担心性能？
 ==========
 
-.. class:: center hugehuge
+.. class:: hugehuge
 
-ghc -O -ddump-simpl foo.hs
+::
+
+  ghc -O
+      -ddump-simpl
+      foo.hs
 
 担心性能？
 ==========
@@ -194,7 +225,7 @@ ghc -O -ddump-simpl foo.hs
 
   .. code-block:: haskell
 
-    \x -> case modInt#  x 2 of
+    \x -> case modInt# x 2 of
             0 -> True
             _ -> False
 
@@ -202,16 +233,14 @@ ghc -O -ddump-simpl foo.hs
 ==========
 
 .. class:: incremental
-.. class:: code-list
+.. class:: code-list big nomargin
 
 * .. code-block:: haskell
 
       map (\x -> x*x)
     . filter ((==0) . (`mod` 2))
 
-* 优化后：
-
-  .. code-block:: haskell
+* .. code-block:: haskell
 
     go xs = case xs of
         []   -> []
@@ -239,7 +268,7 @@ ghc -O -ddump-simpl foo.hs
     (a -> Bool) -> (a -> Bool) -> (a -> Bool)
 * .. code-block:: haskell
 
-    > filter ((<3) ||^ (>8)) [1..10]
+    > filter ( (<3) ||^ (>8) ) [1..10]
 * .. code-block:: haskell
 
     [1,2,9,10]
@@ -247,27 +276,42 @@ ghc -O -ddump-simpl foo.hs
 静态类型系统
 ============
 
-* 能排除错误的程序，同时允许正确的程序的表达，精确性。
+* 排除错误的程序
+
+* 允许正确的程序
+  
+* 要精确!
 
 TODO 图表 (正确的程序 与 类型正确的程序 之间的交集)
 
-Case study - What's the return type of lookup
-=============================================
+Case study
+==========
 
-.. class:: center huge
+``lookup`` 的返回类型应该是什么？
+
+.. class:: huge
 .. code-block:: haskell
 
-    lookup :: k -> Map k v -> ?
+    lookup :: k -> Map k v
+           -> ?
 
-Case study - v ?
-=================
+Case study
+===========
+
+.. class:: big
+
+``v`` ?
 
 .. class:: huge code-list
 .. class:: incremental
 
 * .. code-block:: haskell
 
-    lookup :: k -> Map k v -> v
+    lookup :: k -> Map k v
+           -> v
+
+.. class:: code-list
+.. class:: incremental
 
 * .. code-block:: haskell
 
@@ -283,13 +327,29 @@ Case study - v ?
 
     **crash**
 
-Case study - Maybe v
-======================
+Case study
+===========
 
-.. class:: center huge
+正确答案： ``Maybe v``
+
+.. class:: huge
 .. code-block:: haskell
 
-    lookup :: k -> Map k v -> Maybe v
+    lookup :: k -> Map k v
+           -> Maybe v
+
+.. class:: code-list
+.. class:: incremental
+
+* .. code-block:: haskell
+
+    process (lookup k empty)
+
+* .. class:: red
+
+  ::
+
+    **type error**
 
 What is Maybe
 =============
@@ -297,49 +357,27 @@ What is Maybe
 .. class:: center huge
 .. code-block:: haskell
 
-  data Maybe a = Just a | Nothing
+  data Maybe a = Just a
+                | Nothing
 
-Maybe - Now it's a compile error
-=================================
+Maybe
+=====
 
-.. class:: huge code-list
-.. class:: incremental
+现在需要显式处理异常返回，比如提供默认值。
 
-* .. code-block:: haskell
-
-    process (lookup k empty)
-
-  .. class:: red
-
-  ::
-
-    **type error**
-
-* .. code-block:: haskell
-
-    k -> Map k v -> Maybe v
-                    v       -> something
-                               
-                  type don't match now.
-
-Maybe - Providing a default value
-==================================
-
-.. class:: code-list huge
+.. class:: code-list big
 .. class:: incremental
 
 * .. code-block:: haskell
 
     fromMaybe :: a -> Maybe a -> a
-
-* .. code-block:: haskell
-
     fromMaybe _ (Just a) = a
     fromMaybe a Nothing  = a
 
 * .. code-block:: haskell
 
-    > process (fromMaybe 0 (lookup k empty))
+    > process (fromMaybe 0 
+                 (lookup k empty))
     0
 
 抽象 - Monad
@@ -380,19 +418,19 @@ Maybe - Providing a default value
 
 .. class:: huge center
 
-    顺序执行的指令
+    语句：顺序执行的指令
 
 .. class:: incremental
 
-**顺序：** 执行顺序很关键
+**顺序：** 必须严格按顺序执行
 
 .. class:: incremental
 
-**执行：** 对环境产生副作用
+**执行：** 对执行环境产生副作用
 
 .. class:: incremental
 
-**环境：** 提供语句组合的方法，以及语句执行过程中的状态
+**环境：** 负责执行语句，并维护执行过程中的副作用
 
 Monad - 重载语句
 ================
