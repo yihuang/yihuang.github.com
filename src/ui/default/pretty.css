@@ -2,7 +2,7 @@
 /* Following are the presentation styles -- edit away! */
 
 html, body {margin: 0; padding: 0;}
-body {background: white; color: black;}
+body {background: #E3E7F2; color: #4D402F;}
 /* Replace the background style above with the style below (and again for
    div#header) for a graphic: */
 /* background: white url(bodybg.gif) -16px 0 no-repeat; */
@@ -17,12 +17,12 @@ blockquote p {margin: 0;}
 kbd {font-weight: bold; font-size: 1em;}
 sup {font-size: smaller; line-height: 1px;}
 
-.slide pre {padding: 0; margin-left: 0; margin-right: 0; font-size: 90%;}
-.slide ul ul li {list-style: square;}
+.slide pre {padding: 0; margin:0; font-size: 90%;}
+.slide ul ul li {list-style: square;padding:10px;}
 .slide img.leader {display: block; margin: 0 auto;}
 .slide tt {font-size: 90%;}
 
-div#header, div#footer {background: #005; color: #AAB; font-family: sans-serif;}
+div#header, div#footer {background: #5F6074; color: #AAB; font-family: sans-serif;}
 /* background: #005 url(bodybg.gif) -16px 0 no-repeat; */
 div#footer {font-size: 0.5em; font-weight: bold; padding: 1em 0;}
 #footer h1 {display: block; padding: 0 1em;}
@@ -31,7 +31,7 @@ div#footer {font-size: 0.5em; font-weight: bold; padding: 1em 0;}
 .slide {font-size: 1.2em;}
 .slide h1 {position: absolute; top: 0.45em; z-index: 1;
   margin: 0; padding-left: 0.7em; white-space: nowrap;
-  font: bold 150% sans-serif; color: #DDE; background: #005;}
+  font: bold 150% sans-serif; color: white; }
 .slide h2 {font: bold 120%/1em sans-serif; padding-top: 0.5em;}
 .slide h3 {font: bold 100% sans-serif; padding-top: 0.5em;}
 h1 abbr {font-variant: small-caps;}
@@ -63,10 +63,10 @@ ul.urls {list-style: none; display: inline; margin: 0;}
 html>body .external {border-bottom: none;}
 .external:after {content: " \274F"; font-size: smaller; color: #77B;}
 
-.incremental, .incremental *, .incremental *:after {visibility: visible;
-  color: white; border: 0;}
+.incremental, .incremental *, .incremental *:after {visibility: hidden;
+  color: #E3E7F2; border: 0;}
 img.incremental {visibility: hidden;}
-.slide .current {color: green;}
+.slide .current {background:white;}
 
 .slide-display {display: inline ! important;}
 
@@ -109,12 +109,20 @@ img.incremental {visibility: hidden;}
 
 .slide table.docinfo {margin: 1em 0 0.5em 2em;}
 
-pre.literal-block, pre.doctest-block {background-color: white;}
+/*pre.literal-block, pre.doctest-block {background-color: white;}*/
 
-tt.docutils {background-color: white;}
+/* tt.docutils {background-color: white;} */
 
 /* diagnostics */
 /*
 li:after {content: " [" attr(class) "]"; color: #F88;}
 div:before {content: "[" attr(class) "]"; color: #F88;}
 */
+ul.code-list {list-style:none; margin:0; padding:0 }
+ul.code-list li {margin:0; padding: 10px;}
+
+ul.big {font-family: sans-serif; font-weight: normal; font-size: 120%;}
+ul.big li{margin:0; padding: 20px; margin:20px;}
+.hugehuge {font-family: sans-serif; font-weight: bolder; font-size: 250%;}
+
+.center {margin-top:10%;}

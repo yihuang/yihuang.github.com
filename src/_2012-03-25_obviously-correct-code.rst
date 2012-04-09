@@ -12,13 +12,18 @@ History
 
 TODO 头像
 
+.. class:: huge
+
 Can Programming Be Liberated from the von Neumann Style?
 
-	by John Backus 1978
+	  by John Backus 1978
 
 
 Von Neumann models
 ==================
+
+.. class:: incremental
+.. class:: big
 
 * **Foundations:** complex, bulky, not useful.
 
@@ -31,35 +36,39 @@ Von Neumann models
 The rise of Haskell
 =====================
 
+.. class:: incremental
+.. class:: big
+
 * **September 1987.** Initial meeting at FPCA.
 
-* **1 April 1990.** Version 1.0 Report was published.
+* **1 April 1990.**   Version 1.0 Report was published.
 
-* **May 1996.** Version 1.3 Report with Monadic I/O.
+* **May 1996.**       Version 1.3 Report with Monadic I/O.
 
-* **February 1999** Haskell 98 Report was published.
+* **February 1999**   Haskell 98 Report was published.
 
 * **July 2010** Haskell 2010 Report was published.
 
 Haskell is lazy
 ================
 
-* non-strict semantics and lazy evaluation.
+.. class:: incremental
+.. class:: big
 
-* good for modularization (参考《why fp》).
+* **Cons:** good for modularization (参考《why fp》).
 
-* incompatiable with side-effects.
+* **Cons:** incompatiable with side-effects.
 
-* pros: has runtime overhead.
+* **Pros:** has runtime overhead.
 
-* pros: hard to predict the space behaviour.
+* **Pros:** hard to predict the space behaviour.
 
 Haskell is lazy
 ================
 
 模拟追及问题
 
-::
+.. code-block:: haskell
 
     let a = iterate ((`mod` 360) . (+1)) 0
         -- [0, 1, 2, 3, 4...]
@@ -73,35 +82,49 @@ Haskell is lazy
 Haskell is pure
 ================
 
-* good for correctness.
+.. class:: incremental
+.. class:: big
 
-* good for compiler optimization.
+* **Good** for correctness.
 
-* good for parallelization.
+* **Good** for compiler optimization.
+
+* **Good** for parallelization.
 
 Haskell has type classes
 =========================
 
-TODO
+* like interface but better.
 
 代码质量
 ========
 
-* 抽象
-* 健壮
+.. class:: huge
+.. class:: center
+
+  抽象
+  
+.. class:: huge
+.. class:: center
+
+  健壮
 
 抽象 - 函数组合
 ===============
 
-* `(.)` 函数管道
+``(.)`` 函数管道
 
-  ::
-  
+.. class:: incremental
+
+.. code-block:: haskell
+
     (.) :: (b -> c) -> (a -> b) -> a -> c
     (f . g) x = f (g x)
-  
-  ::
-  
+ 
+.. class:: incremental
+
+::
+
        /--------------------\       
        |   /---\    /---\   |       
     <<-c---c---b----b---a---a-<<-
@@ -111,12 +134,24 @@ TODO
 感受组合的能力
 ==============
 
-::
+.. class:: incremental
+.. class:: code-list big
 
-  > ( (==0) . (`mod` 2) ) 4
-  True
-  > filter ((==0) . (`mod` 2)) [1..10]
-  [2,4,6,8,10]
+*  .. code-block:: haskell
+  
+    > ( (==0) . (`mod` 2) ) 4
+  
+*  .. code-block:: haskell
+  
+    True
+  
+*  .. code-block:: haskell
+  
+    > filter ((==0) . (`mod` 2)) [1..10]
+  
+*  .. code-block:: haskell
+  
+    [2,4,6,8,10]
 
 Case study
 ==========
@@ -133,7 +168,7 @@ Case study
 
 TODO 需要更直观地展示每一步数据转换的过程，以及与自然语言描述的对应。
 
-::
+.. code-block:: haskell
 
   sum' = sum
          . map (\x -> if x<10 then x*2 else x `div` 2)
@@ -144,18 +179,23 @@ TODO 需要更直观地展示每一步数据转换的过程，以及与自然语
 担心性能？
 ==========
 
-::
+.. class:: center hugehuge
 
-    ghc -O -ddump-simpl foo.hs
+ghc -O -ddump-simpl foo.hs
 
 担心性能？
 ==========
 
-::
+.. class:: incremental
+.. class:: code-list huge
+
+* .. code-block:: haskell
 
     (==0) . (`mod` 2)
 
-优化后 ::
+* 优化后：
+
+  .. code-block:: haskell
 
     \x -> case modInt#  x 2 of
             0 -> True
@@ -164,12 +204,17 @@ TODO 需要更直观地展示每一步数据转换的过程，以及与自然语
 担心性能？
 ==========
 
-::
+.. class:: incremental
+.. class:: code-list
+
+* .. code-block:: haskell
 
       map (\x -> x*x)
     . filter ((==0) . (`mod` 2))
 
-::
+* 优化后：
+
+  .. code-block:: haskell
 
     go xs = case xs of
         []   -> []
@@ -181,15 +226,26 @@ TODO 需要更直观地展示每一步数据转换的过程，以及与自然语
 函数组合 - 继续
 ===============
 
-::
+.. class:: incremental
+.. class:: code-list
 
-  > :t (||)
-  Bool -> Bool -> Bool
-  > let (||^) = liftA2 (||)
-  > :t (||^)
-  (a -> Bool) -> (a -> Bool) -> (a -> Bool)
-  > filter ((<3) ||^ (>8)) [1..10]
-  [1,2,9,10]
+* .. code-block:: haskell
+
+    > :t (||)
+    Bool -> Bool -> Bool
+* .. code-block:: haskell
+
+    > let (||^) = liftA2 (||)
+* .. code-block:: haskell
+
+    > :t (||^)
+    (a -> Bool) -> (a -> Bool) -> (a -> Bool)
+* .. code-block:: haskell
+
+    > filter ((<3) ||^ (>8)) [1..10]
+* .. code-block:: haskell
+
+    [1,2,9,10]
 
 静态类型系统
 ============
@@ -198,81 +254,188 @@ TODO 需要更直观地展示每一步数据转换的过程，以及与自然语
 
 TODO 图表 (正确的程序 与 类型正确的程序 之间的交集)
 
-Case study - lookup
-===================
+Case study - What's the return type of lookup
+=============================================
 
-::
+.. class:: center huge
+.. code-block:: haskell
 
     lookup :: k -> Map k v -> ?
 
-假想
-====
+Case study - v ?
+=================
 
-::
+.. class:: huge code-list
+.. class:: incremental
+
+* .. code-block:: haskell
 
     lookup :: k -> Map k v -> v
 
+* .. code-block:: haskell
+
     process :: v -> something
 
-    > process (lookup k m)
+* .. code-block:: haskell
+
+    > process (lookup k empty)
+
+* .. class:: red
+
+  ::
+
     **crash**
 
-Case study - lookup
-===================
+Case study - Maybe v
+======================
 
-::
+.. class:: center huge
+.. code-block:: haskell
 
     lookup :: k -> Map k v -> Maybe v
 
-Maybe - 总有些事情是我们没有把握的
-==================================
+What is Maybe
+=============
 
-::
+.. class:: center huge
+.. code-block:: haskell
 
   data Maybe a = Just a | Nothing
 
-Maybe - 总有些事情是我们没有把握的
-==================================
+Maybe - Now it's a compile error
+=================================
 
-::
+.. class:: huge code-list
+.. class:: incremental
 
-    process :: a -> something
+* .. code-block:: haskell
 
-    > process (lookup k m)
+    process (lookup k empty)
+
+  .. class:: red
+
+  ::
+
     **type error**
 
-Maybe - 总有些事情是我们没有把握的
+* .. code-block:: haskell
+
+    k -> Map k v -> Maybe v
+                    v       -> something
+                               
+                  type don't match now.
+
+Maybe - Providing a default value
 ==================================
 
-::
+.. class:: code-list huge
+.. class:: incremental
+
+* .. code-block:: haskell
 
     fromMaybe :: a -> Maybe a -> a
+
+* .. code-block:: haskell
+
     fromMaybe _ (Just a) = a
     fromMaybe a Nothing  = a
 
-    > process (fromMaybe 0 (lookup k m))
-    **typing ok**
+* .. code-block:: haskell
 
-抽象之Monad
+    > process (fromMaybe 0 (lookup k empty))
+    0
+
+抽象 - Monad
 ============
 
-* 什么是Monad
+.. class:: huge center
 
-* 隐喻：Monad是重载
+    什么是Monad
 
-* 重载：相同形式，不同含义
+抽象 - 什么是Monad
+==================
 
-* ``a+b`` 的含义？ ``1+2`` 还是 ``"foo"+"bar"``
+.. class:: huge center
 
-重载命令式语句
-==============
+    Monad是对语句的重载
 
-语句 vs 表达式
+抽象 - 定义重载
+===============
 
-Monad重载的命令式语句的含义
-===========================
+.. class:: huge center
 
-List Monad (list comprehension的另一种形式)
+    重载：相同形式，不同含义
+
+.. class:: incremental
+
+``a + b`` 的含义？
+
+.. class:: incremental
+
+``1 + 2`` ? 
+
+.. class:: incremental
+
+``"foo" + "bar"`` ?
+
+抽象 - 定义语句
+================
+
+.. class:: huge center
+
+    顺序执行的指令
+
+.. class:: incremental
+
+**顺序：** 执行顺序很关键
+
+.. class:: incremental
+
+**执行：** 对环境产生副作用
+
+.. class:: incremental
+
+**环境：** 提供语句组合的方法，以及语句执行过程中的状态
+
+Monad - 重载语句
+================
+
+IO Monad - 提供普通命令式编程风格
+
+::
+
+    do input <- getLine
+       forM_ [1..3] $ \i ->
+           printf "echo%d:%s" i input
+
+Monad - 重载语句
+================
+
+Parser Monad - 提供解析器的输入并维护中间状态
+
+.. code-block:: haskell
+
+    do t  <- getTagName
+       as <- forM ["title", "href"]
+               getAttribute
+       return (t, as)
+
+Monad - 重载语句
+================
+
+Resource Monad - 维护finalizers，并自动在异常发生时调用以释放资源
+
+.. code-block:: haskell
+
+    do f <- openFile "data"
+       register (closeFile f)
+       process f
+       ...
+
+Monad - 重载语句
+================
+
+ (list comprehension的另一种形式)
 
 ::
 
@@ -280,35 +443,6 @@ List Monad (list comprehension的另一种形式)
        b <- [1..10]
        guard $ a+b>10
        return (a, b)
-
-Monad重载的命令式语句的含义
-===========================
-
-State Monad
-
-::
-
-    do 
-        TODO
-
-Monad重载的命令式语句的含义
-===========================
-
-Coroutine Monad
-
-::
-
-    do TODO
-
-Monad重载的命令式语句的含义
-===========================
-
-IO Monad
-
-::
-
-    do name <- readInput
-       printf "hello %s" name
 
 GHC - 工业级Haskell实现
 =======================
@@ -330,6 +464,11 @@ GHC - 工业级Haskell实现
 * UHC 有字节码解释器和Javascript后端。
 
 * 其他 [http://www.haskell.org/haskellwiki/Implementations]
+
+Learn Haskell Fast and Hard
+===========================
+
+Core Syntax
 
 Q & A
 ======

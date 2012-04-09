@@ -6,5 +6,7 @@
 /* sets basic placement and size of slide components */
 @import url(framing.css);
 
+@import url(pygments.css);
+
 /* styles that make the slides look good */
 @import url(pretty.css);
