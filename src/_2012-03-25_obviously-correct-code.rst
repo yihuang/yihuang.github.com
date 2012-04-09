@@ -505,5 +505,7 @@ Learn Haskell Fast and Hard
 
 Core Syntax
 
+TODO
+
 Q & A
 ======
