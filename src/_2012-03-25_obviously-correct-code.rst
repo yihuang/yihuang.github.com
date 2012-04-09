@@ -23,7 +23,6 @@ Von Neumann models
 ==================
 
 .. class:: incremental
-.. class:: big
 
 * **Foundations:** complex, bulky, not useful.
 
@@ -37,7 +36,6 @@ The rise of Haskell
 =====================
 
 .. class:: incremental
-.. class:: big
 
 * **September 1987.** Initial meeting at FPCA.
 
@@ -53,7 +51,6 @@ Haskell is lazy
 ================
 
 .. class:: incremental
-.. class:: big
 
 * **Cons:** good for modularization (参考《why fp》).
 
@@ -135,22 +132,22 @@ Haskell has type classes
 ==============
 
 .. class:: incremental
-.. class:: code-list big
+.. class:: code-list
 
 *  .. code-block:: haskell
-  
+ 
     > ( (==0) . (`mod` 2) ) 4
-  
+ 
 *  .. code-block:: haskell
-  
+ 
     True
-  
+
 *  .. code-block:: haskell
-  
+
     > filter ((==0) . (`mod` 2)) [1..10]
   
 *  .. code-block:: haskell
-  
+
     [2,4,6,8,10]
 
 Case study
@@ -158,8 +155,8 @@ Case study
 
 来自微博的问题：
 
- 找出一个锯齿数组里长度大于5的子数组
- 在符合要求的子数组里的数据里找出所有偶数
+ 在二维数组里找长度大于5的子数组
+ 在符合要求的子数组里找所有偶数
  如果数据小于10的话乘以2,大于10的除以2
  最后统计符合要求的数据的和
 
@@ -187,7 +184,7 @@ ghc -O -ddump-simpl foo.hs
 ==========
 
 .. class:: incremental
-.. class:: code-list huge
+.. class:: code-list big
 
 * .. code-block:: haskell
 
