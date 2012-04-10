@@ -358,7 +358,7 @@ ul.auto-toc {
 <p class="center huge">应该贴近自然语言描述</p>
 </div>
 <div class="slide" id="id3">
-<h1>示例1</h1>
+<h1>问题1</h1>
 <p class="center huge">从列表取大于10且小于100的数</p>
 </div>
 <div class="slide" id="id4">
@@ -389,20 +389,24 @@ ul.auto-toc {
 </pre></div>
 </div><div class="incremental big"><div class="highlight"><pre><span class="ow">::</span> <span class="kt">Bool</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
 </pre></div>
-</div><p class="red incremental">类型不匹配</p>
+</div><p class="red incremental">类型不对</p>
 </div>
 <div class="slide" id="id8">
 <h1>表达： 且</h1>
 <div class="current big"><div class="highlight"><pre><span class="o">?</span>
 
-<span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
+   <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
+<span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
+<span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
 </pre></div>
 </div></div>
 <div class="slide" id="id9">
 <h1>表达： 且</h1>
 <div class="current big"><div class="highlight"><pre><span class="nf">liftA2</span> <span class="p">(</span><span class="o">&amp;&amp;</span><span class="p">)</span>
 
-<span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
+   <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
+<span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
+<span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
 </pre></div>
 </div></div>
 <div class="slide" id="id10">
