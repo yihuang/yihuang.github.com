@@ -629,6 +629,8 @@ Monad提供重载命令式语句的语义的能力
 GHC - 工业级Haskell实现
 =======================
 
+.. class:: incremental
+
 * 支持Haskell 2010以及大量扩展功能
 
 * 强大的优化能力，能够跨模块优化
@@ -644,6 +646,8 @@ GHC - 工业级Haskell实现
 
 其他实现
 ========
+
+.. class:: incremental
 
 * UHC 有字节码解释器和Javascript后端。
 
