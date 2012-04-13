@@ -360,14 +360,29 @@ ul.auto-toc {
 
 </div>
 <div class="slide" id="id2">
+<h1>今天不讲啥</h1>
+<ul class="incremental big simple">
+<li>编写0-bug软件</li>
+<li>用自然语言编程</li>
+</ul>
+</div>
+<div class="slide" id="id3">
+<h1>今天讲啥</h1>
+<ul class="incremental big simple">
+<li>码农代码分享会</li>
+<li>函数式风格的程序</li>
+<li>Haskell介绍</li>
+</ul>
+</div>
+<div class="slide" id="id4">
 <h1>显然正确的代码</h1>
 <p class="center huge">应该贴近自然语言描述</p>
 </div>
-<div class="slide" id="id3">
+<div class="slide" id="id5">
 <h1>问题1</h1>
 <p class="center huge">从列表取大于10且小于100的数</p>
 </div>
-<div class="slide" id="id4">
+<div class="slide" id="id6">
 <h1>表达： 从列表取 ? 的数</h1>
 <div class="incremental big"><div class="highlight"><pre><span class="err">λ</span> <span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">filter</span> <span class="o">?</span> <span class="n">x</span>
 </pre></div>
@@ -375,7 +390,7 @@ ul.auto-toc {
 <div class="incremental big"><div class="highlight"><pre><span class="nf">filter</span> <span class="o">?</span>
 </pre></div>
 </div></div>
-<div class="slide" id="id5">
+<div class="slide" id="id7">
 <h1>表达： 大于10</h1>
 <div class="incremental big"><div class="highlight"><pre><span class="err">λ</span> <span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">10</span>
 </pre></div>
@@ -383,13 +398,13 @@ ul.auto-toc {
 <div class="incremental big"><div class="highlight"><pre><span class="p">(</span><span class="o">&gt;</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div></div>
-<div class="slide" id="id6">
+<div class="slide" id="id8">
 <h1>表达： 小于100</h1>
 <p class="incremental">同样：</p>
 <div class="incremental big"><div class="highlight"><pre><span class="p">(</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">)</span>
 </pre></div>
 </div></div>
-<div class="slide" id="id7">
+<div class="slide" id="id9">
 <h1>表达： 且</h1>
 <div class="incremental big"><div class="highlight"><pre><span class="o">&amp;&amp;</span>
 </pre></div>
@@ -397,7 +412,7 @@ ul.auto-toc {
 </pre></div>
 </div><p class="red incremental">类型不对</p>
 </div>
-<div class="slide" id="id8">
+<div class="slide" id="id10">
 <h1>表达： 且</h1>
 <div class="current big"><div class="highlight"><pre><span class="o">?</span>
 
@@ -406,7 +421,7 @@ ul.auto-toc {
 <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
 </pre></div>
 </div></div>
-<div class="slide" id="id9">
+<div class="slide" id="id11">
 <h1>表达： 且</h1>
 <div class="current big"><div class="highlight"><pre><span class="nf">liftA2</span> <span class="p">(</span><span class="o">&amp;&amp;</span><span class="p">)</span>
 
@@ -415,12 +430,16 @@ ul.auto-toc {
 <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
 </pre></div>
 </div></div>
-<div class="slide" id="id10">
+<div class="slide" id="id12">
 <h1>表达： 且</h1>
 <div class="current big"><div class="highlight"><pre><span class="p">(</span><span class="o">&amp;&amp;&amp;</span><span class="p">)</span> <span class="ow">=</span> <span class="n">liftA2</span> <span class="p">(</span><span class="o">&amp;&amp;</span><span class="p">)</span>
+
+   <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
+<span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
+<span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
 </pre></div>
 </div></div>
-<div class="slide" id="id11">
+<div class="slide" id="id13">
 <h1>拼在一块：</h1>
 <div class="incremental big"><div class="highlight"><pre><span class="nf">filter</span> <span class="p">(</span> <span class="p">(</span><span class="o">&gt;</span><span class="mi">10</span><span class="p">)</span> <span class="o">&amp;&amp;&amp;</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">)</span> <span class="p">)</span>
 </pre></div>
@@ -429,26 +448,32 @@ ul.auto-toc {
 <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span> <span class="o">...</span> <span class="p">]</span>
 </pre></div>
 </div></div>
-<div class="slide" id="id12">
-<h1>显然正确的代码</h1>
-<p class="center huge">应该暴露自然语言不严谨之处。</p>
-</div>
-<div class="slide" id="id13">
+<div class="slide" id="id14">
 <h1>问题2</h1>
-<p>TODO 展示很自然，但是type fail的代码</p>
+<p class="incremental">取http get参数&quot;name&quot;，前面加上&quot;hello&quot;返回回去。</p>
+<div class="incremental"><div class="highlight"><pre><span class="nf">webapp</span> <span class="ow">::</span> <span class="kt">Application</span>
+<span class="nf">webapp</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="n">name</span> <span class="ow">&lt;-</span> <span class="n">look</span> <span class="s">&quot;name&quot;</span>
+    <span class="n">response</span> <span class="p">(</span><span class="s">&quot;hello &quot;</span><span class="o">++</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div><p class="incremental red">但是，如果用户没有传参数的话。。。</p>
 </div>
-<div class="slide" id="history">
-<h1>History</h1>
+<div class="slide" id="id15">
+<h1>显然正确的代码</h1>
+<p class="center huge">要能主动暴露自然语言不严谨之处</p>
+<p class="incremental center big">静态类型系统</p>
+</div>
+<div class="slide" id="id16">
+<h1>函数式编程源起</h1>
 <p class="center huge">Can Programming Be Liberated from the von Neumann Style?</p>
 <p class="right">by John Backus 1978</p>
 </div>
-<div class="slide" id="von-neumann-models">
-<h1>Von Neumann models</h1>
-<ul class="middle incremental simple">
-<li><strong>Foundations:</strong> complex, bulky, not useful.</li>
-<li><strong>History sensitivity:</strong> have storage, history sensitive</li>
-<li><strong>Semantics:</strong> state transition with complex states.</li>
-<li><strong>Program clarity:</strong> can be moderately clear, and not very useful conceptually.</li>
+<div class="slide" id="id17">
+<h1>冯诺依曼模型的问题</h1>
+<p class="incremental huge center">依赖执行顺序的复杂的状态机模型</p>
+<ul class="incremental simple">
+<li>不容易理解</li>
+<li>不容易组合</li>
 </ul>
 </div>
 <div class="slide" id="the-rise-of-haskell">
@@ -464,58 +489,39 @@ ul.auto-toc {
 <div class="slide" id="haskell-is-lazy">
 <h1>Haskell is lazy</h1>
 <ul class="middle incremental simple">
-<li><strong>Cons:</strong> good for modularization (参考《why fp》).</li>
-<li><strong>Cons:</strong> incompatiable with side-effects.</li>
-<li><strong>Pros:</strong> has runtime overhead.</li>
-<li><strong>Pros:</strong> hard to predict the space behaviour.</li>
+<li><strong>Pros:</strong> 更强大的组合能力</li>
+<li><strong>Pros:</strong> 与副作用本质上不兼容</li>
+<li><strong>Cons:</strong> 存在运行时开销</li>
+<li><strong>Cons:</strong> 不容易预测内存占用（解决方法：静态分析和heap profile）</li>
 </ul>
 </div>
-<div class="slide" id="id14">
-<h1>Haskell is lazy</h1>
-<p>模拟追及问题</p>
-<div class="highlight"><pre><span class="kr">let</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">iterate</span> <span class="p">((`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">360</span><span class="p">)</span> <span class="o">.</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span> <span class="mi">0</span>
-    <span class="c1">-- [0, 1, 2, 3, 4...]</span>
-    <span class="n">b</span> <span class="ow">=</span> <span class="n">iterate</span> <span class="p">((`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">360</span><span class="p">)</span> <span class="o">.</span> <span class="p">(</span><span class="o">+</span><span class="mi">2</span><span class="p">))</span> <span class="mi">1</span>
-    <span class="c1">-- [1, 3, 5, 7, 9...]</span>
-    <span class="n">collides</span> <span class="ow">=</span> <span class="n">zipWith</span> <span class="p">(</span><span class="o">==</span><span class="p">)</span> <span class="n">a</span> <span class="n">b</span>
-    <span class="c1">-- [False, False, ..., True, ...]</span>
-<span class="kr">in</span>  <span class="n">elemIndex</span> <span class="kt">True</span> <span class="n">collides</span>
-    <span class="c1">-- Just 359</span>
+<div class="slide" id="id18">
+<h1>举一个简单的例子</h1>
+<p>在一个400米的环形跑道上</p>
+<p>A以每秒一米的速度开跑</p>
+<div class="highlight"><pre><span class="nf">a</span> <span class="ow">=</span> <span class="n">iterate</span> <span class="p">((`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">400</span><span class="p">)</span> <span class="o">.</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span> <span class="mi">0</span>
+<span class="c1">-- [0, 1, 2, 3, 4...]</span>
+</pre></div>
+<p>B以每秒两米的速度开跑</p>
+<div class="highlight"><pre><span class="nf">b</span> <span class="ow">=</span> <span class="n">iterate</span> <span class="p">((`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">400</span><span class="p">)</span> <span class="o">.</span> <span class="p">(</span><span class="o">+</span><span class="mi">2</span><span class="p">))</span> <span class="mi">1</span>
+<span class="c1">-- [1, 3, 5, 7, 9...]</span>
+</pre></div>
+<p>问他们何时相遇？</p>
+<div class="highlight"><pre><span class="nf">findIndex</span> <span class="p">(</span><span class="n">uncurry</span> <span class="p">(</span><span class="o">==</span><span class="p">))</span> <span class="p">(</span><span class="n">zip</span> <span class="n">a</span> <span class="n">b</span><span class="p">)</span>
+<span class="c1">-- Just 399</span>
 </pre></div>
 </div>
 <div class="slide" id="haskell-is-pure">
 <h1>Haskell is pure</h1>
 <ul class="big incremental simple">
-<li>no side-effects.</li>
-<li><strong>Good</strong> for correctness.</li>
-<li><strong>Good</strong> for compiler optimization.</li>
-<li><strong>Good</strong> for parallelization.</li>
+<li>没有副作用</li>
+<li>不容易出错</li>
+<li>编译器可以做大量优化</li>
+<li>很容易并行化</li>
 </ul>
 </div>
-<div class="slide" id="id15">
-<h1>Haskell is pure</h1>
-<div class="center huge"><div class="highlight"><pre><span class="nf">print</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="nb">()</span>
-</pre></div>
-</div><ul class="code-list simple">
-<li><tt class="docutils literal">IO</tt> is a type constructor, like generics.</li>
-<li>Type system will prevent <tt class="docutils literal">IO</tt> appeares in pure code.</li>
-<li>So, <tt class="docutils literal">IO</tt> allows effects, but not <strong>side-</strong> effects.</li>
-</ul>
-</div>
-<div class="slide" id="haskell-has-type-classes">
-<h1>Haskell has type classes</h1>
-<ul class="simple">
-<li>like interface but better.</li>
-<li>TODO</li>
-</ul>
-</div>
-<div class="slide" id="id16">
-<h1>代码质量</h1>
-<p class="center huge">抽象</p>
-<p class="center huge">健壮</p>
-</div>
-<div class="slide" id="id17">
-<h1>抽象 - 函数组合</h1>
+<div class="slide" id="id19">
+<h1>纯函数是个好抽象</h1>
 <p><tt class="docutils literal">(.)</tt> 函数管道</p>
 <div class="incremental"><div class="highlight"><pre><span class="p">(</span><span class="o">.</span><span class="p">)</span> <span class="ow">::</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">c</span>
 <span class="p">(</span><span class="n">f</span> <span class="o">.</span> <span class="n">g</span><span class="p">)</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">f</span> <span class="p">(</span><span class="n">g</span> <span class="n">x</span><span class="p">)</span>
@@ -528,16 +534,16 @@ ul.auto-toc {
    \--------------------/
 </pre>
 </div>
-<div class="slide" id="id18">
-<h1>感受组合的能力</h1>
+<div class="slide" id="id20">
+<h1>感受组合的魅力</h1>
 <ul class="incremental code-list">
-<li><div class="first"><div class="highlight"><pre><span class="o">&gt;</span> <span class="p">(</span> <span class="p">(</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">.</span> <span class="p">(`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">2</span><span class="p">)</span> <span class="p">)</span> <span class="mi">4</span>
+<li><div class="first"><div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="p">(</span> <span class="p">(</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">.</span> <span class="p">(`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">2</span><span class="p">)</span> <span class="p">)</span> <span class="mi">4</span>
 </pre></div>
 </div></li>
 <li><div class="first"><div class="highlight"><pre><span class="kt">True</span>
 </pre></div>
 </div></li>
-<li><div class="first"><div class="highlight"><pre><span class="o">&gt;</span> <span class="n">filter</span> <span class="p">((</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">.</span> <span class="p">(`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">2</span><span class="p">))</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">10</span><span class="p">]</span>
+<li><div class="first"><div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">filter</span> <span class="p">((</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">.</span> <span class="p">(`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">2</span><span class="p">))</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 </div></li>
 <li><div class="first"><div class="highlight"><pre><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
@@ -545,37 +551,43 @@ ul.auto-toc {
 </div></li>
 </ul>
 </div>
-<div class="slide" id="case-study">
-<h1>Case study</h1>
-<p>来自微博的问题：</p>
-<blockquote>
+<div class="slide" id="id21">
+<h1>来自微博的问题</h1>
 <p>在二维数组里找长度大于5的子数组</p>
 <p>在符合要求的子数组里找所有偶数</p>
 <p>如果数据小于10则乘以2,大于10除以2</p>
 <p>最后统计符合要求的数据的和</p>
-</blockquote>
 </div>
-<div class="slide" id="id19">
-<h1>Case study</h1>
-<p>TODO 需要更直观地展示每一步数据转换的过程，以及与自然语言描述的对应。</p>
+<div class="slide" id="id22">
+<h1>来自微博的问题</h1>
 <div class="highlight"><pre><span class="nf">sum&#39;</span> <span class="ow">=</span> <span class="n">sum</span>
-       <span class="o">.</span> <span class="n">map</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="kr">if</span> <span class="n">x</span><span class="o">&lt;</span><span class="mi">10</span> <span class="kr">then</span> <span class="n">x</span><span class="o">*</span><span class="mi">2</span> <span class="kr">else</span> <span class="n">x</span> <span class="p">`</span><span class="n">div</span><span class="p">`</span> <span class="mi">2</span><span class="p">)</span>
+       <span class="o">.</span> <span class="n">map</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="kr">if</span> <span class="n">x</span><span class="o">&lt;</span><span class="mi">10</span>
+                      <span class="kr">then</span> <span class="n">x</span><span class="o">*</span><span class="mi">2</span>
+                      <span class="kr">else</span> <span class="n">x</span> <span class="p">`</span><span class="n">div</span><span class="p">`</span> <span class="mi">2</span><span class="p">)</span>
        <span class="o">.</span> <span class="n">filter</span> <span class="p">((</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">.</span> <span class="p">(`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">2</span><span class="p">))</span>
        <span class="o">.</span> <span class="n">concat</span>
        <span class="o">.</span> <span class="n">filter</span> <span class="p">((</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">)</span> <span class="o">.</span> <span class="n">length</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="slide" id="id20">
-<h1>担心性能？</h1>
-<pre class="hugehuge literal-block">
+<div class="slide" id="id23">
+<h1>抽象能力与性能不一定成反比</h1>
+<ul class="simple">
+<li>内联（跨模块）</li>
+<li>代码转换</li>
+</ul>
+</div>
+<div class="slide" id="id24">
+<h1>查看中间代码</h1>
+<p>GHC编译器中间代码是Haskell的子集</p>
+<pre class="huge literal-block">
 ghc -O
     -ddump-simpl
     foo.hs
 </pre>
 </div>
-<div class="slide" id="id21">
-<h1>担心性能？</h1>
-<ul class="incremental code-list big">
+<div class="slide" id="id25">
+<h1>查看中间代码</h1>
+<ul class="incremental code-list big nomargin">
 <li><div class="first"><div class="highlight"><pre><span class="p">(</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">.</span> <span class="p">(`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div></li>
@@ -587,65 +599,42 @@ ghc -O
 </li>
 </ul>
 </div>
-<div class="slide" id="id22">
-<h1>担心性能？</h1>
-<ul class="incremental code-list big nomargin">
-<li><div class="first"><div class="highlight"><pre>  <span class="n">map</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="p">)</span>
-<span class="o">.</span> <span class="n">filter</span> <span class="p">((</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">.</span> <span class="p">(`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">2</span><span class="p">))</span>
+<div class="slide" id="id26">
+<h1>查看中间代码</h1>
+<ul class="incremental code-list middle nomargin">
+<li><div class="first"><div class="highlight"><pre>  <span class="n">map</span> <span class="p">(</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+<span class="o">.</span> <span class="n">filter</span> <span class="p">((</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="o">.</span> <span class="p">(`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">2</span><span class="p">))</span>
 </pre></div>
 </div></li>
 <li><div class="first"><div class="highlight"><pre><span class="nf">go</span> <span class="n">xs</span> <span class="ow">=</span> <span class="kr">case</span> <span class="n">xs</span> <span class="kr">of</span>
     <span class="kt">[]</span>   <span class="ow">-&gt;</span> <span class="kt">[]</span>
     <span class="n">x</span><span class="kt">:</span><span class="n">xs</span> <span class="ow">-&gt;</span>
       <span class="kr">case</span> <span class="n">modInt</span><span class="o">#</span> <span class="n">x</span> <span class="mi">2</span> <span class="kr">of</span>
-        <span class="mi">0</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="p">)</span> <span class="kt">:</span> <span class="n">go</span> <span class="n">xs</span>
+        <span class="mi">1</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span> <span class="kt">:</span> <span class="n">go</span> <span class="n">xs</span>
         <span class="kr">_</span> <span class="ow">-&gt;</span> <span class="n">go</span> <span class="n">xs</span>
 </pre></div>
 </div></li>
 </ul>
 </div>
-<div class="slide" id="id23">
-<h1>函数组合 - 继续</h1>
-<ul class="incremental code-list">
-<li><div class="first"><div class="highlight"><pre><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="p">(</span><span class="o">||</span><span class="p">)</span>
-<span class="kt">Bool</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
-</pre></div>
-</div></li>
-<li><div class="first"><div class="highlight"><pre><span class="o">&gt;</span> <span class="kr">let</span> <span class="p">(</span><span class="o">||^</span><span class="p">)</span> <span class="ow">=</span> <span class="n">liftA2</span> <span class="p">(</span><span class="o">||</span><span class="p">)</span>
-</pre></div>
-</div></li>
-<li><div class="first"><div class="highlight"><pre><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="p">(</span><span class="o">||^</span><span class="p">)</span>
-<span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
-</pre></div>
-</div></li>
-<li><div class="first"><div class="highlight"><pre><span class="o">&gt;</span> <span class="n">filter</span> <span class="p">(</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">)</span> <span class="o">||^</span> <span class="p">(</span><span class="o">&gt;</span><span class="mi">8</span><span class="p">)</span> <span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">10</span><span class="p">]</span>
-</pre></div>
-</div></li>
-<li><div class="first"><div class="highlight"><pre><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
-</pre></div>
-</div></li>
-</ul>
-</div>
-<div class="slide" id="id24">
+<div class="slide" id="id27">
 <h1>静态类型系统</h1>
-<ul class="simple">
+<ul class="incremental big simple">
 <li>排除错误的程序</li>
 <li>允许正确的程序</li>
-<li>要精确!</li>
+<li>一言以蔽之：精确!</li>
 </ul>
-<p>TODO 图表 (正确的程序 与 类型正确的程序 之间的交集)</p>
 </div>
-<div class="slide" id="id25">
+<div class="slide" id="case-study">
 <h1>Case study</h1>
-<p><tt class="docutils literal">lookup</tt> 的返回类型应该是什么？</p>
+<p><tt class="docutils literal">lookup</tt> 应该返回什么类型？</p>
 <div class="huge"><div class="highlight"><pre><span class="nf">lookup</span> <span class="ow">::</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="kt">Map</span> <span class="n">k</span> <span class="n">v</span>
        <span class="ow">-&gt;</span> <span class="o">?</span>
 </pre></div>
 </div></div>
-<div class="slide" id="id26">
+<div class="slide" id="id28">
 <h1>Case study</h1>
 <p class="big"><tt class="docutils literal">v</tt> ?</p>
-<ul class="huge code-list incremental">
+<ul class="huge code-list nomargin incremental">
 <li><div class="first"><div class="highlight"><pre><span class="nf">lookup</span> <span class="ow">::</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="kt">Map</span> <span class="n">k</span> <span class="n">v</span>
        <span class="ow">-&gt;</span> <span class="n">v</span>
 </pre></div>
@@ -655,7 +644,7 @@ ghc -O
 <li><div class="first"><div class="highlight"><pre><span class="nf">process</span> <span class="ow">::</span> <span class="n">v</span> <span class="ow">-&gt;</span> <span class="n">something</span>
 </pre></div>
 </div></li>
-<li><div class="first"><div class="highlight"><pre><span class="o">&gt;</span> <span class="n">process</span> <span class="p">(</span><span class="n">lookup</span> <span class="n">k</span> <span class="n">empty</span><span class="p">)</span>
+<li><div class="first"><div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">process</span> <span class="p">(</span><span class="n">lookup</span> <span class="n">k</span> <span class="n">empty</span><span class="p">)</span>
 </pre></div>
 </div></li>
 <li><pre class="red first literal-block">
@@ -664,7 +653,7 @@ ghc -O
 </li>
 </ul>
 </div>
-<div class="slide" id="id27">
+<div class="slide" id="id29">
 <h1>Case study</h1>
 <p>正确答案： <tt class="docutils literal">Maybe v</tt></p>
 <div class="huge"><div class="highlight"><pre><span class="nf">lookup</span> <span class="ow">::</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="kt">Map</span> <span class="n">k</span> <span class="n">v</span>
@@ -687,106 +676,121 @@ ghc -O
 </pre></div>
 </div></div>
 <div class="slide" id="maybe">
-<h1>Maybe</h1>
-<p>现在需要显式处理异常返回，比如提供默认值。</p>
+<h1>Maybe - 显式表达异常分支</h1>
 <ul class="code-list big incremental">
 <li><div class="first"><div class="highlight"><pre><span class="nf">fromMaybe</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
 <span class="nf">fromMaybe</span> <span class="kr">_</span> <span class="p">(</span><span class="kt">Just</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=</span> <span class="n">a</span>
 <span class="nf">fromMaybe</span> <span class="n">a</span> <span class="kt">Nothing</span>  <span class="ow">=</span> <span class="n">a</span>
 </pre></div>
 </div></li>
-<li><div class="first"><div class="highlight"><pre><span class="o">&gt;</span> <span class="n">process</span> <span class="p">(</span><span class="n">fromMaybe</span> <span class="mi">0</span>
-             <span class="p">(</span><span class="n">lookup</span> <span class="n">k</span> <span class="n">empty</span><span class="p">))</span>
+<li><div class="first"><div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">fromMaybe</span> <span class="mi">0</span>
+      <span class="p">(</span><span class="n">lookup</span> <span class="n">k</span> <span class="n">empty</span><span class="p">)</span>
 <span class="mi">0</span>
 </pre></div>
 </div></li>
 </ul>
 </div>
 <div class="slide" id="monad">
-<h1>抽象 - Monad</h1>
+<h1>Monad 也是个好抽象</h1>
 <p class="huge center">什么是Monad</p>
 </div>
-<div class="slide" id="id28">
-<h1>抽象 - 什么是Monad</h1>
+<div class="slide" id="id30">
+<h1>什么是Monad</h1>
 <p class="huge center">Monad是对语句的重载</p>
 </div>
-<div class="slide" id="id29">
-<h1>抽象 - 定义重载</h1>
+<div class="slide" id="id31">
+<h1>定义重载</h1>
 <p class="huge center">重载：相同形式，不同含义</p>
 <p class="incremental"><tt class="docutils literal">a + b</tt> 的含义？</p>
 <p class="incremental"><tt class="docutils literal">1 + 2</tt> ?</p>
 <p class="incremental"><tt class="docutils literal">&quot;foo&quot; + &quot;bar&quot;</tt> ?</p>
 </div>
-<div class="slide" id="id30">
-<h1>抽象 - 定义语句</h1>
+<div class="slide" id="id32">
+<h1>定义语句</h1>
 <p class="huge center">语句：顺序执行的指令</p>
 <p class="incremental"><strong>顺序：</strong> 必须严格按顺序执行</p>
 <p class="incremental"><strong>执行：</strong> 对执行环境产生副作用</p>
 <p class="incremental"><strong>环境：</strong> 负责执行语句，并维护执行过程中的副作用</p>
 </div>
-<div class="slide" id="id31">
+<div class="slide" id="id33">
 <h1>Monad - 重载语句</h1>
-<p>IO Monad - 提供普通命令式编程风格</p>
+<p>List Monad (list comprehension的马甲)</p>
+<pre class="literal-block">
+do a &lt;- [1..10]
+   b &lt;- [1..10]
+   guard $ a+b&gt;10
+   return (a, b)
+
+-- [(1,10), (2,9), (2,10)...]
+</pre>
+</div>
+<div class="slide" id="id34">
+<h1>Monad - 重载语句</h1>
+<p>Parser Monad - 提供解析器的输入并维护中间状态</p>
+<div class="highlight"><pre><span class="kr">do</span> <span class="n">t</span>  <span class="ow">&lt;-</span> <span class="n">getTagName</span>
+   <span class="n">a</span> <span class="ow">&lt;-</span> <span class="n">forM</span> <span class="p">[</span><span class="s">&quot;title&quot;</span><span class="p">,</span> <span class="s">&quot;href&quot;</span><span class="p">]</span>
+             <span class="n">getAttribute</span>
+   <span class="n">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="slide" id="id35">
+<h1>Monad - 重载语句</h1>
+<p>IO Monad - 提供命令式编程风格</p>
 <pre class="literal-block">
 do input &lt;- getLine
    forM_ [1..3] $ \i -&gt;
        printf &quot;echo%d:%s&quot; i input
 </pre>
+<pre class="literal-block">
+&gt; haskell
+echo1:haskell
+echo2:haskell
+echo3:haskell
+</pre>
 </div>
-<div class="slide" id="id32">
+<div class="slide" id="id36">
 <h1>Monad - 重载语句</h1>
-<p>Parser Monad - 提供解析器的输入并维护中间状态</p>
-<div class="highlight"><pre><span class="kr">do</span> <span class="n">t</span>  <span class="ow">&lt;-</span> <span class="n">getTagName</span>
-   <span class="n">as</span> <span class="ow">&lt;-</span> <span class="n">forM</span> <span class="p">[</span><span class="s">&quot;title&quot;</span><span class="p">,</span> <span class="s">&quot;href&quot;</span><span class="p">]</span>
-           <span class="n">getAttribute</span>
-   <span class="n">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">as</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="slide" id="id33">
-<h1>Monad - 重载语句</h1>
-<p>Resource Monad - 维护finalizers，并自动在异常发生时调用以释放资源</p>
+<p>Resource Monad - 在 <tt class="docutils literal">IO</tt> 的基础上提供释放资源的能力。</p>
 <div class="highlight"><pre><span class="kr">do</span> <span class="n">f</span> <span class="ow">&lt;-</span> <span class="n">openFile</span> <span class="s">&quot;data&quot;</span>
    <span class="n">register</span> <span class="p">(</span><span class="n">closeFile</span> <span class="n">f</span><span class="p">)</span>
    <span class="n">process</span> <span class="n">f</span>
    <span class="o">...</span>
 </pre></div>
 </div>
-<div class="slide" id="id34">
-<h1>Monad - 重载语句</h1>
-<blockquote>
-(list comprehension的另一种形式)</blockquote>
-<pre class="literal-block">
-do a &lt;- [1..10]
-   b &lt;- [1..10]
-   guard $ a+b&gt;10
-   return (a, b)
-</pre>
+<div class="slide" id="id37">
+<h1>重复一次</h1>
+<p class="center huge">Monad提供重载命令式语句的语义的能力</p>
 </div>
 <div class="slide" id="ghc-haskell">
 <h1>GHC - 工业级Haskell实现</h1>
 <ul class="simple">
 <li>支持Haskell 2010以及大量扩展功能</li>
-<li>强大的优化能力，能够跨模块优化
+<li>强大的优化能力，能够跨模块优化</li>
+<li>能生成高效的代码，并发程序尤其表现突出
 [<a class="reference external" href="http://shootout.alioth.debian.org/">http://shootout.alioth.debian.org/</a>]</li>
 <li>完美的并发和并行实现，包括M-N微线程和STM实现</li>
 <li>跨平台支持 (Windows, Linux, Mac, 有非官方的iOS的支持)</li>
 <li>Profiling支持，包括time/allocation以及多种heap profiling。</li>
 </ul>
 </div>
-<div class="slide" id="id35">
+<div class="slide" id="id38">
 <h1>其他实现</h1>
 <ul class="simple">
 <li>UHC 有字节码解释器和Javascript后端。</li>
 <li>其他 [<a class="reference external" href="http://www.haskell.org/haskellwiki/Implementations">http://www.haskell.org/haskellwiki/Implementations</a>]</li>
 </ul>
 </div>
-<div class="slide" id="learn-haskell-fast-and-hard">
-<h1>Learn Haskell Fast and Hard</h1>
-<p>Core Syntax</p>
-<p>TODO</p>
-</div>
 <div class="slide" id="q-a">
 <h1>Q &amp; A</h1>
+</div>
+<div class="slide" id="learn-haskell-fast-and-hard">
+<h1>Learn Haskell Fast and Hard</h1>
+<ul class="simple">
+<li>核心语法 (case let where ADT)</li>
+<li>语法糖 (pattern match, type class)</li>
+<li>类型推导</li>
+<li>高阶类型系统扩展</li>
+</ul>
 </div>
 </div>
 </body>
