@@ -247,21 +247,26 @@ Haskell is lazy
 
 A以每秒一米的速度开跑
 
-.. code-block:: haskell
+B以每秒两米的速度开跑
+
+问他们何时相遇？
+
+举一个简单的例子
+=================
+
+.. class:: incremental code-list
+
+* .. code-block:: haskell
 
     a = iterate ((`mod` 400) . (+1)) 0
     -- [0, 1, 2, 3, 4...]
 
-B以每秒两米的速度开跑
-
-.. code-block:: haskell
+* .. code-block:: haskell
 
     b = iterate ((`mod` 400) . (+2)) 1
     -- [1, 3, 5, 7, 9...]
 
-问他们何时相遇？
-
-.. code-block:: haskell
+* .. code-block:: haskell
 
     findIndex (uncurry (==)) (zip a b)
     -- Just 399
