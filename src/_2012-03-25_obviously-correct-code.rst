@@ -2,7 +2,7 @@
 编写显然正确的代码
 ==================
 
-:author: yihuang
+:author: 黄毅 众禄基金程序员
 :email: yi.codeplayer@gmail.com
 :blog: http://yi-programmer.com/
 :github: http://github.com/yihuang
