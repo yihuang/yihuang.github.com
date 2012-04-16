@@ -360,213 +360,205 @@ ul.auto-toc {
 
 </div>
 <div class="slide" id="id2">
-<h1>今天不讲啥</h1>
-<ul class="incremental big simple">
-<li>编写0-bug软件</li>
-<li>用自然语言编程</li>
-</ul>
-</div>
-<div class="slide" id="id3">
-<h1>今天讲啥</h1>
-<ul class="incremental big simple">
-<li>码农代码分享会</li>
-<li>函数式风格的程序</li>
+<h1>今天分享啥</h1>
+<ul class="big simple">
+<li>码农的代码分享会</li>
+<li>函数式编程风格 和 静态类型系统</li>
 <li>Haskell介绍</li>
 </ul>
 </div>
+<div class="slide" id="haskell">
+<h1>Haskell速成 - 函数定义</h1>
+<div class="big"><div class="highlight haskell-quick"><pre><span class="nf function-name">filter</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span><span class="ow">-&gt;</span><span class="kt">Bool</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="nf">filter</span> <span class="n">p</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">filter</span> <span class="n">p</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span>
+     <span class="o">|</span> <span class="n">p</span> <span class="n">x</span>       <span class="ow">=</span> <span class="n">x</span> <span class="kt">:</span> <span class="n">filter</span> <span class="n">p</span> <span class="n">xs</span>
+     <span class="o">|</span> <span class="n">otherwise</span> <span class="ow">=</span> <span class="n">filter</span> <span class="n">p</span> <span class="n">xs</span>
+</pre></div>
+<script>
+desc('.haskell-quick .function-name', '函数名')
+</script></div><p class="handout">这是一个函数定义，第一行是类型签名，冒号前面是函数名，后面是函数的类型，参数和返回值的类型统一由箭头组合在一起，最后一个是返回值，前面都是参数。这种语法使得curry化非常方便，这一点我们后面会讲到。</p>
+<p class="handout">后面几行呢就是函数的定义了，这里比较有意思的地方就是模式匹配了，模式匹配这个东西从执行的角度来讲它就是一种分支的方法，但它是一种更受限的分支方法，它只能针对一个类型的不同构造器进行分支，这个约束使得它具备一个很好的特性，那就是编译器可以自动检查代码是否把所有分支都覆盖全面了，如果遗漏了哪个分支，它会出一个警告，这一点对于编写正确的代码来说太有用了。</p>
+</div>
+<div class="slide" id="haskell-curry">
+<h1>Haskell速成 - Curry化</h1>
+<div class="big"><div class="highlight"><pre><span class="nf">add</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">Int</span>
+<span class="p">(</span><span class="n">add</span> <span class="mi">1</span><span class="p">)</span>    <span class="ow">::</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">Int</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kr">let</span> <span class="n">inc</span> <span class="ow">=</span> <span class="n">add</span> <span class="mi">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">inc</span> <span class="mi">2</span>
+<span class="mi">3</span>
+</pre></div>
+</div><p class="handout">Curry化又叫部分函数调用，也就是一个函数本来接受两个参数，返回一个值的，你现在只给它传一个参数，你就得到了一个只接受一个参数的函数了。通过后面的代码我们会看到，这个特性对于函数式编程风格来说非常重要，它可以大大提高代码重用性，一个函数可以当几个函数用。</p>
+</div>
+<div class="slide" id="id3">
+<h1>Haskell速成 - 前缀/中缀表示法</h1>
+<div class="big"><div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span>
+<span class="mi">3</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="mi">1</span> <span class="mi">2</span>
+<span class="mi">3</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">add</span> <span class="mi">1</span> <span class="mi">2</span>
+<span class="mi">3</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="mi">1</span> <span class="p">`</span><span class="n">add</span><span class="p">`</span> <span class="mi">2</span>
+<span class="mi">3</span>
+</pre></div>
+</div><p class="handout">Haskell里操作符和普通函数没太大区别，唯一的区别就是操作符由特殊符号组成，而普通函数名由标示符组成。</p>
+<p class="handout">而不管操作符还是普通函数，都可以写成前缀形式，也可以写成中缀形式，这几句代码都是等价的。</p>
+</div>
 <div class="slide" id="id4">
-<h1>显然正确的代码</h1>
-<p class="center huge">应该贴近自然语言描述</p>
+<h1>Haskell速成 - 前缀/中缀表示法</h1>
+<div class="big"><div class="highlight"><pre><span class="mi">1</span> <span class="p">`</span><span class="n">add</span><span class="p">`</span> <span class="mi">2</span> <span class="p">`</span><span class="n">add</span><span class="p">`</span> <span class="mi">3</span> <span class="p">`</span><span class="n">add</span><span class="p">`</span> <span class="mi">4</span>
+</pre></div>
+</div><p class="big">VS</p>
+<div class="big"><div class="highlight"><pre><span class="nf">add</span> <span class="p">(</span><span class="n">add</span> <span class="p">(</span><span class="n">add</span> <span class="mi">1</span> <span class="mi">2</span><span class="p">)</span> <span class="mi">3</span><span class="p">)</span> <span class="mi">4</span>
+</pre></div>
+</div><p class="handout">中缀形式在嵌套的时候特别给力，比如这个例子。其实haskell代码也可以写成lisp风格的。</p>
+</div>
+<div class="slide" id="haskell-lambda">
+<h1>Haskell速成 - lambda</h1>
+<div class="big"><div class="highlight"><pre><span class="nf">\</span><span class="n">a</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</pre></div>
+</div><p class="handout">这个lambda语法有够简单了，一条斜杠定义lambda函数的开始，后面空格分隔的是形参，箭头后面就是函数定义。</p>
 </div>
 <div class="slide" id="id5">
-<h1>问题1</h1>
-<p class="center huge">从列表取大于10且小于100的数</p>
+<h1>Haskell速成 - 结束</h1>
+<p class="center huge">恭喜你，你已经学会了Haskell 50% 常用语法</p>
 </div>
 <div class="slide" id="id6">
-<h1>表达： 从列表取 ? 的数</h1>
-<div class="incremental big"><div class="highlight"><pre><span class="err">λ</span> <span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">filter</span> <span class="o">?</span> <span class="n">x</span>
+<h1>显然正确的代码</h1>
+<p class="center huge">一、贴近自然语言描述</p>
+<p class="center">如何让代码更直接地表达你的想法</p>
+<p class="handout">现在正式切入本次分享的题目</p>
+<p class="handout">显然正确的代码，这是个很虚词语，其实我想说的就是代码质量，
+代码质量也还是很虚，世界上有这么多编程风格，每一种都有它独到的地方，
+到底什么样的代码是好的代码，很难有一个统一的标准。
+那今天既然是我给大家分享，那就只好先用我的标准啦，贴近自然语言，大家要是对这个有意见，我们再交流。</p>
+<p class="handout">OK，我们就不纠结这个问题了，直接看代码，大家就会明白我要表达的是啥意思啦。</p>
+</div>
+<div class="slide" id="id7">
+<h1>问题1</h1>
+<p class="center huge">从列表取大于10且小于100的数</p>
+<div class="incremental center huge"><div class="highlight"><pre><span class="nf">filter</span> <span class="p">(</span> <span class="p">(</span><span class="o">&gt;</span><span class="mi">10</span><span class="p">)</span> <span class="p">`</span><span class="n">and</span><span class="p">`</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">)</span> <span class="p">)</span>
+</pre></div>
+</div><p class="handout">这个例子够简单了，不过我想也没有太多语言能想这个代码这样和问题描述如此贴近吧。
+下面我们就把它拆开来，它是由哪些部分拼起来的。</p>
+</div>
+<div class="slide" id="id8">
+<h1>分解： 从列表取 ? 的数</h1>
+<div class="incremental big"><div class="highlight"><pre><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">filter</span> <span class="o">?</span> <span class="n">x</span>
 </pre></div>
 </div><p class="incremental">不如直接点：</p>
 <div class="incremental big"><div class="highlight"><pre><span class="nf">filter</span> <span class="o">?</span>
 </pre></div>
-</div></div>
-<div class="slide" id="id7">
-<h1>表达： 大于10</h1>
-<div class="incremental big"><div class="highlight"><pre><span class="err">λ</span> <span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">10</span>
+</div><p class="handout">首先，我们先考虑这个大的框架，就是从列表取符合某个条件的数，一个lambda函数就可以搞定，
+这个很普通，但是按照我们上面介绍的curry特性，我们可以更进一步，写成这种形式，这两个表达式是等价的。
+Curry特性省了我们很多代码。</p>
+</div>
+<div class="slide" id="id9">
+<h1>分解： 大于10</h1>
+<div class="incremental big"><div class="highlight"><pre><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">10</span>
 </pre></div>
 </div><p class="incremental">不如直接点：</p>
 <div class="incremental big"><div class="highlight"><pre><span class="p">(</span><span class="o">&gt;</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
-</div></div>
-<div class="slide" id="id8">
-<h1>表达： 小于100</h1>
+</div><p class="handout">然后我们来考虑具体过滤条件，大于10，也很简单，一个lambda函数搞定，但我们可以再一次应用我们的curry特性，
+把它写成等价形式，是不是更直接？
+你可以看作是从 (x&gt;10) 里面把x拿掉，就产生了一个这样函数，当你给它传一个参数，它就把那个x的空给补上。</p>
+</div>
+<div class="slide" id="id10">
+<h1>分解： 小于100</h1>
 <p class="incremental">同样：</p>
 <div class="incremental big"><div class="highlight"><pre><span class="p">(</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">)</span>
 </pre></div>
-</div></div>
-<div class="slide" id="id9">
-<h1>表达： 且</h1>
+</div><p class="handout">这个就没什么悬念了</p>
+</div>
+<div class="slide" id="id11">
+<h1>分解： 且</h1>
 <div class="incremental big"><div class="highlight"><pre><span class="o">&amp;&amp;</span>
 </pre></div>
-</div><div class="incremental big"><div class="highlight"><pre><span class="ow">::</span> <span class="kt">Bool</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+</div><div class="incremental big"><div class="highlight"><pre><span class="ow">::</span> <span class="kt">Bool</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
 </pre></div>
 </div><p class="red incremental">类型不对</p>
+<p class="handout">最后，我们还剩下一个 且 ，我们知道and操作符，接受两个bool值返回他们的且，但很遗憾在这里类型不匹配</p>
 </div>
-<div class="slide" id="id10">
-<h1>表达： 且</h1>
+<div class="slide" id="id12">
+<h1>分解： 且</h1>
 <div class="current big"><div class="highlight"><pre><span class="o">?</span>
 
-   <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
+<span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
 <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
 <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
 </pre></div>
-</div></div>
-<div class="slide" id="id11">
-<h1>表达： 且</h1>
-<div class="current big"><div class="highlight"><pre><span class="nf">liftA2</span> <span class="p">(</span><span class="o">&amp;&amp;</span><span class="p">)</span>
-
-   <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
-<span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
-<span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
-</pre></div>
-</div></div>
-<div class="slide" id="id12">
-<h1>表达： 且</h1>
-<div class="current big"><div class="highlight"><pre><span class="p">(</span><span class="o">&amp;&amp;&amp;</span><span class="p">)</span> <span class="ow">=</span> <span class="n">liftA2</span> <span class="p">(</span><span class="o">&amp;&amp;</span><span class="p">)</span>
-
-   <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
-<span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
-<span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
-</pre></div>
-</div></div>
+</div><p class="handout">因为我们需要组合的是两个判断函数，而不是简单的布尔值。</p>
+</div>
 <div class="slide" id="id13">
-<h1>拼在一块：</h1>
-<div class="incremental big"><div class="highlight"><pre><span class="nf">filter</span> <span class="p">(</span> <span class="p">(</span><span class="o">&gt;</span><span class="mi">10</span><span class="p">)</span> <span class="o">&amp;&amp;&amp;</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">)</span> <span class="p">)</span>
+<h1>分解： 且</h1>
+<div class="current big"><div class="highlight"><pre><span class="nf">and</span> <span class="n">f</span> <span class="n">g</span> <span class="ow">=</span> <span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">x</span> <span class="o">&amp;&amp;</span> <span class="n">g</span> <span class="n">x</span>
+
+<span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
+<span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
+<span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
 </pre></div>
-</div><div class="incremental"><div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="kr">let</span> <span class="n">foo</span> <span class="ow">=</span> <span class="n">filter</span> <span class="p">(</span> <span class="p">(</span><span class="o">&gt;</span><span class="mi">10</span><span class="p">)</span> <span class="o">&amp;&amp;&amp;</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">)</span> <span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">foo</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">20</span><span class="p">]</span>
-<span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span> <span class="o">...</span> <span class="p">]</span>
-</pre></div>
-</div></div>
+</div><p class="handout">我们当然可以再一次专门定义一个函数来解决这个问题
+这样我们的问题貌似就全部解决了。</p>
+</div>
 <div class="slide" id="id14">
-<h1>问题2</h1>
-<p class="incremental">取http get参数&quot;name&quot;，前面加上&quot;hello&quot;返回回去。</p>
-<div class="incremental"><div class="highlight"><pre><span class="nf">webapp</span> <span class="ow">::</span> <span class="kt">Application</span>
-<span class="nf">webapp</span> <span class="ow">=</span> <span class="kr">do</span>
-    <span class="n">name</span> <span class="ow">&lt;-</span> <span class="n">look</span> <span class="s">&quot;name&quot;</span>
-    <span class="n">response</span> <span class="p">(</span><span class="s">&quot;hello &quot;</span><span class="o">++</span><span class="n">name</span><span class="p">)</span>
+<h1>分解： 且</h1>
+<div class="current big"><div class="highlight"><pre><span class="o">$</span> <span class="n">lambdabot</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kt">:</span><span class="n">pl</span> <span class="nf">\</span><span class="n">f</span> <span class="n">g</span> <span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">x</span> <span class="o">&amp;&amp;</span> <span class="n">g</span> <span class="n">x</span>
+<span class="nf">liftA2</span> <span class="p">(</span><span class="o">&amp;&amp;</span><span class="p">)</span>
 </pre></div>
-</div><p class="incremental red">但是，如果用户没有传参数的话。。。</p>
+</div><p class="handout">但实际上， and 函数甚至也有一个更直接的实现，
+haskell有意思的地方之一就是它有很多有意思的工具，比如说这个lambdabot，
+里面这个 pl 命令可以把lambda表达式转换成函数组合的风格，
+比如刚才这个and函数的定义就被转换成了一个 liftA2 的调用，
+也就是说，and函数实际上是 liftA2 把 &amp;&amp; 函数提升一下的结果！
+至于liftA2函数就不在今天的范畴了，大家有兴趣可以去了解一下 Applicative。</p>
 </div>
 <div class="slide" id="id15">
-<h1>显然正确的代码</h1>
-<p class="center huge">要能主动暴露自然语言不严谨之处</p>
-<p class="incremental center big">静态类型系统</p>
-</div>
+<h1>分解： 且</h1>
+<div class="current big"><div class="highlight"><pre><span class="nf">and</span> <span class="ow">=</span> <span class="n">liftA2</span> <span class="p">(</span><span class="o">&amp;&amp;</span><span class="p">)</span>
+
+<span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
+<span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
+<span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
+</pre></div>
+</div></div>
 <div class="slide" id="id16">
-<h1>函数式编程源起</h1>
-<p class="center huge">Can Programming Be Liberated from the von Neumann Style?</p>
-<p class="right">by John Backus 1978</p>
-</div>
+<h1>合并</h1>
+<div class="center huge"><div class="highlight"><pre><span class="nf">filter</span> <span class="p">(</span> <span class="p">(</span><span class="o">&gt;</span><span class="mi">10</span><span class="p">)</span> <span class="p">`</span><span class="n">and</span><span class="p">`</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">)</span> <span class="p">)</span>
+</pre></div>
+</div></div>
 <div class="slide" id="id17">
-<h1>冯诺依曼模型的问题</h1>
-<p class="incremental huge center">依赖执行顺序的复杂的状态机模型</p>
-<ul class="incremental simple">
-<li>不容易理解</li>
-<li>不容易组合</li>
-</ul>
-</div>
-<div class="slide" id="the-rise-of-haskell">
-<h1>The rise of Haskell</h1>
-<ul class="middle incremental simple">
-<li><strong>September 1987.</strong> Initial meeting at FPCA.</li>
-<li><strong>1 April 1990.</strong>   Version 1.0 Report was published.</li>
-<li><strong>May 1996.</strong>       Version 1.3 Report with Monadic I/O.</li>
-<li><strong>February 1999</strong>   Haskell 98 Report was published.</li>
-<li><strong>July 2010</strong> Haskell 2010 Report was published.</li>
-</ul>
-</div>
-<div class="slide" id="haskell-is-lazy">
-<h1>Haskell is lazy</h1>
-<ul class="middle incremental simple">
-<li><strong>Pros:</strong> 更强大的组合能力</li>
-<li><strong>Pros:</strong> 与副作用本质上不兼容</li>
-<li><strong>Cons:</strong> 存在运行时开销</li>
-<li><strong>Cons:</strong> 不容易预测内存占用（解决方法：静态分析和heap profile）</li>
-</ul>
-</div>
-<div class="slide" id="id18">
-<h1>举一个简单的例子</h1>
-<p>在一个400米的环形跑道上</p>
-<p>A以每秒一米的速度开跑</p>
-<p>B以每秒两米的速度开跑</p>
-<p>问他们何时相遇？</p>
-</div>
-<div class="slide" id="id19">
-<h1>举一个简单的例子</h1>
-<ul class="incremental code-list">
-<li><div class="first"><div class="highlight"><pre><span class="nf">a</span> <span class="ow">=</span> <span class="n">iterate</span> <span class="p">((`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">400</span><span class="p">)</span> <span class="o">.</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span> <span class="mi">0</span>
-<span class="c1">-- [0, 1, 2, 3, 4...]</span>
-</pre></div>
-</div></li>
-<li><div class="first"><div class="highlight"><pre><span class="nf">b</span> <span class="ow">=</span> <span class="n">iterate</span> <span class="p">((`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">400</span><span class="p">)</span> <span class="o">.</span> <span class="p">(</span><span class="o">+</span><span class="mi">2</span><span class="p">))</span> <span class="mi">1</span>
-<span class="c1">-- [1, 3, 5, 7, 9...]</span>
-</pre></div>
-</div></li>
-<li><div class="first"><div class="highlight"><pre><span class="nf">findIndex</span> <span class="p">(</span><span class="n">uncurry</span> <span class="p">(</span><span class="o">==</span><span class="p">))</span> <span class="p">(</span><span class="n">zip</span> <span class="n">a</span> <span class="n">b</span><span class="p">)</span>
-<span class="c1">-- Just 399</span>
-</pre></div>
-</div></li>
-</ul>
-</div>
-<div class="slide" id="haskell-is-pure">
-<h1>Haskell is pure</h1>
-<ul class="big incremental simple">
-<li>没有副作用</li>
-<li>不容易出错</li>
-<li>编译器可以做大量优化</li>
-<li>很容易并行化</li>
-</ul>
-</div>
-<div class="slide" id="id20">
-<h1>纯函数是个好抽象</h1>
-<p><tt class="docutils literal">(.)</tt> 函数管道</p>
-<div class="incremental"><div class="highlight"><pre><span class="p">(</span><span class="o">.</span><span class="p">)</span> <span class="ow">::</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">c</span>
+<h1>函数管道 (.)</h1>
+<div class="big"><div class="highlight"><pre><span class="p">(</span><span class="o">.</span><span class="p">)</span> <span class="ow">::</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span>
+    <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span>
+    <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span>
 <span class="p">(</span><span class="n">f</span> <span class="o">.</span> <span class="n">g</span><span class="p">)</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">f</span> <span class="p">(</span><span class="n">g</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
-</div><pre class="incremental literal-block">
+</div><pre class="literal-block">
    +--------------------+
    |   +---+    +---+   |
 &lt;&lt;-c---c---b----b---a---a-&lt;&lt;-
    |   +---+    +---+   |
    +--------------------+
 </pre>
+<p class="handout">在看下一个例子之前，我先介绍一下这个函数，这个组合函数类似unix管道，
+它把两个函数组合在一起，当你向它传参数的时候，它先把参数传给右边的函数，
+再把右边函数的返回值传给左边函数。
+加上前面介绍过的中缀语法形式，它可以把一对函数连在一起，非常节省代码。</p>
 </div>
-<div class="slide" id="id21">
-<h1>感受组合的魅力</h1>
-<ul class="incremental code-list">
-<li><div class="first"><div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="p">(</span> <span class="p">(</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">.</span> <span class="p">(`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">2</span><span class="p">)</span> <span class="p">)</span> <span class="mi">4</span>
-</pre></div>
-</div></li>
-<li><div class="first"><div class="highlight"><pre><span class="kt">True</span>
-</pre></div>
-</div></li>
-<li><div class="first"><div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">filter</span> <span class="p">((</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">.</span> <span class="p">(`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">2</span><span class="p">))</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">10</span><span class="p">]</span>
-</pre></div>
-</div></li>
-<li><div class="first"><div class="highlight"><pre><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
-</pre></div>
-</div></li>
-</ul>
-</div>
-<div class="slide" id="id22">
-<h1>来自微博的问题</h1>
+<div class="slide" id="id18">
+<h1>问题2</h1>
 <p>在二维数组里找长度大于5的子数组</p>
 <p>在符合要求的子数组里找所有偶数</p>
 <p>如果数据小于10则乘以2,大于10除以2</p>
 <p>最后统计符合要求的数据的和</p>
+<p class="handout">我们来看这个例子，这是微博上一个朋友发的题目。其实传统命令式风格的程序，
+写几个循环，弄几个中间数组中间变量，也可以搞定这个问题。
+我们看看haskell函数式程序如何解决这个问题</p>
 </div>
-<div class="slide" id="id23">
+<div class="slide" id="id19">
 <h1>来自微博的问题</h1>
 <div class="highlight"><pre><span class="nf">sum&#39;</span> <span class="ow">=</span> <span class="n">sum</span>
        <span class="o">.</span> <span class="n">map</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="kr">if</span> <span class="n">x</span><span class="o">&lt;</span><span class="mi">10</span>
@@ -576,24 +568,37 @@ ul.auto-toc {
        <span class="o">.</span> <span class="n">concat</span>
        <span class="o">.</span> <span class="n">filter</span> <span class="p">((</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">)</span> <span class="o">.</span> <span class="n">length</span><span class="p">)</span>
 </pre></div>
+<p class="handout">这个程序的含义我们要从下往上看，基本上和描述语言是一一对应的。
+最下面是取长度大于5的子数组，然后concat是把二维数组拼成一维，
+然后过滤出偶数，然后用map遍历一次，最后sum求和。</p>
 </div>
-<div class="slide" id="id24">
-<h1>抽象能力与性能不一定成反比</h1>
-<ul class="simple">
+<div class="slide" id="id20">
+<h1>抽象与性能不是死敌</h1>
+<p class="big">GHC 编译器优化</p>
+<ul class="big simple">
 <li>内联（跨模块）</li>
-<li>代码转换</li>
+<li>等价代码转换</li>
 </ul>
+<p class="handout">看到这么多函数式程序，我想很多同学都跟我一样想，这么多小函数套小函数，
+性能一定很差吧，确实对于很多动态语言来说，函数调用就是很大一部分开销。
+不过haskell通过编译器进行代码优化，可以同时获得代码的抽象能力以及很好的性能。
+最主要的手段就是内联，和等价代码转换，而且内联还可以跨模块，这个还是很牛逼的。</p>
 </div>
-<div class="slide" id="id25">
+<div class="slide" id="id21">
 <h1>查看中间代码</h1>
-<p>GHC编译器中间代码是Haskell的子集</p>
 <pre class="huge literal-block">
 ghc -O
     -ddump-simpl
     foo.hs
 </pre>
+<p>GHC编译器中间代码是Haskell的子集</p>
+<p class="handout">GHC编译器中间代码用的也是Haskell的一个子集，而且还是带类型的，这个很有意思，
+对于GHC的开发者来说，这意味着他们可以比较放心地对代码进行转换，
+因为它可以对中间代码进行类型检查，类型检查可以保证代码转换基本上不会出太大问题。
+还有一个好处就是，我们可以很方便地查看编译器优化后的代码，因为它还是haskell的语法。
+这个命令就是用来导出中间代码的。下面我们用这个命令看几个例子。</p>
 </div>
-<div class="slide" id="id26">
+<div class="slide" id="id22">
 <h1>查看中间代码</h1>
 <ul class="incremental code-list big nomargin">
 <li><div class="first"><div class="highlight"><pre><span class="p">(</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">.</span> <span class="p">(`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">2</span><span class="p">)</span>
@@ -606,8 +611,9 @@ ghc -O
 </pre></div>
 </li>
 </ul>
+<p class="handout">可以看到这两个小函数的组合经过内联和转换变成一个简单的判断语句了。</p>
 </div>
-<div class="slide" id="id27">
+<div class="slide" id="id23">
 <h1>查看中间代码</h1>
 <ul class="incremental code-list middle nomargin">
 <li><div class="first"><div class="highlight"><pre>  <span class="n">map</span> <span class="p">(</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
@@ -623,24 +629,42 @@ ghc -O
 </pre></div>
 </div></li>
 </ul>
+<p class="handout">而这个更复杂一些的例子，也被编译成一个平坦的递归，没有小函数，没有生成中间列表。</p>
+<p class="handout">可以说，也正是因为编译器有这个能力做这些优化，也才能使得这种编程风格变得实用。
+否则如果按照python对函数的实现，那真的是不太敢写这样的代码。</p>
 </div>
-<div class="slide" id="id28">
-<h1>静态类型系统</h1>
-<ul class="incremental big simple">
-<li>排除错误的程序</li>
-<li>允许正确的程序</li>
-<li>一言以蔽之：精确!</li>
-</ul>
+<div class="slide" id="id24">
+<h1>边界条件</h1>
+<p>取http get参数&quot;name&quot;，前面加上&quot;hello&quot;返回回去。</p>
+<div class="highlight"><pre><span class="nf">webapp</span> <span class="ow">::</span> <span class="kt">Application</span>
+<span class="nf">webapp</span> <span class="n">req</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="kr">let</span> <span class="n">name</span> <span class="ow">=</span> <span class="n">lookup</span> <span class="s">&quot;name&quot;</span> <span class="p">(</span><span class="n">queryString</span> <span class="n">req</span><span class="p">)</span>
+    <span class="n">response</span> <span class="p">(</span><span class="s">&quot;hello &quot;</span><span class="o">++</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+<p class="incremental red">但是，如果用户没有传参数的话。。。</p>
+<p class="handout">我们看这个简单的web应用，它从querystring里面取一个name参数，加上hello后返回回去。
+代码看起来也非常简单，和我们的问题描述很接近，但是，如果用户没有传参数过来的话，
+就要崩溃了。实际上类似这样的问题，至少在我的python代码里面，经常碰到。</p>
 </div>
-<div class="slide" id="case-study">
-<h1>Case study</h1>
-<p><tt class="docutils literal">lookup</tt> 应该返回什么类型？</p>
+<div class="slide" id="id25">
+<h1>显然正确的代码</h1>
+<p class="center huge">二、要能主动暴露自然语言不严谨之处</p>
+<p class="incremental huge center">解决方案：静态类型系统</p>
+<p class="handout">这就引出我想分享的第二点内容，代码光能贴近自然语言是不够的，因为自然语言并不精确，
+要少出bug，我们的代码需要更严谨一些，如何做到严谨，我们需要强大的静态类型系统。
+我们先来看看在haskell里面我们如何处理这个问题。</p>
+</div>
+<div class="slide" id="id26">
+<h1>问题2 - 继续</h1>
 <div class="huge"><div class="highlight"><pre><span class="nf">lookup</span> <span class="ow">::</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="kt">Map</span> <span class="n">k</span> <span class="n">v</span>
        <span class="ow">-&gt;</span> <span class="o">?</span>
 </pre></div>
-</div></div>
-<div class="slide" id="id29">
-<h1>Case study</h1>
+</div><p class="big current"><tt class="docutils literal">lookup</tt> 应该返回什么类型？</p>
+<p class="handout">大家看这个lookup函数，它的作用是从map中根据key查找value的，大家觉得它应该返回什么类型？
+这里k代表key，v代表value</p>
+</div>
+<div class="slide" id="id27">
+<h1>问题2 - 继续</h1>
 <p class="big"><tt class="docutils literal">v</tt> ?</p>
 <ul class="huge code-list nomargin incremental">
 <li><div class="first"><div class="highlight"><pre><span class="nf">lookup</span> <span class="ow">::</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="kt">Map</span> <span class="n">k</span> <span class="n">v</span>
@@ -660,10 +684,12 @@ ghc -O
 </pre>
 </li>
 </ul>
+<p class="handout">是返回 v 吗？实际上很多语言都是这么设计的，但是这正式造成上面我们崩溃的原因。
+因为当我们把lookup的返回值传给其他函数进行处理的时候，从类型上看没有任何问题，但运行时却崩溃了。</p>
 </div>
-<div class="slide" id="id30">
-<h1>Case study</h1>
-<p>正确答案： <tt class="docutils literal">Maybe v</tt></p>
+<div class="slide" id="id28">
+<h1>问题2 - 继续</h1>
+<p>答案： <tt class="docutils literal">Maybe v</tt></p>
 <div class="huge"><div class="highlight"><pre><span class="nf">lookup</span> <span class="ow">::</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="kt">Map</span> <span class="n">k</span> <span class="n">v</span>
        <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="n">v</span>
 </pre></div>
@@ -676,51 +702,136 @@ ghc -O
 </pre>
 </li>
 </ul>
+<p class="handout">在 Haskell 里面，它的返回值叫做 Maybe v ，有了它，这个代码就变成了一个静态的类型错误，
+而不是运行时错误。那Maybe类型是个什么东西呢</p>
 </div>
-<div class="slide" id="what-is-maybe">
-<h1>What is Maybe</h1>
+<div class="slide" id="maybe">
+<h1>Maybe - 显式表达异常情况</h1>
 <div class="center huge"><div class="highlight"><pre><span class="kr">data</span> <span class="kt">Maybe</span> <span class="n">a</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="n">a</span>
               <span class="o">|</span> <span class="kt">Nothing</span>
 </pre></div>
-</div></div>
-<div class="slide" id="maybe">
-<h1>Maybe - 显式表达异常分支</h1>
-<ul class="code-list big incremental">
-<li><div class="first"><div class="highlight"><pre><span class="nf">fromMaybe</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
-<span class="nf">fromMaybe</span> <span class="kr">_</span> <span class="p">(</span><span class="kt">Just</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=</span> <span class="n">a</span>
-<span class="nf">fromMaybe</span> <span class="n">a</span> <span class="kt">Nothing</span>  <span class="ow">=</span> <span class="n">a</span>
-</pre></div>
-</div></li>
-<li><div class="first"><div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">fromMaybe</span> <span class="mi">0</span>
-      <span class="p">(</span><span class="n">lookup</span> <span class="n">k</span> <span class="n">empty</span><span class="p">)</span>
-<span class="mi">0</span>
-</pre></div>
-</div></li>
-</ul>
+</div><p class="handout">从名字上来看，Maybe就是用来表达一个值可能存在也可能不存在的情况，存在的话就是 Just a，
+不存在的话就是 Nothing。</p>
+<p class="handout">准确地说，Maybe是一个Haskell里面一个自定义数据类型，里面的小写字母 a 是个类型变量，它可以是任何类型。
+如果要类比的话，可以把Maybe看做是个泛型。
+大家可能还会联想到其他语言的比如python的none对象，
+Maybe其实就是一个显式表达出来的none，显式表达的好处就是，代码而不会一不小心忽略对它的处理，因为你的类型会不匹配。</p>
 </div>
-<div class="slide" id="monad">
-<h1>Monad 也是个好抽象</h1>
-<p class="huge center">什么是Monad</p>
+<div class="slide" id="id29">
+<h1>类型系统的终极目标</h1>
+<ul class="big simple">
+<li>排除所有错误的程序</li>
+<li>允许所有正确的程序</li>
+<li>一言以蔽之：精确!</li>
+</ul>
+<p class="handout">对于静态类型系统的设计者来说，终极的目标就是要能排除所有错误的程序，也就是说把所有运行时错误变成类型错误，提前捕获，允许所有正确的程序，就是说类型系统不能挡我们的路，对于我们想要表达的程序，我们知道它是正确的，类型系统不能成为我们的绊脚石，很多时候我们喜欢动态语言的原因也就是这个，虽然他们不能帮我们发现问题，但至少它不挡我的路，我可以比较随心所欲的写我的程序。</p>
+</div>
+<div class="slide" id="id30">
+<h1>Haskell类型系统作用</h1>
+<p class="big">区分纯函数式代码和命令式代码</p>
+<div class="big"><div class="highlight"><pre><span class="nf">upper</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
+
+<span class="nf">bomb</span>  <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="kt">String</span>
+</pre></div>
+</div><p class="handout">刚才说的是个比较完美的境界了，按照这个目标的话，我想haskell的类型系统还差很远，
+但是已经可以帮我们作很多事情了，比如区分纯函数式代码和命令式代码，
+比如通过签名我们就能知道upper只能是个字符串转换函数，它不会修改全局变量，不会写文件，
+除了把输入字符串变成输出字符串它不会干别的，而 readFile 的返回值是 IO String，
+意味着它可以作任何事情，比如发射个导弹啥的。</p>
 </div>
 <div class="slide" id="id31">
+<h1>Haskell类型系统作用</h1>
+<p class="big">精确的文档</p>
+<div class="big"><div class="highlight"><pre><span class="nf">readChan</span> <span class="ow">::</span> <span class="kt">Chan</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="n">a</span>
+</pre></div>
+</div><p>这个函数会阻塞吗？</p>
+<p class="handout">把类型变得更精确的另一个好处就是，类型签名本身可以提供更多的信息，
+比如这个函数，从签名可以看出，它应该是从一个channel读一个数据出来。
+再多想一步，其实我们从类型就可以看出它会不会阻塞。</p>
+<p class="handout">我们可以想象一下，假设它不阻塞，那如果这个channel是空的，它得返回什么呢？
+所以阻塞接口会返回 a，而不阻塞的接口应该返回 Maybe a</p>
+</div>
+<div class="slide" id="id32">
+<h1>Haskell类型系统作用</h1>
+<p class="big">精确的文档</p>
+<div class="big"><div class="highlight"><pre><span class="nf">tryReadChan</span> <span class="ow">::</span> <span class="kt">Chan</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="p">(</span><span class="kt">Maybe</span> <span class="n">a</span><span class="p">)</span>
+</pre></div>
+</div><p>这个呢？</p>
+</div>
+<div class="slide" id="haskell-is-lazy">
+<h1>Haskell is lazy</h1>
+<p>在一个400米的环形跑道上</p>
+<p>A以每秒一米的速度开跑</p>
+<p>B以每秒两米的速度开跑</p>
+<p>问他们何时相遇？</p>
+<p class="handout">最后再给一个例子，让我们看看惰性求值能够如何帮助我们以更直接的方式编写程序。</p>
+</div>
+<div class="slide" id="id33">
+<h1>Haskell is lazy</h1>
+<div class="big"><div class="highlight"><pre><span class="nf">iterate</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="nf">iterate</span> <span class="n">f</span> <span class="n">a</span> <span class="ow">=</span> <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="n">f</span> <span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="n">f</span> <span class="n">f</span> <span class="n">a</span> <span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div><div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">iterate</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="mi">0</span>
+<span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
+</pre></div>
+<p class="handout">在给出程序之前，先介绍一个迭代函数，给它传一个函数和一个初始值，
+它会对这个值不断应用这个函数，并把每一次应用生成一个无限列表。</p>
+</div>
+<div class="slide" id="id34">
+<h1>Haskell is lazy</h1>
+<div class="highlight"><pre><span class="nf">a</span> <span class="ow">=</span> <span class="n">iterate</span> <span class="p">((`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">400</span><span class="p">)</span> <span class="o">.</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span> <span class="mi">0</span>
+<span class="c1">-- [0, 1, 2, 3, 4...]</span>
+
+<span class="nf">b</span> <span class="ow">=</span> <span class="n">iterate</span> <span class="p">((`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">400</span><span class="p">)</span> <span class="o">.</span> <span class="p">(</span><span class="o">+</span><span class="mi">2</span><span class="p">))</span> <span class="mi">0</span>
+<span class="c1">-- [0, 2, 4, 8, 10...]</span>
+
+<span class="nf">findIndex</span> <span class="p">(</span><span class="n">uncurry</span> <span class="p">(</span><span class="o">==</span><span class="p">))</span> <span class="p">(</span><span class="n">tail</span> <span class="p">(</span><span class="n">zip</span> <span class="n">a</span> <span class="n">b</span><span class="p">))</span>
+<span class="c1">-- Just 399</span>
+</pre></div>
+<p class="handout">我们可以用这个迭代函数来模拟这个跑步的过程，把它每一秒的位置生成一个无穷列表，
+每一秒位置+1再摸上400，因为是个环形跑道，然后把a和b的数据用zip一一对应起来，
+用tail去掉第一个元素，然后找到第一个相等的索引，也就是他们相遇的时间了。</p>
+</div>
+<div class="slide" id="lazy-i-o">
+<h1>Lazy I/O</h1>
+<div class="big"><div class="highlight"><pre><span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="n">s</span> <span class="ow">&lt;-</span> <span class="kt">Lazy</span><span class="o">.</span><span class="n">readFile</span> <span class="n">input</span>
+    <span class="kt">Lazy</span><span class="o">.</span><span class="n">writeFile</span> <span class="n">output</span> <span class="n">s</span>
+</pre></div>
+</div><p class="big">消耗常数内存</p>
+<p class="handout">惰性求值除了能让我们以一种全新的结构编写程序，对于一些I/O问题也有奇效，
+比如这个程序，它把输入文件的内容写到输出文件中去，最有意思的是它只消耗常数内存，
+也就是说它运行时是流式处理的，读一块数据写一块数据，原因就在于 readFile 返回的是个
+惰性求值的字符串，它只在被求值的时候才去读内容。</p>
+<p class="handout">不过 Lazy I/O 只适合这种命令行工具的场景，运行完就退出了，不太适合编写持久运行的server，
+因为它很难控制句柄的生命周期，当然对于server的场景有其他库来进行流式数据处理，我们今天就不聊这个了。</p>
+</div>
+<div class="slide" id="q-a">
+<h1>Q &amp; A</h1>
+</div>
+<div class="slide" id="monad">
+<h1>Monad！</h1>
+<p class="huge center">什么是Monad</p>
+</div>
+<div class="slide" id="id35">
 <h1>什么是Monad</h1>
 <p class="huge center">Monad是对语句的重载</p>
 </div>
-<div class="slide" id="id32">
+<div class="slide" id="id36">
 <h1>定义重载</h1>
 <p class="huge center">重载：相同形式，不同含义</p>
 <p class="incremental"><tt class="docutils literal">a + b</tt> 的含义？</p>
 <p class="incremental"><tt class="docutils literal">1 + 2</tt> ?</p>
 <p class="incremental"><tt class="docutils literal">&quot;foo&quot; + &quot;bar&quot;</tt> ?</p>
 </div>
-<div class="slide" id="id33">
+<div class="slide" id="id37">
 <h1>定义语句</h1>
 <p class="huge center">语句：顺序执行的指令</p>
 <p class="incremental"><strong>顺序：</strong> 必须严格按顺序执行</p>
 <p class="incremental"><strong>执行：</strong> 对执行环境产生副作用</p>
 <p class="incremental"><strong>环境：</strong> 负责执行语句，并维护执行过程中的副作用</p>
 </div>
-<div class="slide" id="id34">
+<div class="slide" id="id38">
 <h1>Monad - 重载语句</h1>
 <p>List Monad (list comprehension的马甲)</p>
 <pre class="literal-block">
@@ -732,7 +843,7 @@ do a &lt;- [1..10]
 -- [(1,10), (2,9), (2,10)...]
 </pre>
 </div>
-<div class="slide" id="id35">
+<div class="slide" id="id39">
 <h1>Monad - 重载语句</h1>
 <p>Parser Monad - 提供解析器的输入并维护中间状态</p>
 <div class="highlight"><pre><span class="kr">do</span> <span class="n">t</span>  <span class="ow">&lt;-</span> <span class="n">getTagName</span>
@@ -741,7 +852,7 @@ do a &lt;- [1..10]
    <span class="n">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="slide" id="id36">
+<div class="slide" id="id40">
 <h1>Monad - 重载语句</h1>
 <p>IO Monad - 提供命令式编程风格</p>
 <pre class="literal-block">
@@ -756,7 +867,7 @@ echo2:haskell
 echo3:haskell
 </pre>
 </div>
-<div class="slide" id="id37">
+<div class="slide" id="id41">
 <h1>Monad - 重载语句</h1>
 <p>Resource Monad - 在 <tt class="docutils literal">IO</tt> 的基础上提供释放资源的能力。</p>
 <div class="highlight"><pre><span class="kr">do</span> <span class="n">f</span> <span class="ow">&lt;-</span> <span class="n">openFile</span> <span class="s">&quot;data&quot;</span>
@@ -765,9 +876,32 @@ echo3:haskell
    <span class="o">...</span>
 </pre></div>
 </div>
-<div class="slide" id="id38">
+<div class="slide" id="id42">
 <h1>重复一次</h1>
 <p class="center huge">Monad提供重载命令式语句的语义的能力</p>
+</div>
+<div class="slide" id="id43">
+<h1>函数式编程源起</h1>
+<p class="center huge">Can Programming Be Liberated from the von Neumann Style?</p>
+<p class="right">by John Backus 1978</p>
+</div>
+<div class="slide" id="id44">
+<h1>冯诺依曼模型的问题</h1>
+<p class="incremental huge center">依赖执行顺序的复杂的状态机模型</p>
+<ul class="incremental simple">
+<li>不容易理解</li>
+<li>不容易组合</li>
+</ul>
+</div>
+<div class="slide" id="the-rise-of-haskell">
+<h1>The rise of Haskell</h1>
+<ul class="middle incremental simple">
+<li><strong>September 1987.</strong> Initial meeting at FPCA.</li>
+<li><strong>1 April 1990.</strong>   Version 1.0 Report was published.</li>
+<li><strong>May 1996.</strong>       Version 1.3 Report with Monadic I/O.</li>
+<li><strong>February 1999</strong>   Haskell 98 Report was published.</li>
+<li><strong>July 2010</strong> Haskell 2010 Report was published.</li>
+</ul>
 </div>
 <div class="slide" id="ghc-haskell">
 <h1>GHC - 工业级Haskell实现</h1>
@@ -781,23 +915,11 @@ echo3:haskell
 <li>Profiling支持，包括time/allocation以及多种heap profiling。</li>
 </ul>
 </div>
-<div class="slide" id="id39">
+<div class="slide" id="id45">
 <h1>其他实现</h1>
 <ul class="incremental simple">
 <li>UHC 有字节码解释器和Javascript后端。</li>
 <li>其他 [<a class="reference external" href="http://www.haskell.org/haskellwiki/Implementations">http://www.haskell.org/haskellwiki/Implementations</a>]</li>
-</ul>
-</div>
-<div class="slide" id="q-a">
-<h1>Q &amp; A</h1>
-</div>
-<div class="slide" id="learn-haskell-fast-and-hard">
-<h1>Learn Haskell Fast and Hard</h1>
-<ul class="simple">
-<li>核心语法 (case let where ADT)</li>
-<li>语法糖 (pattern match, type class)</li>
-<li>类型推导</li>
-<li>高阶类型系统扩展</li>
 </ul>
 </div>
 </div>
