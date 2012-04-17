@@ -18,21 +18,25 @@
 
 * Haskell介绍
 
+.. class:: handout
+
+    今天的话题是叫做 编写显然正确的代码 。
+
+    非常高兴来到QCon和大家作这个分享，作为一个码农，
+    我能分享的也就是一些代码了，今天这些代码都跟Haskell有关，
+    所以在前面想先快速地过一下haskell基本的语法。
+
 Haskell速成 - 函数定义
 ============================
 
 .. class:: big
-.. raw:: html
+.. code-block:: haskell
 
-  <div class="highlight haskell-quick"><pre><span class="nf function-name">filter</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span><span class="ow">-&gt;</span><span class="kt">Bool</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
-  <span class="nf">filter</span> <span class="n">p</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">[]</span>
-  <span class="nf">filter</span> <span class="n">p</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span>
-       <span class="o">|</span> <span class="n">p</span> <span class="n">x</span>       <span class="ow">=</span> <span class="n">x</span> <span class="kt">:</span> <span class="n">filter</span> <span class="n">p</span> <span class="n">xs</span>
-       <span class="o">|</span> <span class="n">otherwise</span> <span class="ow">=</span> <span class="n">filter</span> <span class="n">p</span> <span class="n">xs</span>
-  </pre></div>
-  <script>
-  desc('.haskell-quick .function-name', '函数名')
-  </script>
+  filter :: (a->Bool) -> [a] -> [a]
+  filter p [] = []
+  filter p (x:xs)
+       | p x       = x : filter p xs
+       | otherwise = filter p xs
 
 .. class:: handout
 
@@ -47,6 +51,7 @@ Haskell速成 - Curry化
 .. code-block:: haskell
 
     add :: Int -> Int -> Int
+
     (add 1)    :: Int -> Int
 
     >>> let inc = add 1
@@ -129,14 +134,10 @@ Haskell速成 - 结束
 
 .. class:: handout
 
-    现在正式切入本次分享的题目
+    现在正式进入本次分享的题目
 
-    显然正确的代码，这是个很虚词语，其实我想说的就是代码质量，
-    代码质量也还是很虚，世界上有这么多编程风格，每一种都有它独到的地方，
-    到底什么样的代码是好的代码，很难有一个统一的标准。
-    那今天既然是我给大家分享，那就只好先用我的标准啦，贴近自然语言，大家要是对这个有意见，我们再交流。
-
-    OK，我们就不纠结这个问题了，直接看代码，大家就会明白我要表达的是啥意思啦。
+    显然正确的代码，这是个很虚的话题，我对它分解成两部分，
+    第一部分就是如何让代码更直接地表达我们的意图，我先举个例子。
 
 问题1
 =====
