@@ -416,7 +416,7 @@ desc('.haskell-quick .function-name', '函数名')
 </div>
 <div class="slide" id="haskell-lambda">
 <h1>Haskell速成 - lambda</h1>
-<div class="big"><div class="highlight"><pre><span class="nf">\</span><span class="n">a</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<div class="center huge"><div class="highlight"><pre><span class="nf">\</span><span class="n">a</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
 </pre></div>
 </div><p class="handout">这个lambda语法有够简单了，一条斜杠定义lambda函数的开始，后面空格分隔的是形参，箭头后面就是函数定义。</p>
 </div>
@@ -438,7 +438,7 @@ desc('.haskell-quick .function-name', '函数名')
 <div class="slide" id="id7">
 <h1>问题1</h1>
 <p class="center huge">从列表取大于10且小于100的数</p>
-<div class="incremental center huge"><div class="highlight"><pre><span class="nf">filter</span> <span class="p">(</span> <span class="p">(</span><span class="o">&gt;</span><span class="mi">10</span><span class="p">)</span> <span class="p">`</span><span class="n">and</span><span class="p">`</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">)</span> <span class="p">)</span>
+<div class="incremental center huge"><div class="highlight"><pre><span class="nf">filter</span> <span class="p">((</span><span class="o">&gt;</span><span class="mi">10</span><span class="p">)</span> <span class="p">`</span><span class="n">and</span><span class="p">`</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">))</span>
 </pre></div>
 </div><p class="handout">这个例子够简单了，不过我想也没有太多语言能想这个代码这样和问题描述如此贴近吧。
 下面我们就把它拆开来，它是由哪些部分拼起来的。</p>
@@ -523,12 +523,14 @@ haskell有意思的地方之一就是它有很多有意思的工具，比如说�
 <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
 <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
 </pre></div>
-</div></div>
+</div><p class="handout">所以 and 的实现可以这么直接</p>
+</div>
 <div class="slide" id="id16">
 <h1>合并</h1>
-<div class="center huge"><div class="highlight"><pre><span class="nf">filter</span> <span class="p">(</span> <span class="p">(</span><span class="o">&gt;</span><span class="mi">10</span><span class="p">)</span> <span class="p">`</span><span class="n">and</span><span class="p">`</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">)</span> <span class="p">)</span>
+<div class="center huge"><div class="highlight"><pre><span class="nf">filter</span> <span class="p">((</span><span class="o">&gt;</span><span class="mi">10</span><span class="p">)</span> <span class="p">`</span><span class="n">and</span><span class="p">`</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">))</span>
 </pre></div>
-</div></div>
+</div><p class="handout">最后把这些函数合并在一起</p>
+</div>
 <div class="slide" id="id17">
 <h1>函数管道 (.)</h1>
 <div class="big"><div class="highlight"><pre><span class="p">(</span><span class="o">.</span><span class="p">)</span> <span class="ow">::</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span>
@@ -539,11 +541,12 @@ haskell有意思的地方之一就是它有很多有意思的工具，比如说�
 </div><pre class="literal-block">
    +--------------------+
    |   +---+    +---+   |
-&lt;&lt;-c---c---b----b---a---a-&lt;&lt;-
+&lt;&lt;-c---c   b----b   a---a-&lt;&lt;-
    |   +---+    +---+   |
    +--------------------+
 </pre>
-<p class="handout">在看下一个例子之前，我先介绍一下这个函数，这个组合函数类似unix管道，
+<p class="handout">函数有很多中组合方式，刚才说的是一种，我们再来看另一种，
+这个组合函数类似unix管道，
 它把两个函数组合在一起，当你向它传参数的时候，它先把参数传给右边的函数，
 再把右边函数的返回值传给左边函数。
 加上前面介绍过的中缀语法形式，它可以把一对函数连在一起，非常节省代码。</p>
@@ -554,12 +557,12 @@ haskell有意思的地方之一就是它有很多有意思的工具，比如说�
 <p>在符合要求的子数组里找所有偶数</p>
 <p>如果数据小于10则乘以2,大于10除以2</p>
 <p>最后统计符合要求的数据的和</p>
-<p class="handout">我们来看这个例子，这是微博上一个朋友发的题目。其实传统命令式风格的程序，
-写几个循环，弄几个中间数组中间变量，也可以搞定这个问题。
-我们看看haskell函数式程序如何解决这个问题</p>
+<p class="handout">我们来看这个例子，这是微博上一个朋友发的题目。按照过程式风格的写法，
+大概就是几个循环，几个中间数组加中间变量。
+我们来看看haskell函数式程序的写法，看看和过程时写法有什么不同。</p>
 </div>
 <div class="slide" id="id19">
-<h1>来自微博的问题</h1>
+<h1>问题2</h1>
 <div class="highlight"><pre><span class="nf">sum&#39;</span> <span class="ow">=</span> <span class="n">sum</span>
        <span class="o">.</span> <span class="n">map</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="kr">if</span> <span class="n">x</span><span class="o">&lt;</span><span class="mi">10</span>
                       <span class="kr">then</span> <span class="n">x</span><span class="o">*</span><span class="mi">2</span>
@@ -568,9 +571,9 @@ haskell有意思的地方之一就是它有很多有意思的工具，比如说�
        <span class="o">.</span> <span class="n">concat</span>
        <span class="o">.</span> <span class="n">filter</span> <span class="p">((</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">)</span> <span class="o">.</span> <span class="n">length</span><span class="p">)</span>
 </pre></div>
-<p class="handout">这个程序的含义我们要从下往上看，基本上和描述语言是一一对应的。
-最下面是取长度大于5的子数组，然后concat是把二维数组拼成一维，
-然后过滤出偶数，然后用map遍历一次，最后sum求和。</p>
+<p class="handout">这个程序我们要从下往上读，和刚才的问题描述语言基本上是一一对应的。
+最下面filter取长度大于5的子数组，然后concat是把二维数组拼成一维，
+再来一个filter过滤出偶数，然后用map遍历一次，最后传给sum求和。</p>
 </div>
 <div class="slide" id="id20">
 <h1>抽象与性能不是死敌</h1>
@@ -579,10 +582,12 @@ haskell有意思的地方之一就是它有很多有意思的工具，比如说�
 <li>内联（跨模块）</li>
 <li>等价代码转换</li>
 </ul>
-<p class="handout">看到这么多函数式程序，我想很多同学都跟我一样想，这么多小函数套小函数，
-性能一定很差吧，确实对于很多动态语言来说，函数调用就是很大一部分开销。
-不过haskell通过编译器进行代码优化，可以同时获得代码的抽象能力以及很好的性能。
-最主要的手段就是内联，和等价代码转换，而且内联还可以跨模块，这个还是很牛逼的。</p>
+<p class="handout">看到这么多函数式程序，我想大家可能会想，这么多小函数套小函数，
+性能一定很差吧，尤其对于动态语言来说，函数调用是很大一块开销。
+但haskell通过编译器的优化，可以同时获得代码的抽象能力以及很好的性能。
+优化最主要的手段就是内联，还有等价代码转换，
+内联把分离开发的代码拉到一起，而代码转换对代码进行化简，最后得到执行效率更好的代码，
+而且内联还可以跨模块，这对haskell这样的语言来说很关键。</p>
 </div>
 <div class="slide" id="id21">
 <h1>查看中间代码</h1>
@@ -684,8 +689,9 @@ ghc -O
 </pre>
 </li>
 </ul>
-<p class="handout">是返回 v 吗？实际上很多语言都是这么设计的，但是这正式造成上面我们崩溃的原因。
-因为当我们把lookup的返回值传给其他函数进行处理的时候，从类型上看没有任何问题，但运行时却崩溃了。</p>
+<p class="handout">很多语言都是让它直接返回v，而问题就在这里。
+它使得我们的代码从类型上看没有任何问题，但运行时却崩溃了。
+因为v这个类型不能精确表达我们这里所有可能性，也就是查找不到的情况。</p>
 </div>
 <div class="slide" id="id28">
 <h1>问题2 - 继续</h1>
@@ -724,39 +730,78 @@ Maybe其实就是一个显式表达出来的none，显式表达的好处就是�
 <li>允许所有正确的程序</li>
 <li>一言以蔽之：精确!</li>
 </ul>
-<p class="handout">对于静态类型系统的设计者来说，终极的目标就是要能排除所有错误的程序，也就是说把所有运行时错误变成类型错误，提前捕获，允许所有正确的程序，就是说类型系统不能挡我们的路，对于我们想要表达的程序，我们知道它是正确的，类型系统不能成为我们的绊脚石，很多时候我们喜欢动态语言的原因也就是这个，虽然他们不能帮我们发现问题，但至少它不挡我的路，我可以比较随心所欲的写我的程序。</p>
+<p class="handout">对于静态类型系统的设计者来说，终极的目标一个是要能排除所有错误的程序，也就是说把所有运行时错误变成类型错误，提前捕获；
+另一个允许所有正确的程序，就是说类型系统不能挡我们的路，对于我们想要表达的程序，我们也知道它是正确的，这个时候类型系统不应该阻止我们表达，
+其实我们喜欢动态语言的原因也就是这个，虽然他们没有类型系统帮我们发现问题，但至少它不挡我的路，我可以比较随心所欲的写我的程序。</p>
 </div>
 <div class="slide" id="id30">
+<h1>Haskell类型系统特点</h1>
+<ul class="simple">
+<li>自动类型推导（不挡路）</li>
+<li>表达能力强<ul>
+<li>类型变量和类型构造器（泛型）</li>
+<li>typeclass 对类型的约束</li>
+<li>恕不一一列举
+[<a class="reference external" href="http://www.haskell.org/ghc/docs/7.4.1/html/users_guide/other-type-extensions.html">http://www.haskell.org/ghc/docs/7.4.1/html/users_guide/other-type-extensions.html</a>]</li>
+</ul>
+</li>
+</ul>
+<p class="handout">刚才说的是一个完美的境界了，我们看看Haskell离这个境界还有多远，</p>
+<p class="handout">首先它能实现自动类型推导，大部分时候你都完全不需要申明类型，
+编译器帮我们自动推导，不过实际上我们都要求至少顶层函数，尤其是导出的接口，
+都要把类型写上，因为类型不光是写给机器看的，也是写给人看的，有文档的作用。</p>
+<p class="handout">其次呢，说到类型系统的表达能力，这个世界上最厉害的类型系统是一些定理自动证明的系统，
+他们表达能力很强，但是用起来也很复杂，而haskell的原则是维持在表达力和易用性的一个平衡点上，
+在不给语言带来太大复杂度的前提下，尽量采用一些增强表达能力的扩展功能。</p>
+<p class="handout">基本的一些比如类型变量和泛型，大家已经看到是非常方便的，typeclass今天没有涉及到，
+大家有兴趣可以再去了解一下，也是非常有意思的一个特性。
+其他类型扩展今天也不详细介绍了，有展开来说的话，还有大把的内容。</p>
+</div>
+<div class="slide" id="id31">
 <h1>Haskell类型系统作用</h1>
-<p class="big">区分纯函数式代码和命令式代码</p>
+<p class="big">隔离纯函数式代码和命令式代码</p>
 <div class="big"><div class="highlight"><pre><span class="nf">upper</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
 
 <span class="nf">bomb</span>  <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="kt">String</span>
 </pre></div>
-</div><p class="handout">刚才说的是个比较完美的境界了，按照这个目标的话，我想haskell的类型系统还差很远，
-但是已经可以帮我们作很多事情了，比如区分纯函数式代码和命令式代码，
-比如通过签名我们就能知道upper只能是个字符串转换函数，它不会修改全局变量，不会写文件，
-除了把输入字符串变成输出字符串它不会干别的，而 readFile 的返回值是 IO String，
-意味着它可以作任何事情，比如发射个导弹啥的。</p>
+</div><p class="handout">下面我们就来举几个类型系统发挥实际作用的例子，
+第一个是区分纯函数式代码和命令式代码，
+因为haskell是一门纯函数式语言，比如这个upper函数，
+通过签名我们知道它接受一个字符串参数，返回一个字符串，而实际上呢，
+它也只能作转换字符串的工作，类型系统会保证，它不会修改全局变量，不会写文件，
+不会突然丢一个炸弹出来。
+而且丢炸弹这种危险的工作呢，haskell也能做，但是必须封装在IO这个泛型里面。
+如果你想在upper的实现里面调用bomb是门都没有，类型系统可以保证这一点。</p>
 </div>
-<div class="slide" id="id31">
+<div class="slide" id="id32">
 <h1>Haskell类型系统作用</h1>
 <p class="big">精确的文档</p>
 <div class="big"><div class="highlight"><pre><span class="nf">readChan</span> <span class="ow">::</span> <span class="kt">Chan</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="n">a</span>
 </pre></div>
 </div><p>这个函数会阻塞吗？</p>
-<p class="handout">把类型变得更精确的另一个好处就是，类型签名本身可以提供更多的信息，
-比如这个函数，从签名可以看出，它应该是从一个channel读一个数据出来。
-再多想一步，其实我们从类型就可以看出它会不会阻塞。</p>
-<p class="handout">我们可以想象一下，假设它不阻塞，那如果这个channel是空的，它得返回什么呢？
-所以阻塞接口会返回 a，而不阻塞的接口应该返回 Maybe a</p>
+<p class="handout">第二个是类型本身就是最精确的文档。</p>
+<p class="handout">尤其是当你的类型定义得越精确，效果越好，类型签名就可以传达更多的信息，
+比如这个函数，readChan，它从一个channel里面读一个值出来，
+这里的channel类似go里面的channel，
+那通过这个签名你能不能看出它会阻塞还是不阻塞，</p>
 </div>
-<div class="slide" id="id32">
+<div class="slide" id="id33">
 <h1>Haskell类型系统作用</h1>
 <p class="big">精确的文档</p>
-<div class="big"><div class="highlight"><pre><span class="nf">tryReadChan</span> <span class="ow">::</span> <span class="kt">Chan</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="p">(</span><span class="kt">Maybe</span> <span class="n">a</span><span class="p">)</span>
+<div class="big"><div class="highlight"><pre><span class="nf">readChan</span> <span class="ow">::</span> <span class="kt">Chan</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="p">(</span><span class="kt">Maybe</span> <span class="n">a</span><span class="p">)</span>
 </pre></div>
 </div><p>这个呢？</p>
+<p class="handout">我们可以想象一下，假设它不阻塞，那如果这个channel是空的，它得返回什么呢？
+所以返回 a 的应该是阻塞接口，而返回 Maybe a 的应该是不阻塞的接口。</p>
+</div>
+<div class="slide" id="id34">
+<h1>中场休息</h1>
+<p class="center huge">中场休息</p>
+<p class="handout">刚才基本上把关于显然正确的代码想传达的两方面的内容都分享得差不多了，
+一个是贴近自然语言，一个是精确的类型，
+关于贴近自然语言呢，除了函数组合的编程风格，
+haskell里面还有一些其他的机制可以帮助我们。后面我想再介绍两点，一个是惰性求值，
+一个是Monad。</p>
 </div>
 <div class="slide" id="haskell-is-lazy">
 <h1>Haskell is lazy</h1>
@@ -764,9 +809,11 @@ Maybe其实就是一个显式表达出来的none，显式表达的好处就是�
 <p>A以每秒一米的速度开跑</p>
 <p>B以每秒两米的速度开跑</p>
 <p>问他们何时相遇？</p>
-<p class="handout">最后再给一个例子，让我们看看惰性求值能够如何帮助我们以更直接的方式编写程序。</p>
+<p class="handout">惰性求值的意思，通俗地说就是一个表达式，不到真正需要它的时候，它不会被计算出来。
+它以thunk的形式存在内存里，thunk包含了计算它所需要的代码片段。</p>
+<p class="handout">我们看看惰性求值能够如何帮助我们以更直接的方式编写这个程序。</p>
 </div>
-<div class="slide" id="id33">
+<div class="slide" id="id35">
 <h1>Haskell is lazy</h1>
 <div class="big"><div class="highlight"><pre><span class="nf">iterate</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
 <span class="nf">iterate</span> <span class="n">f</span> <span class="n">a</span> <span class="ow">=</span> <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="n">f</span> <span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="n">f</span> <span class="n">f</span> <span class="n">a</span> <span class="o">...</span><span class="p">]</span>
@@ -774,10 +821,11 @@ Maybe其实就是一个显式表达出来的none，显式表达的好处就是�
 </div><div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">iterate</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="mi">0</span>
 <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
 </pre></div>
-<p class="handout">在给出程序之前，先介绍一个迭代函数，给它传一个函数和一个初始值，
-它会对这个值不断应用这个函数，并把每一次应用生成一个无限列表。</p>
+<p class="handout">首先介绍一个迭代函数，给它传一个函数和一个初始值，
+它会对这个值不断应用这个函数，并把每一次应用生成一个无限列表。
+因为惰性求值的原因，这个无限列表不会耗尽我们的内存。</p>
 </div>
-<div class="slide" id="id34">
+<div class="slide" id="id36">
 <h1>Haskell is lazy</h1>
 <div class="highlight"><pre><span class="nf">a</span> <span class="ow">=</span> <span class="n">iterate</span> <span class="p">((`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">400</span><span class="p">)</span> <span class="o">.</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span> <span class="mi">0</span>
 <span class="c1">-- [0, 1, 2, 3, 4...]</span>
@@ -792,69 +840,14 @@ Maybe其实就是一个显式表达出来的none，显式表达的好处就是�
 每一秒位置+1再摸上400，因为是个环形跑道，然后把a和b的数据用zip一一对应起来，
 用tail去掉第一个元素，然后找到第一个相等的索引，也就是他们相遇的时间了。</p>
 </div>
-<div class="slide" id="lazy-i-o">
-<h1>Lazy I/O</h1>
-<div class="big"><div class="highlight"><pre><span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
-    <span class="n">s</span> <span class="ow">&lt;-</span> <span class="kt">Lazy</span><span class="o">.</span><span class="n">readFile</span> <span class="n">input</span>
-    <span class="kt">Lazy</span><span class="o">.</span><span class="n">writeFile</span> <span class="n">output</span> <span class="n">s</span>
-</pre></div>
-</div><p class="big">消耗常数内存</p>
-<p class="handout">惰性求值除了能让我们以一种全新的结构编写程序，对于一些I/O问题也有奇效，
-比如这个程序，它把输入文件的内容写到输出文件中去，最有意思的是它只消耗常数内存，
-也就是说它运行时是流式处理的，读一块数据写一块数据，原因就在于 readFile 返回的是个
-惰性求值的字符串，它只在被求值的时候才去读内容。</p>
-<p class="handout">不过 Lazy I/O 只适合这种命令行工具的场景，运行完就退出了，不太适合编写持久运行的server，
-因为它很难控制句柄的生命周期，当然对于server的场景有其他库来进行流式数据处理，我们今天就不聊这个了。</p>
-</div>
-<div class="slide" id="q-a">
-<h1>Q &amp; A</h1>
-</div>
 <div class="slide" id="monad">
 <h1>Monad！</h1>
 <p class="huge center">什么是Monad</p>
-</div>
-<div class="slide" id="id35">
-<h1>什么是Monad</h1>
-<p class="huge center">Monad是对语句的重载</p>
-</div>
-<div class="slide" id="id36">
-<h1>定义重载</h1>
-<p class="huge center">重载：相同形式，不同含义</p>
-<p class="incremental"><tt class="docutils literal">a + b</tt> 的含义？</p>
-<p class="incremental"><tt class="docutils literal">1 + 2</tt> ?</p>
-<p class="incremental"><tt class="docutils literal">&quot;foo&quot; + &quot;bar&quot;</tt> ?</p>
+<p class="handout">到Monad了，在解释monad之前，我们先来看看Monad能让我们写出什么样的代码吧</p>
 </div>
 <div class="slide" id="id37">
-<h1>定义语句</h1>
-<p class="huge center">语句：顺序执行的指令</p>
-<p class="incremental"><strong>顺序：</strong> 必须严格按顺序执行</p>
-<p class="incremental"><strong>执行：</strong> 对执行环境产生副作用</p>
-<p class="incremental"><strong>环境：</strong> 负责执行语句，并维护执行过程中的副作用</p>
-</div>
-<div class="slide" id="id38">
-<h1>Monad - 重载语句</h1>
-<p>List Monad (list comprehension的马甲)</p>
-<pre class="literal-block">
-do a &lt;- [1..10]
-   b &lt;- [1..10]
-   guard $ a+b&gt;10
-   return (a, b)
-
--- [(1,10), (2,9), (2,10)...]
-</pre>
-</div>
-<div class="slide" id="id39">
-<h1>Monad - 重载语句</h1>
-<p>Parser Monad - 提供解析器的输入并维护中间状态</p>
-<div class="highlight"><pre><span class="kr">do</span> <span class="n">t</span>  <span class="ow">&lt;-</span> <span class="n">getTagName</span>
-   <span class="n">a</span> <span class="ow">&lt;-</span> <span class="n">forM</span> <span class="p">[</span><span class="s">&quot;title&quot;</span><span class="p">,</span> <span class="s">&quot;href&quot;</span><span class="p">]</span>
-             <span class="n">getAttribute</span>
-   <span class="n">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="slide" id="id40">
-<h1>Monad - 重载语句</h1>
-<p>IO Monad - 提供命令式编程风格</p>
+<h1>Monad！</h1>
+<p>IO Monad - 命令式编程风格</p>
 <pre class="literal-block">
 do input &lt;- getLine
    forM_ [1..3] $ \i -&gt;
@@ -866,26 +859,74 @@ echo1:haskell
 echo2:haskell
 echo3:haskell
 </pre>
+<p class="handout">Monad最开始引入是为了让haskell里面能写命令式的代码，
+因为haskell是一门纯函数式编程语言，而我们要解决的问题很多时候就是要去改变外部的状态，
+比如需要写文件、需要写网络、有时候也必须写全局变量。
+而前面介绍的惰性求值也使得haskell没办法用普通的方法直接引入副作用。
+因为惰性求值的一个特点就是，一个表达式是否会被求值，什么时候被求值是不确定的，
+这是由调用它的代码决定的，而对于依赖状态的代码，这是不能接受的，
+两条命令式语句执行顺序换一下，含义可能是天壤之别。
+这其实逼迫haskell的设计者们寻求一种抽象，能够表达命令式语句的这些特点。
+大概1996年，IO Monad被引入，用来进行命令式的编程，并且引入了一个语法糖 do ，
+让Monad的代码形式上和传统命令式语言更接近。
+所以我们现在看到的这个代码，我想还是比较容易理解的，它从标准输入读入用户输入的一行信息，
+然后循环三次输出出来。</p>
+<p class="handout">Monad被引入以后大家发现，这个抽象非常强大，除了实现这种普通的命令式程序以外，
+它还干很多别的事情。</p>
 </div>
-<div class="slide" id="id41">
-<h1>Monad - 重载语句</h1>
-<p>Resource Monad - 在 <tt class="docutils literal">IO</tt> 的基础上提供释放资源的能力。</p>
+<div class="slide" id="id38">
+<h1>Monad！</h1>
+<p>Resource Monad - 在 <tt class="docutils literal">IO</tt> 的基础上提供资源管理的能力。</p>
 <div class="highlight"><pre><span class="kr">do</span> <span class="n">f</span> <span class="ow">&lt;-</span> <span class="n">openFile</span> <span class="s">&quot;data&quot;</span>
    <span class="n">register</span> <span class="p">(</span><span class="n">closeFile</span> <span class="n">f</span><span class="p">)</span>
    <span class="n">process</span> <span class="n">f</span>
    <span class="o">...</span>
 </pre></div>
+<p class="handout">比如这个resource monad，这个代码的意思是，打开一个文件，然后注册一个释放文件的行为，
+然后的代码中发生任何异常，这个关闭文件的代码确保一定会被执行。</p>
 </div>
-<div class="slide" id="id42">
-<h1>重复一次</h1>
-<p class="center huge">Monad提供重载命令式语句的语义的能力</p>
+<div class="slide" id="id39">
+<h1>Monad！</h1>
+<p>Resource Monad - 在 <tt class="docutils literal">IO</tt> 的基础上提供资源管理的能力。</p>
+<div class="highlight"><pre><span class="kr">do</span> <span class="n">f</span> <span class="ow">&lt;-</span> <span class="n">openFile</span> <span class="s">&quot;data&quot;</span>
+   <span class="n">key</span> <span class="ow">&lt;-</span> <span class="n">register</span> <span class="p">(</span><span class="n">closeFile</span> <span class="n">f</span><span class="p">)</span>
+
+   <span class="n">processing</span><span class="o">...</span>
+
+   <span class="n">closeFile</span> <span class="n">f</span>
+   <span class="n">release</span> <span class="n">key</span>
+
+   <span class="n">processing</span><span class="o">...</span>
+</pre></div>
+<p class="handout">更进一步，register还返回一个key，通过这个key可以主动取消前面注册的行为，
+这样当我们主动关闭文件成功后，可以取消这个注册，防止文件被关闭两次。</p>
+<p class="handout">为什么可以做到这一点</p>
 </div>
-<div class="slide" id="id43">
+<div class="slide" id="id40">
+<h1>Monad是对语句的抽象</h1>
+<div class="big"><div class="highlight"><pre><span class="kr">do</span> <span class="n">a</span> <span class="ow">&lt;-</span> <span class="n">ma</span>
+   <span class="n">b</span> <span class="ow">&lt;-</span> <span class="n">mb</span>
+   <span class="n">return</span> <span class="n">c</span>
+</pre></div>
+</div><div class="big"><div class="highlight"><pre><span class="nf">ma</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">a</span> <span class="ow">-&gt;</span>
+           <span class="n">mb</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">))</span>
+</pre></div>
+</div><p class="handout">我们看下do语法糖的转换之后的代码就清楚了，
+它把顺序执行的语句通过一个运算符绑定成一个表达式，
+回调函数套回调函数，
+通过控制这个操作符的具体实现，我们就可以实现各种Monad。
+我们可以把状态封装起来，让业务逻辑的代码变得更干净。</p>
+</div>
+<div class="slide" id="q-a">
+<h1>Q &amp; A</h1>
+<p class="center huge">Thanks</p>
+</div>
+<div class="slide" id="id41">
 <h1>函数式编程源起</h1>
 <p class="center huge">Can Programming Be Liberated from the von Neumann Style?</p>
 <p class="right">by John Backus 1978</p>
 </div>
-<div class="slide" id="id44">
+<div class="slide" id="id42">
 <h1>冯诺依曼模型的问题</h1>
 <p class="incremental huge center">依赖执行顺序的复杂的状态机模型</p>
 <ul class="incremental simple">
@@ -915,7 +956,7 @@ echo3:haskell
 <li>Profiling支持，包括time/allocation以及多种heap profiling。</li>
 </ul>
 </div>
-<div class="slide" id="id45">
+<div class="slide" id="id43">
 <h1>其他实现</h1>
 <ul class="incremental simple">
 <li>UHC 有字节码解释器和Javascript后端。</li>
