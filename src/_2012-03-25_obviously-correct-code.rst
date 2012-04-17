@@ -29,7 +29,6 @@
 Haskell速成 - 函数定义
 ============================
 
-.. class:: big
 .. code-block:: haskell
 
   filter :: (a->Bool) -> [a] -> [a]
@@ -40,9 +39,34 @@ Haskell速成 - 函数定义
 
 .. class:: handout
 
-    这是一个函数定义，第一行是类型签名，冒号前面是函数名，后面是函数的类型，参数和返回值的类型统一由箭头组合在一起，最后一个是返回值，前面都是参数。这种语法使得curry化非常方便，这一点我们后面会讲到。
+    这是一个函数定义，第一行是类型签名，冒号前面是函数名，后面是函数的类型，参数和返回值的类型统一由箭头组合在一起，最后一个是返回值，第一个参数是个高阶函数。这种语法使得curry化非常方便，这一点我们后面会讲到。
 
-    后面几行呢就是函数的定义了，这里比较有意思的地方就是模式匹配了，模式匹配这个东西从执行的角度来讲它就是一种分支的方法，但它是一种更受限的分支方法，它只能针对一个类型的不同构造器进行分支，这个约束使得它具备一个很好的特性，那就是编译器可以自动检查代码是否把所有分支都覆盖全面了，如果遗漏了哪个分支，它会出一个警告，这一点对于编写正确的代码来说太有用了。
+    后面几行呢就是函数的定义了，这里比较有意思的地方就是模式匹配了，
+    模式匹配这个东西从执行的角度来讲它就是一种分支的方法，
+    但是可读性很好，而且还有一个非常好的性质，那就是编译器可以自动检查代码是否把所有分支都覆盖全面了，如果遗漏了哪个分支，它会出一个警告，这一点对于编写正确的代码来说太有用了。
+
+Haskell速成 - 函数定义
+============================
+
+.. code-block:: haskell
+
+  filter :: (a->Bool) -> [a] -> [a]
+  -- filter p [] = []
+  filter p (x:xs)
+       | p x       = x : filter p xs
+       | otherwise = filter p xs
+
+.. class:: incremental
+
+::
+
+  $ ghc -Wall foo.hs
+  Warning: Pattern match(es) are
+                  non-exhaustive
+
+.. class:: handout
+
+    比如注释掉对空列表进行处理的部分，ghc就会给这么一个警告。
 
 Haskell速成 - Curry化
 ======================
@@ -53,6 +77,9 @@ Haskell速成 - Curry化
     add :: Int -> Int -> Int
 
     (add 1)    :: Int -> Int
+
+.. class:: incremental big
+.. code-block:: haskell
 
     >>> let inc = add 1
     >>> inc 2
@@ -146,7 +173,7 @@ Haskell速成 - 结束
 
 从列表取大于10且小于100的数
 
-.. class:: incremental center huge
+.. class:: incremental center big
 .. code-block:: haskell
 
   filter ((>10) `and` (<100))
@@ -285,16 +312,16 @@ Haskell速成 - 结束
 
     $ lambdabot
     >>> :pl \f g x -> f x && g x
-    liftA2 (&&)
+    liftM2 (&&)
 
 .. class:: handout
 
     haskell很意思的地方之一就是它有很多有意思的工具，比如说这个lambdabot，
     里面这个 pl 命令可以把lambda表达式转换成函数组合的风格，
     比如刚才这个and函数的定义传给它，就被转换成了一个非常简单的实现，
-    也就是说，and函数实际上是 liftA2 把 && 函数提升一下的结果！
-    只要你了解 liftA2 的含义，你马上就能明白 and 函数的含义，
-    不过今天因为时间关系，我们就不介绍liftA2函数本身了，大家有兴趣可以去了解一下 Applicative。
+    也就是说，and函数实际上是 liftM2 把 && 函数提升一下的结果！
+    只要你了解 liftM2 的含义，你马上就能明白 and 函数的含义，
+    不过今天因为时间关系，我们就不介绍liftM2函数本身了，大家有兴趣可以去了解一下 Applicative。
 
 分解： 且
 ============================
@@ -302,7 +329,7 @@ Haskell速成 - 结束
 .. class:: current big
 .. code-block:: haskell
 
-    and = liftA2 (&&)
+    and = liftM2 (&&)
 
     :: (a -> Bool)
     -> (a -> Bool)
@@ -315,7 +342,7 @@ Haskell速成 - 结束
 合并
 ====
 
-.. class:: center huge
+.. class:: center big
 .. code-block:: haskell
 
   filter ((>10) `and` (<100))
@@ -489,7 +516,8 @@ GHC编译器中间代码是Haskell的子集
 
   webapp :: Application
   webapp req = do
-      let name = lookup "name" (queryString req)
+      let name = lookup "name"
+                        (queryString req)
       response ("hello "++name)
 
 .. class:: incremental red
@@ -511,7 +539,7 @@ GHC编译器中间代码是Haskell的子集
 
 .. class:: incremental huge center
 
-解决方案：静态类型系统
+解决方案：精确的类型
 
 .. class:: handout
 
@@ -534,13 +562,13 @@ GHC编译器中间代码是Haskell的子集
 
 .. class:: handout
 
-    大家看这个lookup函数，它的作用是从map中根据key查找value的，大家觉得它应该返回什么类型？
+    这个问题的关键就在于lookup函数的类型，它的作用是从map中根据key查找value的，大家觉得它应该返回什么类型？
     这里k代表key，v代表value
 
 问题3 - 继续
 =============
 
-.. class:: big
+.. class:: big center nomargin
 
 ``v`` ?
 
@@ -726,7 +754,8 @@ Haskell类型系统作用
 .. class:: big
 .. code-block:: haskell
 
-    readChan :: Chan a -> IO (Maybe a)
+    readChan :: Chan a ->
+                   IO (Maybe a)
 
 这个呢？
 
@@ -735,12 +764,18 @@ Haskell类型系统作用
     我们可以想象一下，假设它不阻塞，那如果这个channel是空的，它得返回什么呢？
     所以返回 a 的应该是阻塞接口，而返回 Maybe a 的应该是不阻塞的接口。
 
-中场休息
-=========
+回顾
+==============
 
-.. class:: center huge
+.. class:: big
 
-中场休息
+显然正确的代码
+
+.. class:: big
+
+* 贴近自然语言描述
+
+* 精确的类型
 
 .. class:: handout
 
@@ -749,6 +784,29 @@ Haskell类型系统作用
     关于贴近自然语言呢，除了函数组合的编程风格，
     haskell里面还有一些其他的机制可以帮助我们。后面我想再介绍两点，一个是惰性求值，
     一个是Monad。
+
+Haskell is lazy
+================
+
+.. class:: big
+.. code-block:: haskell
+
+    >>> let l = [1..]
+    >>> take 5 l
+    [1,2,3,4,5]
+
+只在需要的时候进行计算
+
+.. class:: handout
+
+    惰性求值通俗地说就是一个表达式，只在真正需要它的值的时候，它才被计算出来。
+    在这之前它以thunk的形式存在内存里，thunk包含了计算它所需要的代码片段。
+
+    最典型的就是这个无限列表，当我们定义他的时候，他并不会耗尽我们的内存，
+    只在take取前五个元素的时候，才把这些元素算出来。
+
+    惰性求值能让我们以一种全新的方式组织代码，对于某些问题，
+    我们可以先把问题的全部解空间全部表达出来，然后在来决定哪些解是我们想要的。
 
 Haskell is lazy
 ================
@@ -763,34 +821,27 @@ B以每秒两米的速度开跑
 
 .. class:: handout
 
-    惰性求值的意思，通俗地说就是一个表达式，不到真正需要它的时候，它不会被计算出来。
-    它以thunk的形式存在内存里，thunk包含了计算它所需要的代码片段。
-
-    我们看看惰性求值能够如何帮助我们以更直接的方式编写这个程序。
+    比如这个例子，我们来看看惰性求值能够如何帮助我们以更直接的方式把他写出来。
 
 Haskell is lazy
 ================
 
-.. class:: big
 .. code-block:: haskell
 
     iterate :: (a -> a) -> a -> [a]
-    iterate f a = [ a
-                  , f a
-                  , f f a
-                  ...
-                  ]
+    iterate f a = [a, f a, f f a, ...]
 
 .. code-block:: haskell
 
-    >>> iterate (+1) 0
-    [0,1,2,3,4,...]
+    >>> take 5 (iterate (+1) 0)
+    [0,1,2,3,4]
 
 .. class:: handout
 
     首先介绍一个迭代函数，给它传一个函数和一个初始值，
-    它会对这个值不断应用这个函数，并把每一次应用生成一个无限列表。
-    因为惰性求值的原因，这个无限列表不会耗尽我们的内存。
+    它会对这个值不断应用这个函数，并把每一次应用的结果生成一个无限列表。
+    因为惰性求值的原因，这个无限列表不会耗尽我们的内存，
+    而是等到你真正遍历这个列表的时候，才去计算每个元素的值。
 
 Haskell is lazy
 ================
@@ -828,11 +879,13 @@ Monad！
 
 IO Monad - 命令式编程风格
 
-::
+.. code-block:: haskell
 
     do input <- getLine
        forM_ [1..3] $ \i ->
            printf "echo%d:%s" i input
+
+.. class:: incremental nomargin
 
 ::
 
@@ -862,7 +915,9 @@ IO Monad - 命令式编程风格
 Monad！
 ================
 
-Resource Monad - 在 ``IO`` 的基础上提供资源管理的能力。
+Resource Monad
+
+在 ``IO`` 的基础上提供资源管理的能力。
 
 .. code-block:: haskell
 
@@ -879,19 +934,19 @@ Resource Monad - 在 ``IO`` 的基础上提供资源管理的能力。
 Monad！
 ================
 
-Resource Monad - 在 ``IO`` 的基础上提供资源管理的能力。
+Resource Monad - 也可以主动取消。
 
 .. code-block:: haskell
 
-    do f <- openFile "data"
+    do f <- io $ openFile "data"
        key <- register (closeFile f)
 
-       processing...
+       -- processing...
 
-       closeFile f
+       io $ closeFile f
        release key
 
-       processing...
+       -- processing...
 
 .. class:: handout
 
@@ -910,7 +965,7 @@ Monad是对语句的抽象
        b <- mb
        return c
 
-.. class:: big
+.. class:: big incremental
 .. code-block:: haskell
 
     ma >>= (\a ->
@@ -923,6 +978,56 @@ Monad是对语句的抽象
     回调函数套回调函数，
     通过控制这个操作符的具体实现，我们就可以实现各种Monad。
     我们可以把状态封装起来，让业务逻辑的代码变得更干净。
+
+Monad是对语句的抽象
+===================
+
+.. class:: big
+.. code-block:: haskell
+
+    class Monad m where
+        return :: a -> m a
+        (>>=) :: m a -> (a -> m b) -> m b
+
+.. class:: big incremental
+.. code-block:: haskell
+
+    instance Monad Foo where
+        return a = ...
+        ma >>= f = ...
+
+Monad不一定是IO
+=================
+
+.. class:: big
+
+List Monad
+
+.. code-block:: haskell
+
+    do a <- [1..10]
+       b <- [1..10]
+       guard (a+b>10)
+       return (a, b)
+
+.. class:: incremental
+.. code-block:: haskell
+
+    [(1,10),(2,9),(2,10),(3,8)...]
+
+Monad不一定是IO
+=================
+
+.. class:: big
+
+List Monad
+
+.. class:: big
+.. code-block:: haskell
+
+    instance Monad [] where
+        return a = [a]
+        xs >>= f = concatMap f xs
 
 Q & A
 ======
