@@ -818,6 +818,11 @@ Maybe其实就是一个显式表达出来的none，显式表达的好处就是�
 所以返回 a 的应该是阻塞接口，而返回 Maybe a 的应该是不阻塞的接口。</p>
 </div>
 <div class="slide" id="id35">
+<h1>Haskell类型系统作用</h1>
+<p class="big">Hoogle 根据类型搜实现的搜索引擎</p>
+<img alt="ui/hoogle.png" src="ui/hoogle.png" />
+</div>
+<div class="slide" id="id36">
 <h1>回顾</h1>
 <p class="big">显然正确的代码</p>
 <ul class="big simple">
@@ -844,7 +849,7 @@ haskell里面还有一些其他的机制可以帮助我们。后面我想再介�
 <p class="handout">惰性求值能让我们以一种全新的方式组织代码，对于某些问题，
 我们可以先把问题的全部解空间全部表达出来，然后在来决定哪些解是我们想要的。</p>
 </div>
-<div class="slide" id="id36">
+<div class="slide" id="id37">
 <h1>Haskell is lazy</h1>
 <p>在一个400米的环形跑道上</p>
 <p>A以每秒一米的速度开跑</p>
@@ -852,7 +857,7 @@ haskell里面还有一些其他的机制可以帮助我们。后面我想再介�
 <p>问他们何时相遇？</p>
 <p class="handout">比如这个例子，我们来看看惰性求值能够如何帮助我们以更直接的方式把他写出来。</p>
 </div>
-<div class="slide" id="id37">
+<div class="slide" id="id38">
 <h1>Haskell is lazy</h1>
 <div class="highlight"><pre><span class="nf">iterate</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
 <span class="nf">iterate</span> <span class="n">f</span> <span class="n">a</span> <span class="ow">=</span> <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="n">f</span> <span class="n">a</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
@@ -865,7 +870,7 @@ haskell里面还有一些其他的机制可以帮助我们。后面我想再介�
 因为惰性求值的原因，这个无限列表不会耗尽我们的内存，
 而是等到你真正遍历这个列表的时候，才去计算每个元素的值。</p>
 </div>
-<div class="slide" id="id38">
+<div class="slide" id="id39">
 <h1>Haskell is lazy</h1>
 <div class="highlight"><pre><span class="nf">a</span> <span class="ow">=</span> <span class="n">iterate</span> <span class="p">((`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">400</span><span class="p">)</span> <span class="o">.</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span> <span class="mi">0</span>
 <span class="c1">-- [0, 1, 2, 3, 4...]</span>
@@ -885,7 +890,7 @@ haskell里面还有一些其他的机制可以帮助我们。后面我想再介�
 <p class="huge center">什么是Monad</p>
 <p class="handout">到Monad了，在解释monad之前，我们先来看看Monad能让我们写出什么样的代码吧</p>
 </div>
-<div class="slide" id="id39">
+<div class="slide" id="id40">
 <h1>Monad！</h1>
 <p>IO Monad - 命令式编程风格</p>
 <div class="highlight"><pre><span class="kr">do</span> <span class="n">input</span> <span class="ow">&lt;-</span> <span class="n">getLine</span>
@@ -913,7 +918,7 @@ echo3:haskell
 <p class="handout">Monad被引入以后大家发现，这个抽象非常强大，除了实现这种普通的命令式程序以外，
 它还干很多别的事情。</p>
 </div>
-<div class="slide" id="id40">
+<div class="slide" id="id41">
 <h1>Monad！</h1>
 <p>Resource Monad</p>
 <p>在 <tt class="docutils literal">IO</tt> 的基础上提供资源管理的能力。</p>
@@ -925,7 +930,7 @@ echo3:haskell
 <p class="handout">比如这个resource monad，这个代码的意思是，打开一个文件，然后注册一个释放文件的行为，
 然后的代码中发生任何异常，这个关闭文件的代码确保一定会被执行。</p>
 </div>
-<div class="slide" id="id41">
+<div class="slide" id="id42">
 <h1>Monad！</h1>
 <p>Resource Monad - 也可以主动取消。</p>
 <div class="highlight"><pre><span class="kr">do</span> <span class="n">f</span> <span class="ow">&lt;-</span> <span class="n">io</span> <span class="o">$</span> <span class="n">openFile</span> <span class="s">&quot;data&quot;</span>
@@ -942,7 +947,7 @@ echo3:haskell
 这样当我们主动关闭文件成功后，可以取消这个注册，防止文件被关闭两次。</p>
 <p class="handout">为什么可以做到这一点</p>
 </div>
-<div class="slide" id="id42">
+<div class="slide" id="id43">
 <h1>Monad是对语句的抽象</h1>
 <div class="big"><div class="highlight"><pre><span class="kr">do</span> <span class="n">a</span> <span class="ow">&lt;-</span> <span class="n">ma</span>
    <span class="n">b</span> <span class="ow">&lt;-</span> <span class="n">mb</span>
@@ -957,7 +962,7 @@ echo3:haskell
 通过控制这个操作符的具体实现，我们就可以实现各种Monad。
 我们可以把状态封装起来，让业务逻辑的代码变得更干净。</p>
 </div>
-<div class="slide" id="id43">
+<div class="slide" id="id44">
 <h1>Monad是对语句的抽象</h1>
 <div class="big"><div class="highlight"><pre><span class="kr">class</span> <span class="kt">Monad</span> <span class="n">m</span> <span class="kr">where</span>
     <span class="n">return</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">a</span>
@@ -979,7 +984,7 @@ echo3:haskell
 <div class="incremental"><div class="highlight"><pre><span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">9</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">10</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">8</span><span class="p">)</span><span class="o">...</span><span class="p">]</span>
 </pre></div>
 </div></div>
-<div class="slide" id="id44">
+<div class="slide" id="id45">
 <h1>Monad不一定是IO</h1>
 <p class="big">List Monad</p>
 <div class="big"><div class="highlight"><pre><span class="kr">instance</span> <span class="kt">Monad</span> <span class="kt">[]</span> <span class="kr">where</span>
@@ -991,12 +996,12 @@ echo3:haskell
 <h1>Q &amp; A</h1>
 <p class="center huge">Thanks</p>
 </div>
-<div class="slide" id="id45">
+<div class="slide" id="id46">
 <h1>函数式编程源起</h1>
 <p class="center huge">Can Programming Be Liberated from the von Neumann Style?</p>
 <p class="right">by John Backus 1978</p>
 </div>
-<div class="slide" id="id46">
+<div class="slide" id="id47">
 <h1>冯诺依曼模型的问题</h1>
 <p class="incremental huge center">依赖执行顺序的复杂的状态机模型</p>
 <ul class="incremental simple">
@@ -1026,7 +1031,7 @@ echo3:haskell
 <li>Profiling支持，包括time/allocation以及多种heap profiling。</li>
 </ul>
 </div>
-<div class="slide" id="id47">
+<div class="slide" id="id48">
 <h1>其他实现</h1>
 <ul class="incremental simple">
 <li>UHC 有字节码解释器和Javascript后端。</li>
