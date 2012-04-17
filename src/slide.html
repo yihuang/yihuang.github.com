@@ -499,8 +499,11 @@ Curry特性省了我们很多代码。</p>
 <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
 <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
 </pre></div>
-</div><p class="handout">我们当然可以再一次专门定义一个函数来解决这个问题
-这样我们的问题貌似就全部解决了。</p>
+</div><p class="handout">也许我们只能专门定义一个函数来解决这个问题，
+这个函数接受两个函数作为参数，返回一个lambda函数，
+当给它传一个值，它把这个值传给那两个函数，再把结果且一下。</p>
+<p class="handout">但从我这冗长的描述可以感觉到，这个实现还是相对比较复杂的。
+有没有更直接的实现方法呢。</p>
 </div>
 <div class="slide" id="id14">
 <h1>分解： 且</h1>
@@ -508,12 +511,12 @@ Curry特性省了我们很多代码。</p>
 <span class="o">&gt;&gt;&gt;</span> <span class="kt">:</span><span class="n">pl</span> <span class="nf">\</span><span class="n">f</span> <span class="n">g</span> <span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">x</span> <span class="o">&amp;&amp;</span> <span class="n">g</span> <span class="n">x</span>
 <span class="nf">liftA2</span> <span class="p">(</span><span class="o">&amp;&amp;</span><span class="p">)</span>
 </pre></div>
-</div><p class="handout">但实际上， and 函数甚至也有一个更直接的实现，
-haskell有意思的地方之一就是它有很多有意思的工具，比如说这个lambdabot，
+</div><p class="handout">haskell很意思的地方之一就是它有很多有意思的工具，比如说这个lambdabot，
 里面这个 pl 命令可以把lambda表达式转换成函数组合的风格，
-比如刚才这个and函数的定义就被转换成了一个 liftA2 的调用，
+比如刚才这个and函数的定义传给它，就被转换成了一个非常简单的实现，
 也就是说，and函数实际上是 liftA2 把 &amp;&amp; 函数提升一下的结果！
-至于liftA2函数就不在今天的范畴了，大家有兴趣可以去了解一下 Applicative。</p>
+只要你了解 liftA2 的含义，你马上就能明白 and 函数的含义，
+不过今天因为时间关系，我们就不介绍liftA2函数本身了，大家有兴趣可以去了解一下 Applicative。</p>
 </div>
 <div class="slide" id="id15">
 <h1>分解： 且</h1>
@@ -523,7 +526,7 @@ haskell有意思的地方之一就是它有很多有意思的工具，比如说�
 <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
 <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span>
 </pre></div>
-</div><p class="handout">所以 and 的实现可以这么直接</p>
+</div><p class="handout">所以 and 的实现也可以这么直接</p>
 </div>
 <div class="slide" id="id16">
 <h1>合并</h1>
@@ -616,7 +619,8 @@ ghc -O
 </pre></div>
 </li>
 </ul>
-<p class="handout">可以看到这两个小函数的组合经过内联和转换变成一个简单的判断语句了。</p>
+<p class="handout">可以看到这两个小函数的组合经过内联和转换变成一个简单的判断语句了。
+为了显示效果好一点，这里给的代码经过了简单的清理，GHC直接导出的代码还包括一切其他的信息。</p>
 </div>
 <div class="slide" id="id23">
 <h1>查看中间代码</h1>
@@ -639,7 +643,7 @@ ghc -O
 否则如果按照python对函数的实现，那真的是不太敢写这样的代码。</p>
 </div>
 <div class="slide" id="id24">
-<h1>边界条件</h1>
+<h1>问题3</h1>
 <p>取http get参数&quot;name&quot;，前面加上&quot;hello&quot;返回回去。</p>
 <div class="highlight"><pre><span class="nf">webapp</span> <span class="ow">::</span> <span class="kt">Application</span>
 <span class="nf">webapp</span> <span class="n">req</span> <span class="ow">=</span> <span class="kr">do</span>
@@ -647,7 +651,7 @@ ghc -O
     <span class="n">response</span> <span class="p">(</span><span class="s">&quot;hello &quot;</span><span class="o">++</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
 <p class="incremental red">但是，如果用户没有传参数的话。。。</p>
-<p class="handout">我们看这个简单的web应用，它从querystring里面取一个name参数，加上hello后返回回去。
+<p class="handout">我们再来看一个例子，这是个简单的web应用，它从querystring里面取一个name参数，加上hello后返回回去。
 代码看起来也非常简单，和我们的问题描述很接近，但是，如果用户没有传参数过来的话，
 就要崩溃了。实际上类似这样的问题，至少在我的python代码里面，经常碰到。</p>
 </div>
@@ -660,7 +664,7 @@ ghc -O
 我们先来看看在haskell里面我们如何处理这个问题。</p>
 </div>
 <div class="slide" id="id26">
-<h1>问题2 - 继续</h1>
+<h1>问题3 - 继续</h1>
 <div class="huge"><div class="highlight"><pre><span class="nf">lookup</span> <span class="ow">::</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="kt">Map</span> <span class="n">k</span> <span class="n">v</span>
        <span class="ow">-&gt;</span> <span class="o">?</span>
 </pre></div>
@@ -669,7 +673,7 @@ ghc -O
 这里k代表key，v代表value</p>
 </div>
 <div class="slide" id="id27">
-<h1>问题2 - 继续</h1>
+<h1>问题3 - 继续</h1>
 <p class="big"><tt class="docutils literal">v</tt> ?</p>
 <ul class="huge code-list nomargin incremental">
 <li><div class="first"><div class="highlight"><pre><span class="nf">lookup</span> <span class="ow">::</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="kt">Map</span> <span class="n">k</span> <span class="n">v</span>
@@ -694,7 +698,7 @@ ghc -O
 因为v这个类型不能精确表达我们这里所有可能性，也就是查找不到的情况。</p>
 </div>
 <div class="slide" id="id28">
-<h1>问题2 - 继续</h1>
+<h1>问题3 - 继续</h1>
 <p>答案： <tt class="docutils literal">Maybe v</tt></p>
 <div class="huge"><div class="highlight"><pre><span class="nf">lookup</span> <span class="ow">::</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="kt">Map</span> <span class="n">k</span> <span class="n">v</span>
        <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="n">v</span>
@@ -816,7 +820,11 @@ haskell里面还有一些其他的机制可以帮助我们。后面我想再介�
 <div class="slide" id="id35">
 <h1>Haskell is lazy</h1>
 <div class="big"><div class="highlight"><pre><span class="nf">iterate</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
-<span class="nf">iterate</span> <span class="n">f</span> <span class="n">a</span> <span class="ow">=</span> <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="n">f</span> <span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="n">f</span> <span class="n">f</span> <span class="n">a</span> <span class="o">...</span><span class="p">]</span>
+<span class="nf">iterate</span> <span class="n">f</span> <span class="n">a</span> <span class="ow">=</span> <span class="p">[</span> <span class="n">a</span>
+              <span class="p">,</span> <span class="n">f</span> <span class="n">a</span>
+              <span class="p">,</span> <span class="n">f</span> <span class="n">f</span> <span class="n">a</span>
+              <span class="o">...</span>
+              <span class="p">]</span>
 </pre></div>
 </div><div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">iterate</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="mi">0</span>
 <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
