@@ -26,6 +26,22 @@
     我能分享的也就是一些代码了，今天这些代码都跟Haskell有关，
     所以在前面想先快速地过一下haskell基本的语法。
 
+今天不分享啥
+=============
+
+.. class:: center big incremental
+
+0bug软件开发
+
+显然正确的代码
+==============
+
+.. class:: big
+
+* 贴近自然语言的问题描述
+
+* 精确的类型
+
 Haskell速成 - 函数定义
 ============================
 
@@ -186,7 +202,7 @@ Haskell速成 - 结束
 分解： 从列表取 ? 的数
 ===========================
 
-.. class:: incremental big
+.. class:: big
 .. code-block:: haskell
 
     \x -> filter ? x
@@ -209,7 +225,7 @@ Haskell速成 - 结束
 分解： 大于10
 ===========================
 
-.. class:: incremental big
+.. class:: big
 .. code-block:: haskell
 
     \x -> x > 10
@@ -232,14 +248,12 @@ Haskell速成 - 结束
 分解： 小于100
 ===============
 
-.. class:: incremental
+同样：
 
-  同样：
+.. class:: big
+.. code-block:: haskell
 
-  .. class:: big
-  .. code-block:: haskell
-
-      (<100)
+  (<100)
 
 .. class:: handout
 
@@ -248,13 +262,10 @@ Haskell速成 - 结束
 分解： 且
 ===========================
 
-.. class:: incremental big
+.. class:: big
 .. code-block:: haskell
 
     &&
-
-.. class:: incremental big
-.. code-block:: haskell
 
     :: Bool -> Bool -> Bool
 
@@ -350,6 +361,19 @@ Haskell速成 - 结束
 .. class:: handout
 
     最后把这些函数合并在一起
+
+真实代码
+=========
+
+解析html属性值的末尾
+
+.. class:: big
+.. code-block:: haskell
+
+    takeTill ((=='>')
+             `or` isSpace)
+
+[https://github.com/yihuang/tagstream-conduit]
 
 函数管道 (.)
 =================
@@ -658,7 +682,9 @@ Maybe - 显式表达异常情况
 
 * 排除所有错误的程序
 
-* 允许所有正确的程序
+  （把运行时错误变成编译时错误）
+
+* 允许所有正确的程序 （不挡路）
 
 * 一言以蔽之：精确!
 
@@ -996,7 +1022,8 @@ Monad是对语句的抽象
 
     class Monad m where
         return :: a -> m a
-        (>>=) :: m a -> (a -> m b) -> m b
+        (>>=) :: m a -> (a -> m b)
+                     -> m b
 
 .. class:: big incremental
 .. code-block:: haskell
@@ -1072,7 +1099,6 @@ by John Backus 1978
 The rise of Haskell
 =====================
 
-.. class:: middle
 .. class:: incremental
 
 * **September 1987.** Initial meeting at FPCA.
