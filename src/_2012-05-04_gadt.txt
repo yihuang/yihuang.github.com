@@ -1,0 +1,171 @@
+=============
+利用类型系统
+=============
+
+问题：
+
+    我有一个这样的程序：
+
+    .. code-block:: haskell
+
+        data B = B Int
+        data A = Safe Int | Unsafe Int
+
+        createB :: A -> B
+        createB (Safe i) = B i
+        createB (Unsafe i) = error "禁止出现"
+
+    问题是，使用 Unsafe 调用 createB 的情况只能在运行时才能检查，而如果去掉第二条分支，又变成了模式匹配不完备的错误了 :-(
+
+    有没有办法把它变成编译错误？
+
+以下答复使用文学化Haskell(literate Haskell)写就。
+
+> {-# LANGUAGE DataKinds, KindSignatures, GADTs #-}
+
+要让类型系统介入进来，关键在于把信息放在类型系统能看到的地方，也就是类型签名里面。
+
+所以我们要把 ``A`` 类型改成这样，让 Safe/Unsafe 的信息出现在里面：
+
+> data A safety = A Int
+
+这就是所谓的“phantom类型”了，因为 `safety` 类型变量只出现的类型定义的左边。B的类型可以保持不变：
+
+> data B        = B Int
+
+现在，我们需要表达 "Safe" 和 "Unsafe"：
+
+> data Safe
+> data Unsafe
+
+通常数据类型定义会有一个或多个数据构造器。而这两个类型没有数据构造器，因为我们只打算把他们当作phantom类型参数用，不需要用到他们的值。我们需要两个独立的类型，是因为我们想在编译时区分两种情况。如果只定义一个类型带两个构造器的话，就没办法在编译时获得足够的约束能力了。
+
+现在我们再定义两个函数把值标记成 Safe 或者 Unsafe：
+
+> unsafe :: A safety -> A Unsafe
+> unsafe  (A x) = (A x)
+
+> safe :: A safety -> A Safe
+> safe    (A x) = (A x)
+
+然后我们把 ``createB`` 改成只接受 ``Safe`` 参数：
+
+> createB :: A Safe -> B
+> createB (A x) = B x
+
+这样，我们就只能传给它 ``Safe`` 的参数：
+
+> b :: B
+> b = createB (safe (A 1))
+
+而不能传 ``Unsafe`` 的参数：
+
+> {-
+
+> b2 :: B
+> b2 = createB (unsafe (A 1))
+
+编译错误： ::
+
+   Couldn't match expected type `Safe' with actual type `Unsafe'
+   Expected type: A Safe
+     Actual type: A Unsafe
+
+> -}
+
+可惜，我们还是可以给 createB 传没标记过的值：
+
+> b3 :: B
+> b3 = createB (A 1)
+
+有时候这是个好事，不过针对楼主的问题，应该是不想这种情况发生。有一个方案是不要导出 ``A`` 这个构造器，同时导出这样两个函数：
+
+> unsafeA :: Int -> A Unsafe
+> unsafeA  x = (A x)
+
+> safeA :: Int -> A Safe
+> safeA    x = (A x)
+
+如果只能通过这两个函数创建类型 `A` 的值的话，那就不会存在没标记过的值了。
+
+目前这个方案可以让我们把值标记成 Safe 或 Unsafe，并在编译时阻止某些函数的调用。
+然而，要想写一个函数同时对两种情况进行处理却很麻烦，需要建个type class（译注：可以作为练习）。
+
+不如还是把 `A` 改回成两个构造器的版本：
+
+] data A' safety = SafeA' Int | UnsafeA' Int
+
+现在，我们需要解决一个棘手的问题，就是如何保证 ``SafeA'`` 构造出来的值会带上phantom类型 ``Safe`` ，而 ``UnsafeA'`` 构造出来的值带phantom类型 ``Unsafe`` ？
+
+要解决这个问题就要用 GADTs 类型扩展了，我们可以这么写：
+
+> data A' safety where
+>     UnsafeInt :: Int -> A' Unsafe
+>     SafeInt   :: Int -> A' Safe
+
+这个定义和常规的数据类型定义很类似：
+
+] data A' safety
+]     = UnsafeInt Int
+]     | SafeInt Int
+
+但在 GADT 版本里面，我们可以指定当使用 ``UnsafeInt`` 的时候，phantom类型变量一定是 ``Unsafe`` ，而用 ``SafeInt`` 的时候一定是 ``Safe`` 。
+
+这样就把上面说的两个问题都解决了，我们既可以对safe和unsafe两个构造器进行模式匹配，也可以保证 ``A'`` 类型一定会被标记成"Safe"或"Unsafe"。如果我们确实想要不标记的值，我们可以加一个构造器：
+
+>     UnknownInt   :: Int -> A' safety
+
+现在我们可以把 ``createB`` 改成这样了：
+
+> createB' :: A' Safe -> B
+> createB' (SafeInt i) = B i
+
+这里， ``createB'`` 的定义是完备的，因为编译器知道它的参数不可能是 ``UnsafeInt`` 。如果你非要加上：
+
+] createB' (UnsafeInt i) = B i
+
+会得到编译错误： ::
+
+   Couldn't match type `Safe' with `Unsafe'
+   Inaccessible code in
+     a pattern with constructor
+       UnsafeInt :: Int -> A' Unsafe,
+
+到现在， ``A`` and ``A'`` 两个版本都还存在的一个问题是，phantom类型变量可以是任何类型。比如我们可以这么写：
+
+> nonsense :: A' Char
+> nonsense = UnknownInt 1
+
+我们只希望支持Safe和Unsafe，但 ``A' Char`` 也是一个合法——但是不合理的类型。
+
+GHC 7.4 里面我们可以使用数据类型提升来约束phantom类型参数能接受的类型。
+
+我们先定义一个普通的数据类型：
+
+> data Safety = IsSafe | IsUnsafe
+
+只要启用了 DataKind 扩展，我们就可以把这个类型用作phantom类型参数的签名。这样，类型 ``Safety`` 会自动变成kind ``Safety`` ，而数据构造器 ``IsSafe`` 和 ``IsUnsafe`` 自动变成类型构造器。现在我们就可以这么写：
+
+> data Alpha (safetype :: Safety) where
+>     SafeThing    :: Int -> Alpha IsSafe
+>     UnsafeThing  :: Int -> Alpha IsUnsafe
+>     UnknownThing :: Int -> Alpha safetype
+
+然后，我们可以这么写：
+
+> foo :: Alpha IsUnsafe
+> foo  = UnknownThing 1
+
+但是，如果我们尝试这么写的话：
+
+] foo' :: Alpha Char
+] foo'  = UnknownThing 1
+
+就会得到一个编译错误： ::
+
+   Kind mis-match
+   The first argument of `Alpha' should have kind `Safety',
+   but `Char' has kind `*'
+   In the type signature for foo': foo' :: Alpha Char
+
+希望这些能帮到你！
