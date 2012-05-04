@@ -43,6 +43,167 @@
         <div id="content">
             <div id="right">
                 <div class="post">
+                    <a href="2012-05-04_gadt.html"><h1>利用类型系统解决问题 <span class="date">2012-05-04</span></h1></a>
+                    <p>看邮件列表有一个回答很精彩，是一个很典型的利用类型系统表达约束的案例，故翻译过来。</p>
+<p>原讨论：[<a class="reference external" href="http://article.gmane.org/gmane.comp.lang.haskell.cafe/98103">http://article.gmane.org/gmane.comp.lang.haskell.cafe/98103</a>]</p>
+<p>问题：</p>
+<blockquote>
+<p>我有一个这样的程序：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">data</span> <span class="kt">B</span> <span class="ow">=</span> <span class="kt">B</span> <span class="kt">Int</span>
+</div><div class="line" id="LC1"><span class="kr">data</span> <span class="kt">A</span> <span class="ow">=</span> <span class="kt">Safe</span> <span class="kt">Int</span> <span class="o">|</span> <span class="kt">Unsafe</span> <span class="kt">Int</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">createB</span> <span class="ow">::</span> <span class="kt">A</span> <span class="ow">-&gt;</span> <span class="kt">B</span>
+</div><div class="line" id="LC1"><span class="nf">createB</span> <span class="p">(</span><span class="kt">Safe</span> <span class="n">i</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">B</span> <span class="n">i</span>
+</div><div class="line" id="LC1"><span class="nf">createB</span> <span class="p">(</span><span class="kt">Unsafe</span> <span class="n">i</span><span class="p">)</span> <span class="ow">=</span> <span class="ne">error</span> <span class="s">&quot;禁止出现&quot;</span>
+</div></pre></div>
+<p>问题是，使用 Unsafe 调用 createB 的情况只能在运行时才能检查，而如果去掉第二条分支，又变成了模式匹配不完备的错误了 :-(</p>
+<p>有没有办法把它变成编译错误？</p>
+</blockquote>
+<p>以下答复使用文学化Haskell(literate Haskell)写就。</p>
+<pre class="literal-block">
+{-# LANGUAGE DataKinds, KindSignatures, GADTs #-}
+</pre>
+<p>要让类型系统介入进来，关键在于把信息放在类型系统能看到的地方，也就是类型签名里面。</p>
+<p>所以我们要把 <tt class="docutils literal">A</tt> 类型改成这样，让 Safe/Unsafe 的信息出现在里面：</p>
+<pre class="literal-block">
+data A safety = A Int
+</pre>
+<p>这就是所谓的“phantom类型”了，因为 <cite>safety</cite> 类型变量只出现的类型定义的左边。B的类型可以保持不变：</p>
+<pre class="literal-block">
+data B        = B Int
+</pre>
+<p>现在，我们需要表达 &quot;Safe&quot; 和 &quot;Unsafe&quot;：</p>
+<pre class="literal-block">
+data Safe
+data Unsafe
+</pre>
+<p>通常数据类型定义会有一个或多个数据构造器。而这两个类型没有数据构造器，因为我们只打算把他们当作phantom类型参数用，不需要用到他们的值。我们需要两个独立的类型，是因为我们想在编译时区分两种情况。如果只定义一个类型带两个构造器的话，就没办法在编译时获得足够的约束能力了。</p>
+<p>现在我们再定义两个函数把值标记成 Safe 或者 Unsafe：</p>
+<pre class="literal-block">
+unsafe :: A safety -&gt; A Unsafe
+unsafe  (A x) = (A x)
+
+safe :: A safety -&gt; A Safe
+safe    (A x) = (A x)
+</pre>
+<p>然后我们把 <tt class="docutils literal">createB</tt> 改成只接受 <tt class="docutils literal">Safe</tt> 参数：</p>
+<pre class="literal-block">
+createB :: A Safe -&gt; B
+createB (A x) = B x
+</pre>
+<p>这样，我们就只能传给它 <tt class="docutils literal">Safe</tt> 的参数：</p>
+<pre class="literal-block">
+b :: B
+b = createB (safe (A 1))
+</pre>
+<p>而不能传 <tt class="docutils literal">Unsafe</tt> 的参数：</p>
+<pre class="literal-block">
+{-
+
+b2 :: B
+b2 = createB (unsafe (A 1))
+
+编译错误：
+
+   Couldn't match expected type `Safe' with actual type `Unsafe'
+   Expected type: A Safe
+     Actual type: A Unsafe
+
+-}
+</pre>
+<p>可惜，我们还是可以给 createB 传没标记过的值：</p>
+<pre class="literal-block">
+b3 :: B
+b3 = createB (A 1)
+</pre>
+<p>有时候这是个好事，不过针对楼主的问题，应该是不想这种情况发生。有一个方案是不要导出 <tt class="docutils literal">A</tt> 这个构造器，同时导出这样两个函数：</p>
+<pre class="literal-block">
+unsafeA :: Int -&gt; A Unsafe
+unsafeA  x = (A x)
+
+safeA :: Int -&gt; A Safe
+safeA    x = (A x)
+</pre>
+<p>如果只能通过这两个函数创建类型 <cite>A</cite> 的值的话，那就不会存在没标记过的值了。</p>
+<p>目前这个方案可以让我们把值标记成 Safe 或 Unsafe，并在编译时阻止某些函数的调用。
+然而，要想写一个函数同时对两种情况进行处理却很麻烦，需要建个type class（译注：可以作为练习）。</p>
+<p>不如还是把 <cite>A</cite> 改回成两个构造器的版本：</p>
+<pre class="literal-block">
+] data A' safety = SafeA' Int | UnsafeA' Int
+</pre>
+<p>现在，我们需要解决一个棘手的问题，就是如何保证 <tt class="docutils literal">SafeA'</tt> 构造出来的值会带上phantom类型 <tt class="docutils literal">Safe</tt> ，而 <tt class="docutils literal">UnsafeA'</tt> 构造出来的值带phantom类型 <tt class="docutils literal">Unsafe</tt> ？</p>
+<p>要解决这个问题就要用 GADTs 类型扩展了，我们可以这么写：</p>
+<pre class="literal-block">
+data A' safety where
+    UnsafeInt :: Int -&gt; A' Unsafe
+    SafeInt   :: Int -&gt; A' Safe
+</pre>
+<p>这个定义和常规的数据类型定义很类似：</p>
+<pre class="literal-block">
+] data A' safety
+]     = UnsafeInt Int
+]     | SafeInt Int
+</pre>
+<p>但在 GADT 版本里面，我们可以指定当使用 <tt class="docutils literal">UnsafeInt</tt> 的时候，phantom类型变量一定是 <tt class="docutils literal">Unsafe</tt> ，而用 <tt class="docutils literal">SafeInt</tt> 的时候一定是 <tt class="docutils literal">Safe</tt> 。</p>
+<p>这样就把上面说的两个问题都解决了，我们既可以对safe和unsafe两个构造器进行模式匹配，也可以保证 <tt class="docutils literal">A'</tt> 类型一定会被标记成&quot;Safe&quot;或&quot;Unsafe&quot;。如果我们确实想要不标记的值，我们可以加一个构造器：</p>
+<pre class="literal-block">
+UnknownInt   :: Int -&gt; A' safety
+</pre>
+<p>现在我们可以把 <tt class="docutils literal">createB</tt> 改成这样了：</p>
+<pre class="literal-block">
+createB' :: A' Safe -&gt; B
+createB' (SafeInt i) = B i
+</pre>
+<p>这里， <tt class="docutils literal">createB'</tt> 的定义是完备的，因为编译器知道它的参数不可能是 <tt class="docutils literal">UnsafeInt</tt> 。如果你非要加上：</p>
+<pre class="literal-block">
+] createB' (UnsafeInt i) = B i
+</pre>
+<p>会得到编译错误：</p>
+<pre class="literal-block">
+Couldn't match type `Safe' with `Unsafe'
+Inaccessible code in
+  a pattern with constructor
+    UnsafeInt :: Int -&gt; A' Unsafe,
+</pre>
+<p>到现在， <tt class="docutils literal">A</tt> and <tt class="docutils literal">A'</tt> 两个版本都还存在的一个问题是，phantom类型变量可以是任何类型。比如我们可以这么写：</p>
+<pre class="literal-block">
+nonsense :: A' Char
+nonsense = UnknownInt 1
+</pre>
+<p>我们只希望支持Safe和Unsafe，但 <tt class="docutils literal">A' Char</tt> 也是一个合法——但是不合理的类型。</p>
+<p>GHC 7.4 里面我们可以使用数据类型提升来约束phantom类型参数能接受的类型。</p>
+<p>我们先定义一个普通的数据类型：</p>
+<pre class="literal-block">
+data Safety = IsSafe | IsUnsafe
+</pre>
+<p>只要启用了 DataKind 扩展，我们就可以把这个类型用作phantom类型参数的签名。这样，类型 <tt class="docutils literal">Safety</tt> 会自动变成kind <tt class="docutils literal">Safety</tt> ，而数据构造器 <tt class="docutils literal">IsSafe</tt> 和 <tt class="docutils literal">IsUnsafe</tt> 自动变成类型构造器。现在我们就可以这么写：</p>
+<pre class="literal-block">
+data Alpha (safetype :: Safety) where
+    SafeThing    :: Int -&gt; Alpha IsSafe
+    UnsafeThing  :: Int -&gt; Alpha IsUnsafe
+    UnknownThing :: Int -&gt; Alpha safetype
+</pre>
+<p>然后，我们可以这么写：</p>
+<pre class="literal-block">
+foo :: Alpha IsUnsafe
+foo  = UnknownThing 1
+</pre>
+<p>但是，如果我们尝试这么写的话：</p>
+<pre class="literal-block">
+] foo' :: Alpha Char
+] foo'  = UnknownThing 1
+</pre>
+<p>就会得到一个编译错误：</p>
+<pre class="literal-block">
+Kind mis-match
+The first argument of `Alpha' should have kind `Safety',
+but `Char' has kind `*'
+In the type signature for foo': foo' :: Alpha Char
+</pre>
+<p>希望这些能帮到你！</p>
+
+                </div>
+                <div class="post">
                     <a href="2011-11-12_wai-static-app.html"><h1>warp静态文件服务器评测 <span class="date">2011-11-12</span></h1></a>
                     <div class="section" id="id1">
 <h2>安装</h2>
@@ -242,38 +403,6 @@ typeclass 作为 haskell 一大标志性特性，还是很值得介绍介绍的�
                     <a href="2011-09-24_haskell-web-introduce.html"><h1>珠三角技术沙龙介绍Haskell Web开发 <span class="date">2011-09-24</span></h1></a>
                     <p>2011年09年17日，再次跑到珠三角技术沙龙忽悠Haskell，这次是广州，侧重Haskell服务器端以及Web开发中的实用功能。 <a class="reference external" href="http://techparty.org/">沙龙活动总结</a></p>
 <div style="width:425px" id="__ss_9364009"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/cngump/haskell-web" title="走马观花— Haskell Web 开发" target="_blank">走马观花— Haskell Web 开发</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/9364009" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe> <div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/" target="_blank">presentations</a> from <a href="http://www.slideshare.net/cngump" target="_blank">Gump Law</a> </div> </div>
-                </div>
-                <div class="post">
-                    <a href="2011-06-04_type-inference-and-unification.html"><h1>类型推导和合一算法的简单介绍 <span class="date">2011-06-04</span></h1></a>
-                    <p>Hindley Milner类型系统最过瘾的就是 <a class="reference external" href="http://en.wikipedia.org/wiki/Type_inference">类型推导</a> 功能。写程序的时候可以完全忽略变量和函数的类型，由编译器自动推导类型并做类型检查。可以说是静态语言和动态语言的完美结合。本文简单介绍类型推导的过程，以及其中的关键算法： <a class="reference external" href="http://en.wikipedia.org/wiki/Unification">合一</a> 。</p>
-<p>先问一个问题， <cite>flip id</cite> 的类型是什么？我们知道 <cite>id</cite> 是原封不动地返回传给它的参数，类型是 <cite>a -&gt; a</cite> ； <cite>flip</cite> 是用来交换一个函数前两个参数的位置，类型是 <cite>(a -&gt; b -&gt; c) -&gt; b -&gt; a -&gt; c</cite> ，然而用 <cite>id</cite> 去调用 <cite>flip</cite> 返回的是个什么类型？心算起来还是有难度，幸好我们可以求助于 ghci ：</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">id</span>
-</div><div class="line" id="LC1"><span class="nf">id</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
-</div><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">flip</span>
-</div><div class="line" id="LC1"><span class="nf">flip</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">c</span>
-</div><div class="line" id="LC1"><span class="kt">Prelude</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">flip</span> <span class="n">id</span>
-</div><div class="line" id="LC1"><span class="nf">flip</span> <span class="n">id</span> <span class="ow">::</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">c</span>
-</div></pre></div>
-<p>Haskell是如何算出这个结果的？这就是类型推导算法在起作用了。简单地说，类型推导过程分两部进行：1. 根据类型系统规则产生一个方程组；2.解方程组。</p>
-<p>比如上面这个问题，我们先假定 <cite>flip id</cite> 的类型是 <cite>x</cite> ，然后根据函数调用的规则以及 <cite>id</cite> 的类型，我们发现 <cite>flip</cite> 的类型应该是 <cite>(a -&gt; a) -&gt; x</cite> ，同时我们已知 <cite>flip</cite> 的类型是： <cite>(a -&gt; b -&gt; c) -&gt; b -&gt; a -&gt; c</cite> ，这两个写法必须是等价的。根据这一点，我们就能得出一个方程组，通过合一算法解方程组，我们就可以得到 <cite>x</cite> 的值。</p>
-<p>首先为了防止命名冲突，先进行必要的重命名，同时对 <cite>flip</cite> 的类型进行一点等价转换，现在两个类型便成为如下形式：</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="p">(</span><span class="n">d</span> <span class="ow">-&gt;</span> <span class="n">d</span>       <span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">x</span>
-</div><div class="line" id="LC1"><span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span>
-</div></pre></div>
-<p>根据其中的对应关系，我们可以得出这些一样等式：</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">d</span> <span class="ow">=</span> <span class="n">a</span>
-</div><div class="line" id="LC1"><span class="nf">d</span> <span class="ow">=</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span>
-</div><div class="line" id="LC1"><span class="nf">x</span> <span class="ow">=</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">c</span>
-</div></pre></div>
-<p>然后再通过一些等价替换就不难解出 <cite>x</cite> 的值了： <cite>b -&gt; (b -&gt; c) -&gt; c</cite> 。</p>
-<p>我用Haskell写了一个 <a class="reference external" href="https://github.com/yihuang/haskell-snippets/blob/master/Unif.hs">合一算法的简单实现</a> ，供大家学习参考，运行效果如下：</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="o">*</span><span class="kt">Main</span><span class="o">&gt;</span> <span class="n">test</span> <span class="p">(</span><span class="n">f</span> <span class="p">[</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">x</span><span class="p">])</span> <span class="p">(</span><span class="n">f</span> <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">],</span> <span class="n">f</span> <span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">c</span><span class="p">]])</span>
-</div><div class="line" id="LC1"><span class="nf">f</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>  <span class="o">&lt;==&gt;</span>  <span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">),</span><span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">c</span><span class="p">))</span>
-</div><div class="line" id="LC1"><span class="nf">d</span> <span class="ow">-&gt;</span> <span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
-</div><div class="line" id="LC1"><span class="nf">x</span> <span class="ow">-&gt;</span> <span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">),</span><span class="n">c</span><span class="p">)</span>
-</div><div class="line" id="LC1"><span class="nf">a</span> <span class="ow">-&gt;</span> <span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
-</div></pre></div>
-
                 </div>
                 <p class="more"><a href="list.html">查看全部文章>></a></p>
             </div>

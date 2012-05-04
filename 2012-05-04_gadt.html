@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.8.1: http://docutils.sourceforge.net/" />
+<title>利用类型系统解决问题</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="index.html"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="新浪微博" href="http://weibo.com/1897911954" class=""><img src="images/icons/weibo.png" alt="新浪微博"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">利用类型系统解决问题</h1>
+
+                    <p class="author">2012-05-04 黄毅</p>
+                    <p>看邮件列表有一个回答很精彩，是一个很典型的利用类型系统表达约束的案例，故翻译过来。</p>
+<p>原讨论：[<a class="reference external" href="http://article.gmane.org/gmane.comp.lang.haskell.cafe/98103">http://article.gmane.org/gmane.comp.lang.haskell.cafe/98103</a>]</p>
+<p>问题：</p>
+<blockquote>
+<p>我有一个这样的程序：</p>
+<pre class="literal-block">
+data B = B Int
+data A = Safe Int | Unsafe Int
+
+createB :: A -&gt; B
+createB (Safe i) = B i
+createB (Unsafe i) = error &quot;禁止出现&quot;
+</pre>
+<p>问题是，使用 Unsafe 调用 createB 的情况只能在运行时才能检查，而如果去掉第二条分支，又变成了模式匹配不完备的错误了 :-(</p>
+<p>有没有办法把它变成编译错误？</p>
+</blockquote>
+<p>以下答复使用文学化Haskell(literate Haskell)写就。</p>
+<pre class="literal-block">
+{-# LANGUAGE DataKinds, KindSignatures, GADTs #-}
+</pre>
+<p>要让类型系统介入进来，关键在于把信息放在类型系统能看到的地方，也就是类型签名里面。</p>
+<p>所以我们要把 <tt class="docutils literal">A</tt> 类型改成这样，让 Safe/Unsafe 的信息出现在里面：</p>
+<pre class="literal-block">
+data A safety = A Int
+</pre>
+<p>这就是所谓的“phantom类型”了，因为 <cite>safety</cite> 类型变量只出现的类型定义的左边。B的类型可以保持不变：</p>
+<pre class="literal-block">
+data B        = B Int
+</pre>
+<p>现在，我们需要表达 &quot;Safe&quot; 和 &quot;Unsafe&quot;：</p>
+<pre class="literal-block">
+data Safe
+data Unsafe
+</pre>
+<p>通常数据类型定义会有一个或多个数据构造器。而这两个类型没有数据构造器，因为我们只打算把他们当作phantom类型参数用，不需要用到他们的值。我们需要两个独立的类型，是因为我们想在编译时区分两种情况。如果只定义一个类型带两个构造器的话，就没办法在编译时获得足够的约束能力了。</p>
+<p>现在我们再定义两个函数把值标记成 Safe 或者 Unsafe：</p>
+<pre class="literal-block">
+unsafe :: A safety -&gt; A Unsafe
+unsafe  (A x) = (A x)
+
+safe :: A safety -&gt; A Safe
+safe    (A x) = (A x)
+</pre>
+<p>然后我们把 <tt class="docutils literal">createB</tt> 改成只接受 <tt class="docutils literal">Safe</tt> 参数：</p>
+<pre class="literal-block">
+createB :: A Safe -&gt; B
+createB (A x) = B x
+</pre>
+<p>这样，我们就只能传给它 <tt class="docutils literal">Safe</tt> 的参数：</p>
+<pre class="literal-block">
+b :: B
+b = createB (safe (A 1))
+</pre>
+<p>而不能传 <tt class="docutils literal">Unsafe</tt> 的参数：</p>
+<pre class="literal-block">
+{-
+
+b2 :: B
+b2 = createB (unsafe (A 1))
+
+编译错误：
+
+   Couldn't match expected type `Safe' with actual type `Unsafe'
+   Expected type: A Safe
+     Actual type: A Unsafe
+
+-}
+</pre>
+<p>可惜，我们还是可以给 createB 传没标记过的值：</p>
+<pre class="literal-block">
+b3 :: B
+b3 = createB (A 1)
+</pre>
+<p>有时候这是个好事，不过针对楼主的问题，应该是不想这种情况发生。有一个方案是不要导出 <tt class="docutils literal">A</tt> 这个构造器，同时导出这样两个函数：</p>
+<pre class="literal-block">
+unsafeA :: Int -&gt; A Unsafe
+unsafeA  x = (A x)
+
+safeA :: Int -&gt; A Safe
+safeA    x = (A x)
+</pre>
+<p>如果只能通过这两个函数创建类型 <cite>A</cite> 的值的话，那就不会存在没标记过的值了。</p>
+<p>目前这个方案可以让我们把值标记成 Safe 或 Unsafe，并在编译时阻止某些函数的调用。
+然而，要想写一个函数同时对两种情况进行处理却很麻烦，需要建个type class（译注：可以作为练习）。</p>
+<p>不如还是把 <cite>A</cite> 改回成两个构造器的版本：</p>
+<pre class="literal-block">
+] data A' safety = SafeA' Int | UnsafeA' Int
+</pre>
+<p>现在，我们需要解决一个棘手的问题，就是如何保证 <tt class="docutils literal">SafeA'</tt> 构造出来的值会带上phantom类型 <tt class="docutils literal">Safe</tt> ，而 <tt class="docutils literal">UnsafeA'</tt> 构造出来的值带phantom类型 <tt class="docutils literal">Unsafe</tt> ？</p>
+<p>要解决这个问题就要用 GADTs 类型扩展了，我们可以这么写：</p>
+<pre class="literal-block">
+data A' safety where
+    UnsafeInt :: Int -&gt; A' Unsafe
+    SafeInt   :: Int -&gt; A' Safe
+</pre>
+<p>这个定义和常规的数据类型定义很类似：</p>
+<pre class="literal-block">
+] data A' safety
+]     = UnsafeInt Int
+]     | SafeInt Int
+</pre>
+<p>但在 GADT 版本里面，我们可以指定当使用 <tt class="docutils literal">UnsafeInt</tt> 的时候，phantom类型变量一定是 <tt class="docutils literal">Unsafe</tt> ，而用 <tt class="docutils literal">SafeInt</tt> 的时候一定是 <tt class="docutils literal">Safe</tt> 。</p>
+<p>这样就把上面说的两个问题都解决了，我们既可以对safe和unsafe两个构造器进行模式匹配，也可以保证 <tt class="docutils literal">A'</tt> 类型一定会被标记成&quot;Safe&quot;或&quot;Unsafe&quot;。如果我们确实想要不标记的值，我们可以加一个构造器：</p>
+<pre class="literal-block">
+UnknownInt   :: Int -&gt; A' safety
+</pre>
+<p>现在我们可以把 <tt class="docutils literal">createB</tt> 改成这样了：</p>
+<pre class="literal-block">
+createB' :: A' Safe -&gt; B
+createB' (SafeInt i) = B i
+</pre>
+<p>这里， <tt class="docutils literal">createB'</tt> 的定义是完备的，因为编译器知道它的参数不可能是 <tt class="docutils literal">UnsafeInt</tt> 。如果你非要加上：</p>
+<pre class="literal-block">
+] createB' (UnsafeInt i) = B i
+</pre>
+<p>会得到编译错误：</p>
+<pre class="literal-block">
+Couldn't match type `Safe' with `Unsafe'
+Inaccessible code in
+  a pattern with constructor
+    UnsafeInt :: Int -&gt; A' Unsafe,
+</pre>
+<p>到现在， <tt class="docutils literal">A</tt> and <tt class="docutils literal">A'</tt> 两个版本都还存在的一个问题是，phantom类型变量可以是任何类型。比如我们可以这么写：</p>
+<pre class="literal-block">
+nonsense :: A' Char
+nonsense = UnknownInt 1
+</pre>
+<p>我们只希望支持Safe和Unsafe，但 <tt class="docutils literal">A' Char</tt> 也是一个合法——但是不合理的类型。</p>
+<p>GHC 7.4 里面我们可以使用数据类型提升来约束phantom类型参数能接受的类型。</p>
+<p>我们先定义一个普通的数据类型：</p>
+<pre class="literal-block">
+data Safety = IsSafe | IsUnsafe
+</pre>
+<p>只要启用了 DataKind 扩展，我们就可以把这个类型用作phantom类型参数的签名。这样，类型 <tt class="docutils literal">Safety</tt> 会自动变成kind <tt class="docutils literal">Safety</tt> ，而数据构造器 <tt class="docutils literal">IsSafe</tt> 和 <tt class="docutils literal">IsUnsafe</tt> 自动变成类型构造器。现在我们就可以这么写：</p>
+<pre class="literal-block">
+data Alpha (safetype :: Safety) where
+    SafeThing    :: Int -&gt; Alpha IsSafe
+    UnsafeThing  :: Int -&gt; Alpha IsUnsafe
+    UnknownThing :: Int -&gt; Alpha safetype
+</pre>
+<p>然后，我们可以这么写：</p>
+<pre class="literal-block">
+foo :: Alpha IsUnsafe
+foo  = UnknownThing 1
+</pre>
+<p>但是，如果我们尝试这么写的话：</p>
+<pre class="literal-block">
+] foo' :: Alpha Char
+] foo'  = UnknownThing 1
+</pre>
+<p>就会得到一个编译错误：</p>
+<pre class="literal-block">
+Kind mis-match
+The first argument of `Alpha' should have kind `Safety',
+but `Char' has kind `*'
+In the type signature for foo': foo' :: Alpha Char
+</pre>
+<p>希望这些能帮到你！</p>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2012-05-04_gadt';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2012-05-04_gadt.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2012-05-04_gadt.html&title=利用类型系统解决问题"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2012-05-04_gadt.html&title=利用类型系统解决问题"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=利用类型系统解决问题&uri=http://www.yi-programmer.com/blog/2012-05-04_gadt.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2012-05-04_gadt.html&title=利用类型系统解决问题"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2012-05-04_gadt.html&it=利用类型系统解决问题&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2012-05-04_gadt.html&title=利用类型系统解决问题&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2012-05-04_gadt.html&t=利用类型系统解决问题"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2012-05-04_gadt.html&title=利用类型系统解决问题"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=利用类型系统解决问题&rurl=http://www.yi-programmer.com/blog/2012-05-04_gadt.html&rcontent=http://www.yi-programmer.com/blog/2012-05-04_gadt.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2012-05-04_gadt.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2012-05-04_gadt.html&t=利用类型系统解决问题"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2012-05-04_gadt.txt">View document source</a>.
+Generated on: 2012-05-04.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>
