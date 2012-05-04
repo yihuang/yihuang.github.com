@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<rss version="2.0"><channel><title>&#31934;&#30830;&#32534;&#31243;</title><link>http://yi-programmer.com/</link><description></description><lastBuildDate>Fri, 04 May 2012 21:29:52 GMT</lastBuildDate><generator>PyRSS2Gen-1.0.0</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>&#21033;&#29992;&#31867;&#22411;&#31995;&#32479;&#35299;&#20915;&#38382;&#39064;</title><link>http://yi-programmer.com/2012-05-04_gadt.html</link><description>&lt;p&gt;&#30475;&#37038;&#20214;&#21015;&#34920;&#26377;&#19968;&#20010;&#22238;&#31572;&#24456;&#31934;&#24425;&#65292;&#26159;&#19968;&#20010;&#24456;&#20856;&#22411;&#30340;&#21033;&#29992;&#31867;&#22411;&#31995;&#32479;&#34920;&#36798;&#32422;&#26463;&#30340;&#26696;&#20363;&#65292;&#25925;&#32763;&#35793;&#36807;&#26469;&#12290;&lt;/p&gt;
+<rss version="2.0"><channel><title>&#31934;&#30830;&#32534;&#31243;</title><link>http://yi-programmer.com/</link><description></description><lastBuildDate>Fri, 04 May 2012 21:32:46 GMT</lastBuildDate><generator>PyRSS2Gen-1.0.0</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>&#21033;&#29992;&#31867;&#22411;&#31995;&#32479;&#35299;&#20915;&#38382;&#39064;</title><link>http://yi-programmer.com/2012-05-04_gadt.html</link><description>&lt;p&gt;&#30475;&#37038;&#20214;&#21015;&#34920;&#26377;&#19968;&#20010;&#22238;&#31572;&#24456;&#31934;&#24425;&#65292;&#26159;&#19968;&#20010;&#24456;&#20856;&#22411;&#30340;&#21033;&#29992;&#31867;&#22411;&#31995;&#32479;&#34920;&#36798;&#32422;&#26463;&#30340;&#26696;&#20363;&#65292;&#25925;&#32763;&#35793;&#36807;&#26469;&#12290;&lt;/p&gt;
 &lt;p&gt;&#21407;&#35752;&#35770;&#65306;[&lt;a class="reference external" href="http://article.gmane.org/gmane.comp.lang.haskell.cafe/98103"&gt;http://article.gmane.org/gmane.comp.lang.haskell.cafe/98103&lt;/a&gt;]&lt;/p&gt;
 &lt;p&gt;&#38382;&#39064;&#65306;&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;&#25105;&#26377;&#19968;&#20010;&#36825;&#26679;&#30340;&#31243;&#24207;&#65306;&lt;/p&gt;
-&lt;div class="highlight None"&gt;&lt;pre&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="kr"&gt;data&lt;/span&gt; &lt;span class="kt"&gt;B&lt;/span&gt; &lt;span class="ow"&gt;=&lt;/span&gt; &lt;span class="kt"&gt;B&lt;/span&gt; &lt;span class="kt"&gt;Int&lt;/span&gt;
-&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="kr"&gt;data&lt;/span&gt; &lt;span class="kt"&gt;A&lt;/span&gt; &lt;span class="ow"&gt;=&lt;/span&gt; &lt;span class="kt"&gt;Safe&lt;/span&gt; &lt;span class="kt"&gt;Int&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="kt"&gt;Unsafe&lt;/span&gt; &lt;span class="kt"&gt;Int&lt;/span&gt;
-&lt;/div&gt;&lt;div class="line" id="LC1"&gt;
-&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="nf"&gt;createB&lt;/span&gt; &lt;span class="ow"&gt;::&lt;/span&gt; &lt;span class="kt"&gt;A&lt;/span&gt; &lt;span class="ow"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="kt"&gt;B&lt;/span&gt;
-&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="nf"&gt;createB&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;Safe&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="ow"&gt;=&lt;/span&gt; &lt;span class="kt"&gt;B&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;
-&lt;/div&gt;&lt;div class="line" id="LC1"&gt;&lt;span class="nf"&gt;createB&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;Unsafe&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="ow"&gt;=&lt;/span&gt; &lt;span class="ne"&gt;error&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;&#31105;&#27490;&#20986;&#29616;&amp;quot;&lt;/span&gt;
-&lt;/div&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;pre class="literal-block"&gt;
+data B = B Int
+data A = Safe Int | Unsafe Int
+
+createB :: A -&amp;gt; B
+createB (Safe i) = B i
+createB (Unsafe i) = error &amp;quot;&#31105;&#27490;&#20986;&#29616;&amp;quot;
+&lt;/pre&gt;
 &lt;p&gt;&#38382;&#39064;&#26159;&#65292;&#20351;&#29992; Unsafe &#35843;&#29992; createB &#30340;&#24773;&#20917;&#21482;&#33021;&#22312;&#36816;&#34892;&#26102;&#25165;&#33021;&#26816;&#26597;&#65292;&#32780;&#22914;&#26524;&#21435;&#25481;&#31532;&#20108;&#26465;&#20998;&#25903;&#65292;&#21448;&#21464;&#25104;&#20102;&#27169;&#24335;&#21305;&#37197;&#19981;&#23436;&#22791;&#30340;&#38169;&#35823;&#20102; :-(&lt;/p&gt;
 &lt;p&gt;&#26377;&#27809;&#26377;&#21150;&#27861;&#25226;&#23427;&#21464;&#25104;&#32534;&#35793;&#38169;&#35823;&#65311;&lt;/p&gt;
 &lt;/blockquote&gt;

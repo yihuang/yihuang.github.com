@@ -49,13 +49,14 @@
 <p>问题：</p>
 <blockquote>
 <p>我有一个这样的程序：</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">data</span> <span class="kt">B</span> <span class="ow">=</span> <span class="kt">B</span> <span class="kt">Int</span>
-</div><div class="line" id="LC1"><span class="kr">data</span> <span class="kt">A</span> <span class="ow">=</span> <span class="kt">Safe</span> <span class="kt">Int</span> <span class="o">|</span> <span class="kt">Unsafe</span> <span class="kt">Int</span>
-</div><div class="line" id="LC1">
-</div><div class="line" id="LC1"><span class="nf">createB</span> <span class="ow">::</span> <span class="kt">A</span> <span class="ow">-&gt;</span> <span class="kt">B</span>
-</div><div class="line" id="LC1"><span class="nf">createB</span> <span class="p">(</span><span class="kt">Safe</span> <span class="n">i</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">B</span> <span class="n">i</span>
-</div><div class="line" id="LC1"><span class="nf">createB</span> <span class="p">(</span><span class="kt">Unsafe</span> <span class="n">i</span><span class="p">)</span> <span class="ow">=</span> <span class="ne">error</span> <span class="s">&quot;禁止出现&quot;</span>
-</div></pre></div>
+<pre class="literal-block">
+data B = B Int
+data A = Safe Int | Unsafe Int
+
+createB :: A -&gt; B
+createB (Safe i) = B i
+createB (Unsafe i) = error &quot;禁止出现&quot;
+</pre>
 <p>问题是，使用 Unsafe 调用 createB 的情况只能在运行时才能检查，而如果去掉第二条分支，又变成了模式匹配不完备的错误了 :-(</p>
 <p>有没有办法把它变成编译错误？</p>
 </blockquote>
