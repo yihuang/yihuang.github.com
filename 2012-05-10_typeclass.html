@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>Typeclass语法糖</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="index.html"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="新浪微博" href="http://weibo.com/1897911954" class=""><img src="images/icons/weibo.png" alt="新浪微博"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">Typeclass语法糖</h1>
+
+                    <p class="author">2012-05-10 黄毅</p>
+                    <p>你想让你的代码具备更高的复用性，比如说你写了一个牛逼的排序函数 <tt class="docutils literal">sort</tt> ，你不希望它只能对整数或是字符串排序，你希望它能对所有类型排序，也就是：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">sort</span> <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+</div></pre></div>
+<p>但是你的排序函数并不是真的能对所有类型排序，被排序的类型至少要支持比较操作，于是我们改成这样：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">data</span> <span class="kt">Ordering</span> <span class="ow">=</span> <span class="kt">GT</span> <span class="o">|</span> <span class="kt">EQ</span><span class="o">|</span> <span class="kt">LT</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">sort</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Ordering</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+</div></pre></div>
+<p>通过让使用者主动提供比较函数，我们的函数可以支持尽可能多的类型。</p>
+<p>又假设你想写一个网络服务程序，你又不想依赖特定的传输协议，我们也可以用类似的做法，只不过刚才是一个函数，这次变成一组：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">data</span> <span class="kt">Connection</span> <span class="ow">=</span> <span class="kt">Connection</span>
+</div><div class="line" id="LC1">  <span class="p">{</span> <span class="n">recv</span>  <span class="ow">::</span> <span class="kt">IO</span> <span class="kt">ByteString</span>
+</div><div class="line" id="LC1">  <span class="p">,</span> <span class="n">send</span>  <span class="ow">::</span> <span class="kt">ByteString</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="kt">Int</span>
+</div><div class="line" id="LC1">  <span class="p">,</span> <span class="n">close</span> <span class="ow">::</span> <span class="kt">IO</span> <span class="nb">()</span>
+</div><div class="line" id="LC1">  <span class="p">}</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">service</span> <span class="ow">::</span> <span class="kt">Connection</span> <span class="ow">-&gt;</span> <span class="o">...</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="nb">()</span>
+</div></pre></div>
+<p>而具体传输协议的实现大概就是这样：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">tcpConn</span> <span class="ow">::</span> <span class="kt">Socket</span> <span class="ow">-&gt;</span> <span class="kt">Connection</span>
+</div><div class="line" id="LC1"><span class="nf">tcpConn</span> <span class="n">sock</span> <span class="ow">=</span> <span class="kt">Connection</span>
+</div><div class="line" id="LC1">  <span class="p">{</span> <span class="n">recv</span>  <span class="ow">=</span> <span class="kt">Sock</span><span class="o">.</span><span class="n">recv</span> <span class="n">sock</span>
+</div><div class="line" id="LC1">  <span class="p">,</span> <span class="n">send</span>  <span class="ow">=</span> <span class="kt">Sock</span><span class="o">.</span><span class="n">send</span> <span class="n">sock</span>
+</div><div class="line" id="LC1">  <span class="p">,</span> <span class="n">close</span> <span class="ow">=</span> <span class="kt">Sock</span><span class="o">.</span><span class="n">close</span> <span class="n">sock</span>
+</div><div class="line" id="LC1">  <span class="p">}</span>
+</div></pre></div>
+<p>再举一个例子，你想写一个hash map，其中key需要满足两个条件，一个是可以被hash，一个是可以比较，按照上面的做法，我们可能会这么写：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">data</span> <span class="kt">IsKey</span> <span class="n">key</span> <span class="ow">=</span> <span class="kt">IsKey</span> <span class="n">key</span>
+</div><div class="line" id="LC1">  <span class="p">{</span> <span class="n">hash</span>    <span class="ow">::</span> <span class="n">key</span> <span class="ow">-&gt;</span> <span class="kt">Int</span>
+</div><div class="line" id="LC1">  <span class="p">,</span> <span class="n">compare</span> <span class="ow">::</span> <span class="n">key</span> <span class="ow">-&gt;</span> <span class="n">key</span> <span class="ow">-&gt;</span> <span class="kt">Ordering</span>
+</div><div class="line" id="LC1">  <span class="p">}</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">lookup</span> <span class="ow">::</span> <span class="kt">IsKey</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="kt">HashMap</span> <span class="n">k</span> <span class="n">v</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="n">v</span>
+</div><div class="line" id="LC1"><span class="nf">insert</span> <span class="ow">::</span> <span class="kt">IsKey</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="n">v</span> <span class="ow">-&gt;</span> <span class="kt">HashMap</span> <span class="n">k</span> <span class="n">v</span> <span class="ow">-&gt;</span> <span class="kt">HashMap</span> <span class="n">k</span> <span class="n">v</span>
+</div><div class="line" id="LC1"><span class="c1">-- 此处省略若干操作</span>
+</div></pre></div>
+<p>这里就存在一个问题，没有人阻止我们对同一个map，传入不同的函数实现，比如不同的哈希算法，不同的比较实现，这样我们的数据结构就悲剧了。</p>
+<p>Haskell的typeclass语法糖本质上就是隐式传入的一组函数，只不过通过与类型系统的结合，可以保证同一个类型针对同一个接口只有一个实现，从而避免了上面这个问题。</p>
+<p>比如hash map的例子，用typeclass写就是这样的：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">class</span> <span class="kt">IsKey</span> <span class="n">a</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">hash</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Int</span>
+</div><div class="line" id="LC1">    <span class="n">compare</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Ordering</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">lookup</span> <span class="ow">::</span> <span class="kt">IsKey</span> <span class="n">k</span> <span class="ow">=&gt;</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="kt">HashMap</span> <span class="n">k</span> <span class="n">v</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="n">v</span>
+</div><div class="line" id="LC1"><span class="nf">insert</span> <span class="ow">::</span> <span class="kt">IsKey</span> <span class="n">k</span> <span class="ow">=&gt;</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="n">v</span> <span class="ow">-&gt;</span> <span class="kt">HashMap</span> <span class="n">k</span> <span class="n">v</span> <span class="ow">-&gt;</span> <span class="kt">HashMap</span> <span class="n">k</span> <span class="n">v</span>
+</div></pre></div>
+<p>为了让typeclass更好复用，实际上是这样的：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">class</span> <span class="kt">Hashable</span> <span class="n">a</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">hash</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Int</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="kr">class</span> <span class="kt">Ord</span> <span class="n">a</span> <span class="kr">where</span>
+</div><div class="line" id="LC1">    <span class="n">compare</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Ordering</span>
+</div><div class="line" id="LC1">
+</div><div class="line" id="LC1"><span class="nf">lookup</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Hashable</span> <span class="n">k</span><span class="p">,</span> <span class="kt">Ord</span> <span class="n">k</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="kt">HashMap</span> <span class="n">k</span> <span class="n">v</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="n">v</span>
+</div><div class="line" id="LC1"><span class="nf">insert</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Hashable</span> <span class="n">k</span><span class="p">,</span> <span class="kt">Ord</span> <span class="n">k</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="n">v</span> <span class="ow">-&gt;</span> <span class="kt">HashMap</span> <span class="n">k</span> <span class="n">v</span> <span class="ow">-&gt;</span> <span class="kt">HashMap</span> <span class="n">k</span> <span class="n">v</span>
+</div></pre></div>
+<p>不过，语法糖也并不总是比原始语法更好用，语法糖用得别扭的时候考虑一下更原始的方案，也许会有新思路。</p>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2012-05-10_typeclass';
+                        var disqus_url = 'http://www.yi-programmer.com/blog/2012-05-10_typeclass.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/blog/2012-05-10_typeclass.html&title=Typeclass语法糖"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/blog/2012-05-10_typeclass.html&title=Typeclass语法糖"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=Typeclass语法糖&uri=http://www.yi-programmer.com/blog/2012-05-10_typeclass.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/blog/2012-05-10_typeclass.html&title=Typeclass语法糖"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/blog/2012-05-10_typeclass.html&it=Typeclass语法糖&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/blog/2012-05-10_typeclass.html&title=Typeclass语法糖&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/blog/2012-05-10_typeclass.html&t=Typeclass语法糖"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/blog/2012-05-10_typeclass.html&title=Typeclass语法糖"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=Typeclass语法糖&rurl=http://www.yi-programmer.com/blog/2012-05-10_typeclass.html&rcontent=http://www.yi-programmer.com/blog/2012-05-10_typeclass.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/blog/2012-05-10_typeclass.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/blog/2012-05-10_typeclass.html&t=Typeclass语法糖"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2012-05-10_typeclass.txt">View document source</a>.
+Generated on: 2012-05-10.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

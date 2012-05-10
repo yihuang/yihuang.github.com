@@ -1,0 +1,85 @@
+Typeclass语法糖
+================
+
+你想让你的代码具备更高的复用性，比如说你写了一个牛逼的排序函数 ``sort`` ，你不希望它只能对整数或是字符串排序，你希望它能对所有类型排序，也就是：
+
+.. code-block:: haskell
+
+    sort :: [a] -> [a] 
+
+但是你的排序函数并不是真的能对所有类型排序，被排序的类型至少要支持比较操作，于是我们改成这样：
+
+.. code-block:: haskell
+
+    data Ordering = GT | EQ| LT
+
+    sort :: (a -> a -> Ordering) -> [a] -> [a]
+
+通过让使用者主动提供比较函数，我们的函数可以支持尽可能多的类型。
+
+又假设你想写一个网络服务程序，你又不想依赖特定的传输协议，我们也可以用类似的做法，只不过刚才是一个函数，这次变成一组：
+
+.. code-block:: haskell
+
+    data Connection = Connection
+      { recv  :: IO ByteString
+      , send  :: ByteString -> IO Int
+      , close :: IO ()
+      }
+
+    service :: Connection -> ... -> IO ()
+
+而具体传输协议的实现大概就是这样：
+
+.. code-block:: haskell
+
+    tcpConn :: Socket -> Connection
+    tcpConn sock = Connection
+      { recv  = Sock.recv sock
+      , send  = Sock.send sock
+      , close = Sock.close sock
+      }
+
+再举一个例子，你想写一个hash map，其中key需要满足两个条件，一个是可以被hash，一个是可以比较，按照上面的做法，我们可能会这么写：
+
+.. code-block:: haskell
+
+    data IsKey key = IsKey key
+      { hash    :: key -> Int
+      , compare :: key -> key -> Ordering
+      }
+
+    lookup :: IsKey k -> k -> HashMap k v -> Maybe v
+    insert :: IsKey k -> k -> v -> HashMap k v -> HashMap k v
+    -- 此处省略若干操作
+
+这里就存在一个问题，没有人阻止我们对同一个map，传入不同的函数实现，比如不同的哈希算法，不同的比较实现，这样我们的数据结构就悲剧了。
+
+Haskell的typeclass语法糖本质上就是隐式传入的一组函数，只不过通过与类型系统的结合，可以保证同一个类型针对同一个接口只有一个实现，从而避免了上面这个问题。
+
+比如hash map的例子，用typeclass写就是这样的：
+
+.. code-block:: haskell
+
+    class IsKey a where
+        hash :: a -> Int
+        compare :: a -> a -> Ordering
+
+    lookup :: IsKey k => k -> HashMap k v -> Maybe v
+    insert :: IsKey k => k -> v -> HashMap k v -> HashMap k v
+
+为了让typeclass更好复用，实际上是这样的：
+
+.. code-block:: haskell
+
+    class Hashable a where
+        hash :: a -> Int
+
+    class Ord a where
+        compare :: a -> a -> Ordering
+
+    lookup :: (Hashable k, Ord k) => k -> HashMap k v -> Maybe v
+    insert :: (Hashable k, Ord k) => k -> v -> HashMap k v -> HashMap k v
+
+
+不过，语法糖也并不总是比原始语法更好用，语法糖用得别扭的时候考虑一下更原始的方案，也许会有新思路。
