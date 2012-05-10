@@ -34,7 +34,7 @@ m = re.match(r'^(\d+-\d+-\d+)', basename)
 if m:
     datestr = m.group(1)
 
-content = listtpl.render(c=parts, cfg=config, date=datestr, url='http://www.yi-programmer.com/blog/%s.html'%basename, identifier=basename)
+content = listtpl.render(c=parts, cfg=config, date=datestr, url='http://www.yi-programmer.com/%s.html'%basename, identifier=basename)
 
 destname = os.path.join('../',basename+'.html')
 open(destname, 'w').write(content)
