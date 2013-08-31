@@ -787,9 +787,73 @@ tuple: -40
 </div></li>
 </ul>
 </div>
+<div class="slide" id="pythonc">
+<h1>类Python语法的c程序</h1>
+<div class="highlight"><pre><span class="n">cdef</span> <span class="n">object</span> <span class="n">int_to_decimal_string</span><span class="p">(</span><span class="n">Py_ssize_t</span> <span class="n">n</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">cdef</span> <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">32</span><span class="p">],</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="o">*</span><span class="n">bufend</span>
+    <span class="n">cdef</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">absn</span>
+    <span class="n">cdef</span> <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="sc">&#39;0&#39;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">bufend</span> <span class="o">=</span> <span class="n">buf</span> <span class="o">+</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">:</span>
+        <span class="n">absn</span> <span class="o">=</span> <span class="mi">0UL</span> <span class="o">-</span> <span class="n">n</span>
+    <span class="nl">else:</span>
+        <span class="n">absn</span> <span class="o">=</span> <span class="n">n</span>
+
+    <span class="p">...</span>
+</pre></div>
+</div>
+<div class="slide" id="c">
+<h1>使用外部c库</h1>
+<ul class="incremental">
+<li><div class="first"><div class="highlight"><pre><span class="n">cdef</span> <span class="n">extern</span> <span class="nb">int</span> <span class="n">spam_counter</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="n">cdef</span> <span class="n">extern</span> <span class="kn">from</span> <span class="s">&quot;foo.h&quot;</span><span class="p">:</span>
+
+    <span class="nb">int</span> <span class="n">spam_counter</span>
+    <span class="n">struct</span> <span class="n">spam</span><span class="p">:</span>
+        <span class="k">pass</span>
+</pre></div>
+</div></li>
+</ul>
+</div>
+<div class="slide" id="id18">
+<h1>使用外部c库</h1>
+<div class="highlight"><pre><span class="n">cdef</span> <span class="n">extern</span> <span class="kn">from</span> <span class="s">&quot;Python.h&quot;</span><span class="p">:</span>
+    <span class="n">Py_ssize_t</span> <span class="n">PyByteArray_GET_SIZE</span><span class="p">(</span><span class="nb">object</span> <span class="n">array</span><span class="p">)</span>
+
+    <span class="n">ctypedef</span> <span class="k">class</span> <span class="nc">__builtin__</span><span class="o">.</span><span class="n">bytearray</span> <span class="p">[</span><span class="nb">object</span> <span class="n">PyByteArrayObject</span><span class="p">]:</span>
+        <span class="n">cdef</span> <span class="n">Py_ssize_t</span> <span class="n">ob_alloc</span>
+        <span class="n">cdef</span> <span class="n">char</span> <span class="o">*</span><span class="n">ob_bytes</span>
+        <span class="n">cdef</span> <span class="n">Py_ssize_t</span> <span class="n">ob_size</span>
+</pre></div>
+</div>
 <div class="slide" id="extension-type">
 <h1>Extension Type</h1>
-<p>TODO</p>
+<div class="highlight"><pre><span class="n">cdef</span> <span class="k">class</span> <span class="nc">Connection</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">cdef</span> <span class="n">public</span> <span class="nb">int</span> <span class="n">port</span>
+    <span class="n">cdef</span> <span class="n">public</span> <span class="nb">object</span> <span class="n">_sock</span>
+
+    <span class="n">cdef</span> <span class="n">send_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">tuple</span> <span class="n">args</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sock</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pack_command</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="slide" id="id19">
+<h1>Cython基本精神传达完毕</h1>
+<p class="huge center">细节请看手册</p>
+<p class="huge center"><a class="reference external" href="http://docs.cython.org/">http://docs.cython.org/</a></p>
+</div>
+<div class="slide" id="q-a">
+<h1>Q &amp; A</h1>
+<p>招聘广告：</p>
+<blockquote>
+<p>深圳市云悦科技有限公司</p>
+<p>招聘Python程序员</p>
+<p>一起开发手机游戏服务器</p>
+<p>我们用：python/redis/lua/mysql/vim/xmonad</p>
+<p>地址：科技园南区 - 创维大厦（高新园站附近）/ 虚拟大学园（深大站附件）</p>
+</blockquote>
 </div>
 </div>
 </body>

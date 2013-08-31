@@ -479,7 +479,86 @@ cdef 消除名字查找和函数调用的开销
         }
     }
 
+类Python语法的c程序
+===================
+
+.. code-block:: c
+
+    cdef object int_to_decimal_string(Py_ssize_t n):
+        cdef char buf[32], *p, *bufend
+        cdef unsigned long absn
+        cdef char c = '0'
+        p = bufend = buf + sizeof(buf)
+        if n < 0:
+            absn = 0UL - n
+        else:
+            absn = n
+
+        ...
+
+使用外部c库
+===========
+
+.. class:: incremental
+
+* .. code-block:: python
+
+    cdef extern int spam_counter
+
+* .. code-block:: python
+
+    cdef extern from "foo.h":
+
+        int spam_counter
+        struct spam:
+            pass
+
+使用外部c库
+===========
+
+.. code-block:: python
+
+    cdef extern from "Python.h":
+        Py_ssize_t PyByteArray_GET_SIZE(object array)
+
+        ctypedef class __builtin__.bytearray [object PyByteArrayObject]:
+            cdef Py_ssize_t ob_alloc
+            cdef char *ob_bytes
+            cdef Py_ssize_t ob_size
+
 Extension Type
 ==============
 
-TODO
+.. code-block:: python
+
+    cdef class Connection(object):
+        cdef public int port
+        cdef public object _sock
+
+        cdef send_command(self, tuple args):
+            self._sock.sendall(
+                self._pack_command(args))
+
+Cython基本精神传达完毕
+======================
+
+.. class:: huge center
+
+    细节请看手册
+
+    http://docs.cython.org/
+
+Q & A
+=====
+
+招聘广告：
+
+    深圳市云悦科技有限公司
+
+    招聘Python程序员
+
+    一起开发手机游戏服务器
+
+    我们用：python/redis/lua/mysql/vim/xmonad
+
+    地址：科技园南区 - 创维大厦（高新园站附近）/ 虚拟大学园（深大站附件）
