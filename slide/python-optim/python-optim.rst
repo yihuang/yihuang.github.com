@@ -12,11 +12,11 @@ Python 代码优化
 .. class:: incremental
 
 * IO
-  
+
   请先确定瓶颈在Python代码
 
 * pypy
-  
+ 
   准备用pypy的话，今天说的完全不适用
 
 大纲
@@ -25,6 +25,13 @@ Python 代码优化
 #. **性能分析工具(快速)**
 #. CPython的性能
 #. Cython简明教程
+
+提前优化乃万恶之母
+==================
+
+.. class:: huge center
+
+    提前优化乃万恶之母
 
 评测工具: timeit
 =================
@@ -146,6 +153,30 @@ Mockup
 * ``namedtuple``. 不可变对象，比对象省点内存。
 * ``OrderedDict`` (dict+linked list). 费内存，需要就用。
 
+tuple VS list
+=============
+
+.. class:: incremental
+
+* .. code-block:: c
+
+    typedef struct {
+        PyObject_VAR_HEAD
+        // 结构体内动态数组
+        PyObject *ob_item[1];
+    } PyTupleObject;
+
+* .. code-block:: c
+
+    typedef struct {
+        PyObject_VAR_HEAD
+        // 额外分配的内存空间
+        PyObject **ob_item;
+        Py_ssize_t allocated;
+    } PyListObject;
+
+* mutable tuple ?
+
 小对象缓存和freelist
 ====================
 
@@ -186,14 +217,14 @@ Mockup
 其他预先计算时机：
 
 * 模块导入时
-* class创建时 (metaclass)
+* class创建时 (metaclass，这是另一个话题了)
 
 name resolution[1]
 ==================
 
-.. class:: incremental
+局部变量：
 
-* 局部变量
+.. class:: incremental
 
   .. code-block:: python
 
@@ -209,6 +240,8 @@ name resolution[2]
 
 ``LOAD_FAST i``
 
+.. class:: incremental
+
   .. code-block:: c
 
     PyObject *PyEval_EvalCodeEx(...) {
@@ -217,12 +250,14 @@ name resolution[2]
         fastlocals = f->f_localsplus;
         ...
         fastlocals[i]
-        ..*
+        ...
 
 name resolution[3]
 ==================
 
-* 模块变量
+模块变量：
+
+.. class:: incremental
 
   .. code-block:: python
 
@@ -239,6 +274,8 @@ name resolution[4]
 
 ``LOAD_GLOBAL 0``
 
+.. class:: incremental
+
   .. class:: small
   .. code-block:: c
 
@@ -253,27 +290,7 @@ name resolution[4]
             x = PyDict_GetItem(f->f_builtins, w);
             if (x == NULL) {
               load_global_error:
-        ..*
-
-name resolution[5] 优化示例
-===========================
-
-* .. code-block:: python
-
-    def encode(s):
-        b = 0
-        for c in s:
-            b |= ord(c)
-
-.. class:: incremental
-
-* .. code-block:: python
-
-    def encode(s):
-        b = 0
-        _ord = ord
-        for c in s:
-            b |= _ord(c)
+        ...
 
 function call[1]
 ================
@@ -295,7 +312,7 @@ function call[1]
     PyDict_SetItem(kwargs, "a", 1);
     PyDict_SetItem(kwargs, "b", 2);
     PyObject_Call(func, args, kwargs);
-    ..*
+    ...
 
 function call[2]
 ================
@@ -308,12 +325,22 @@ function call[2]
 
 * 还是无法忍受，没办法，只能改成c了。
 
-object model
-============
+object model - 对象的消耗
+==========================
 
-对象的消耗：
+``obj.a``
 
 .. class:: incremental
+
+* 先查找 ``type(obj)``
+* 如果是 data descriptor，使用其 ``__get__`` 方法
+* 查找 ``obj`` 的字典
+* 如果没找到，再看是否 non-data descriptor
+
+object model - 对象的消耗
+==========================
+
+.. class:: incremental small
 
 .. code-block:: python
 
@@ -335,9 +362,9 @@ object model
 延迟计算 - Non-data descriptors
 ===============================
 
-.. class::incremental
+.. class:: incremental
 
-.. code-block:: python
+* .. code-block:: python
 
     class LazyUser(object):
         def __get__(self, obj, objtype=None):
@@ -346,7 +373,7 @@ object model
             obj.user = value
             return value
 
-.. code-block:: python
+* .. code-block:: python
 
     >>> req.user
     计算...
@@ -356,11 +383,9 @@ object model
 简化设计
 ========
 
-.. class:: incremental
-
 * KISS, KISS, KISS
 
-* 没什么好说的
+* 简单的代码通常都有更好的性能
 
 大纲
 ====
@@ -435,7 +460,8 @@ cdef 消除名字查找和函数调用的开销
         for i in range(100):
             add(a, b)
 
-.. class:: incremental
+给Python加入类型签名，无限接近纯C
+=================================
 
 * .. code-block:: c
 

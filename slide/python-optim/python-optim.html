@@ -389,6 +389,10 @@ ul.auto-toc {
 <li>Cython简明教程</li>
 </ol>
 </div>
+<div class="slide" id="id3">
+<h1>提前优化乃万恶之母</h1>
+<p class="huge center">提前优化乃万恶之母</p>
+</div>
 <div class="slide" id="timeit">
 <h1>评测工具: timeit</h1>
 <p>用于：</p>
@@ -411,7 +415,7 @@ ul.auto-toc {
 <span class="n">cProfile</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s">&#39;for i in rng:test()&#39;</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="s">&#39;time&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="slide" id="id3">
+<div class="slide" id="id4">
 <h1>一起用</h1>
 <pre class="literal-block">
 timeit[10000]: 0.519935846329
@@ -446,7 +450,7 @@ ncalls  tottime  percall filename:lineno(function)
 </div></li>
 </ul>
 </div>
-<div class="slide" id="id4">
+<div class="slide" id="id5">
 <h1>内存泄漏[1]</h1>
 <ul class="incremental">
 <li><p class="first">创建heap快照 <tt class="docutils literal">gc.get_objects()</tt></p>
@@ -466,7 +470,7 @@ tuple: -40
 </li>
 </ul>
 </div>
-<div class="slide" id="id5">
+<div class="slide" id="id6">
 <h1>内存泄漏[2]</h1>
 <ul class="simple">
 <li>CPython存在小对象缓存 和 内存碎片</li>
@@ -475,7 +479,7 @@ tuple: -40
 <li>live with it.</li>
 </ul>
 </div>
-<div class="slide" id="id6">
+<div class="slide" id="id7">
 <h1>大纲</h1>
 <ul class="simple">
 <li>性能分析工具(快速)</li>
@@ -483,7 +487,7 @@ tuple: -40
 <li>Cython简明教程</li>
 </ul>
 </div>
-<div class="slide" id="id7">
+<div class="slide" id="id8">
 <h1>使用正确的数据结构[1/2]</h1>
 <ul class="incremental simple">
 <li><tt class="docutils literal">list</tt>. 连续，不要在中间增删数据！</li>
@@ -495,11 +499,33 @@ tuple: -40
 <li><tt class="docutils literal">heap</tt>. 最小堆，实现timer。</li>
 </ul>
 </div>
-<div class="slide" id="id8">
+<div class="slide" id="id9">
 <h1>使用正确的数据结构[2/2]</h1>
 <ul class="incremental simple">
 <li><tt class="docutils literal">namedtuple</tt>. 不可变对象，比对象省点内存。</li>
 <li><tt class="docutils literal">OrderedDict</tt> (dict+linked list). 费内存，需要就用。</li>
+</ul>
+</div>
+<div class="slide" id="tuple-vs-list">
+<h1>tuple VS list</h1>
+<ul class="incremental">
+<li><div class="first"><div class="highlight"><pre><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">PyObject_VAR_HEAD</span>
+    <span class="c1">// 结构体内动态数组</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">ob_item</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span> <span class="n">PyTupleObject</span><span class="p">;</span>
+</pre></div>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">PyObject_VAR_HEAD</span>
+    <span class="c1">// 额外分配的内存空间</span>
+    <span class="n">PyObject</span> <span class="o">**</span><span class="n">ob_item</span><span class="p">;</span>
+    <span class="n">Py_ssize_t</span> <span class="n">allocated</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">PyListObject</span><span class="p">;</span>
+</pre></div>
+</div></li>
+<li><p class="first">mutable tuple ?</p>
+</li>
 </ul>
 </div>
 <div class="slide" id="freelist">
@@ -513,7 +539,7 @@ tuple: -40
 <li>最多80个 <tt class="docutils literal">dict</tt> 对象，但 <tt class="docutils literal">dict</tt> 额外还有动态内存分配。</li>
 </ul>
 </div>
-<div class="slide" id="id9">
+<div class="slide" id="id10">
 <h1>预先计算[1]</h1>
 <ul class="incremental">
 <li><p class="first"><strong>BAD</strong></p>
@@ -531,58 +557,49 @@ tuple: -40
 </li>
 </ul>
 </div>
-<div class="slide" id="id10">
+<div class="slide" id="id11">
 <h1>预先计算[2]</h1>
 <p>其他预先计算时机：</p>
 <ul class="simple">
 <li>模块导入时</li>
-<li>class创建时 (metaclass)</li>
+<li>class创建时 (metaclass，这是另一个话题了)</li>
 </ul>
 </div>
 <div class="slide" id="name-resolution-1">
 <h1>name resolution[1]</h1>
-<ul class="incremental">
-<li><p class="first">局部变量</p>
-<div class="highlight"><pre><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+<p>局部变量：</p>
+<div class="incremental"><div class="highlight"><pre><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
     <span class="n">a</span>
 </pre></div>
-<div class="highlight"><pre><span class="n">LOAD_FAST</span> <span class="mi">0</span>
+</div><div class="incremental"><div class="highlight"><pre><span class="n">LOAD_FAST</span> <span class="mi">0</span>
 </pre></div>
-</li>
-</ul>
-</div>
+</div></div>
 <div class="slide" id="name-resolution-2">
 <h1>name resolution[2]</h1>
 <p><tt class="docutils literal">LOAD_FAST i</tt></p>
-<blockquote>
-<div class="highlight"><pre><span class="n">PyObject</span> <span class="o">*</span><span class="nf">PyEval_EvalCodeEx</span><span class="p">(...)</span> <span class="p">{</span>
+<div class="incremental"><div class="highlight"><pre><span class="n">PyObject</span> <span class="o">*</span><span class="nf">PyEval_EvalCodeEx</span><span class="p">(...)</span> <span class="p">{</span>
     <span class="k">register</span> <span class="n">PyObject</span> <span class="o">**</span><span class="n">fastlocals</span><span class="p">;</span>
     <span class="p">...</span>
     <span class="n">fastlocals</span> <span class="o">=</span> <span class="n">f</span><span class="o">-&gt;</span><span class="n">f_localsplus</span><span class="p">;</span>
     <span class="p">...</span>
     <span class="n">fastlocals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="p">..</span><span class="o">*</span>
+    <span class="p">...</span>
 </pre></div>
-</blockquote>
-</div>
+</div></div>
 <div class="slide" id="name-resolution-3">
 <h1>name resolution[3]</h1>
-<ul>
-<li><p class="first">模块变量</p>
-<div class="highlight"><pre><span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+<p>模块变量：</p>
+<div class="incremental"><div class="highlight"><pre><span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
     <span class="n">a</span>
 </pre></div>
-<div class="highlight"><pre><span class="n">LOAD_GLOBAL</span> <span class="mi">0</span>
+</div><div class="incremental"><div class="highlight"><pre><span class="n">LOAD_GLOBAL</span> <span class="mi">0</span>
 </pre></div>
-</li>
-</ul>
-</div>
+</div></div>
 <div class="slide" id="name-resolution-4">
 <h1>name resolution[4]</h1>
 <p><tt class="docutils literal">LOAD_GLOBAL 0</tt></p>
-<blockquote>
-<div class="small"><div class="highlight"><pre><span class="n">PyObject</span> <span class="o">*</span><span class="nf">PyEval_EvalCodeEx</span><span class="p">(...)</span> <span class="p">{</span>
+<div class="incremental small"><div class="highlight"><pre><span class="n">PyObject</span> <span class="o">*</span><span class="nf">PyEval_EvalCodeEx</span><span class="p">(...)</span> <span class="p">{</span>
     <span class="n">PyObject</span> <span class="o">*</span><span class="n">names</span><span class="p">;</span>
     <span class="p">...</span>
     <span class="n">names</span> <span class="o">=</span> <span class="n">co</span><span class="o">-&gt;</span><span class="n">co_names</span><span class="p">;</span>
@@ -593,30 +610,9 @@ tuple: -40
         <span class="n">x</span> <span class="o">=</span> <span class="n">PyDict_GetItem</span><span class="p">(</span><span class="n">f</span><span class="o">-&gt;</span><span class="n">f_builtins</span><span class="p">,</span> <span class="n">w</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
           <span class="nl">load_global_error:</span>
-    <span class="p">..</span><span class="o">*</span>
+    <span class="p">...</span>
 </pre></div>
-</div></blockquote>
-</div>
-<div class="slide" id="name-resolution-5">
-<h1>name resolution[5] 优化示例</h1>
-<ul>
-<li><div class="first"><div class="highlight"><pre><span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
-        <span class="n">b</span> <span class="o">|=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-</pre></div>
-</div></li>
-</ul>
-<ul class="incremental">
-<li><div class="first"><div class="highlight"><pre><span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">_ord</span> <span class="o">=</span> <span class="nb">ord</span>
-    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
-        <span class="n">b</span> <span class="o">|=</span> <span class="n">_ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-</pre></div>
-</div></li>
-</ul>
-</div>
+</div></div>
 <div class="slide" id="function-call-1">
 <h1>function call[1]</h1>
 <div class="highlight"><pre><span class="n">test</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -630,7 +626,7 @@ tuple: -40
 <span class="n">PyDict_SetItem</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s">&quot;a&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 <span class="n">PyDict_SetItem</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s">&quot;b&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
 <span class="n">PyObject_Call</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">);</span>
-<span class="p">..</span><span class="o">*</span>
+<span class="p">...</span>
 </pre></div>
 </div></div>
 <div class="slide" id="function-call-2">
@@ -642,9 +638,18 @@ tuple: -40
 </ul>
 </div>
 <div class="slide" id="object-model">
-<h1>object model</h1>
-<p>对象的消耗：</p>
-<div class="incremental"><div class="highlight"><pre><span class="nb">object</span> <span class="n">PyObject_GenericGetAttr</span><span class="p">(</span><span class="nb">object</span> <span class="n">obj</span><span class="p">,</span> <span class="nb">object</span> <span class="n">name</span><span class="p">):</span>
+<h1>object model - 对象的消耗</h1>
+<p><tt class="docutils literal">obj.a</tt></p>
+<ul class="incremental simple">
+<li>先查找 <tt class="docutils literal">type(obj)</tt></li>
+<li>如果是 data descriptor，使用其 <tt class="docutils literal">__get__</tt> 方法</li>
+<li>查找 <tt class="docutils literal">obj</tt> 的字典</li>
+<li>如果没找到，再看是否 non-data descriptor</li>
+</ul>
+</div>
+<div class="slide" id="id12">
+<h1>object model - 对象的消耗</h1>
+<div class="incremental small"><div class="highlight"><pre><span class="nb">object</span> <span class="n">PyObject_GenericGetAttr</span><span class="p">(</span><span class="nb">object</span> <span class="n">obj</span><span class="p">,</span> <span class="nb">object</span> <span class="n">name</span><span class="p">):</span>
     <span class="c"># 从class中查找descriptor</span>
     <span class="n">descr</span> <span class="o">=</span> <span class="n">PyType_Lookup</span><span class="p">(</span><span class="n">Py_TYPE</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">name</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">PyDescr_IsData</span><span class="p">(</span><span class="n">descr</span><span class="p">):</span>
@@ -662,28 +667,31 @@ tuple: -40
 </div></div>
 <div class="slide" id="non-data-descriptors">
 <h1>延迟计算 - Non-data descriptors</h1>
-<!-- class::incremental -->
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">LazyUser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<ul class="incremental">
+<li><div class="first"><div class="highlight"><pre><span class="k">class</span> <span class="nc">LazyUser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">objtype</span><span class="p">)</span>
         <span class="c"># 使用对象字典作为缓存</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="n">value</span>
 </pre></div>
-<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">req</span><span class="o">.</span><span class="n">user</span>
+</div></li>
+<li><div class="first"><div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">req</span><span class="o">.</span><span class="n">user</span>
 <span class="err">计算</span><span class="o">...</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">req</span><span class="o">.</span><span class="n">user</span>
 <span class="err">从字典中取值</span>
 </pre></div>
-</div>
-<div class="slide" id="id11">
-<h1>简化设计</h1>
-<ul class="incremental simple">
-<li>KISS, KISS, KISS</li>
-<li>没什么好说的</li>
+</div></li>
 </ul>
 </div>
-<div class="slide" id="id12">
+<div class="slide" id="id13">
+<h1>简化设计</h1>
+<ul class="simple">
+<li>KISS, KISS, KISS</li>
+<li>简单的代码通常都有更好的性能</li>
+</ul>
+</div>
+<div class="slide" id="id14">
 <h1>大纲</h1>
 <ul class="simple">
 <li>性能分析工具(快速)</li>
@@ -699,7 +707,7 @@ tuple: -40
 <li>提供扩展语法用于对接c</li>
 </ul>
 </div>
-<div class="slide" id="id13">
+<div class="slide" id="id15">
 <h1>编译纯Python，消除解释执行的开销</h1>
 <ul>
 <li><div class="first"><div class="highlight"><pre><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
@@ -731,7 +739,7 @@ tuple: -40
 </div></li>
 </ul>
 </div>
-<div class="slide" id="id14">
+<div class="slide" id="id16">
 <h1>cdef 消除名字查找和函数调用的开销</h1>
 <ul>
 <li><div class="first"><div class="highlight"><pre><span class="n">PyObject</span> <span class="o">*</span><span class="nf">test</span><span class="p">(</span><span class="n">PyObject</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="p">{</span>
@@ -758,7 +766,10 @@ tuple: -40
 </pre></div>
 </div></li>
 </ul>
-<ul class="incremental">
+</div>
+<div class="slide" id="id17">
+<h1>给Python加入类型签名，无限接近纯C</h1>
+<ul>
 <li><div class="first"><div class="highlight"><pre><span class="kt">int</span> <span class="nf">add</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
 <span class="p">}</span>
