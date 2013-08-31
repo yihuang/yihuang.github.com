@@ -680,7 +680,6 @@ tuple: -40
 <ul class="incremental simple">
 <li>KISS, KISS, KISS</li>
 <li>没什么好说的</li>
-<li>就像</li>
 </ul>
 </div>
 <div class="slide" id="id12">
@@ -700,14 +699,14 @@ tuple: -40
 </ul>
 </div>
 <div class="slide" id="id13">
-<h1>编译纯Python的好处</h1>
-<ul class="incremental">
-<li><p class="first">没有解释执行的开销</p>
-</li>
+<h1>编译纯Python，消除解释执行的开销</h1>
+<ul>
 <li><div class="first"><div class="highlight"><pre><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
 </pre></div>
 </div></li>
+</ul>
+<ul class="incremental">
 <li><div class="first"><div class="highlight"><pre><span class="n">PyObject</span> <span class="o">*</span><span class="nf">test</span><span class="p">(</span><span class="n">PyObject</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">PyObject</span> <span class="o">*</span><span class="n">a</span> <span class="o">=</span> <span class="n">PyTuple_GET_ITEM</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
     <span class="n">PyObject</span> <span class="o">*</span><span class="n">b</span> <span class="o">=</span> <span class="n">PyTuple_GET_ITEM</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
@@ -717,30 +716,68 @@ tuple: -40
 </div></li>
 </ul>
 </div>
-<div class="slide" id="id14">
-<h1>给Python加入类型签名</h1>
-<ul class="incremental">
-<li><div class="first"><div class="highlight"><pre><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="nb">int</span> <span class="n">a</span><span class="p">,</span> <span class="nb">int</span> <span class="n">b</span><span class="p">):</span>
+<div class="slide" id="cdef">
+<h1>cdef 消除名字查找和函数调用的开销</h1>
+<ul>
+<li><div class="first"><div class="highlight"><pre><span class="n">cdef</span> <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="n">cdef</span> <span class="nb">int</span> <span class="n">i</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 </pre></div>
 </div></li>
+</ul>
+</div>
+<div class="slide" id="id14">
+<h1>cdef 消除名字查找和函数调用的开销</h1>
+<ul>
 <li><div class="first"><div class="highlight"><pre><span class="n">PyObject</span> <span class="o">*</span><span class="nf">test</span><span class="p">(</span><span class="n">PyObject</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">PyObject</span> <span class="o">*</span><span class="n">pya</span> <span class="o">=</span> <span class="n">PyTuple_GET_ITEM</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
     <span class="n">PyObject</span> <span class="o">*</span><span class="n">pyb</span> <span class="o">=</span> <span class="n">PyTuple_GET_ITEM</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-    <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">__Pyx_PyInt_AsInt</span><span class="p">(</span><span class="n">pya</span><span class="p">);</span>
-    <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="n">__Pyx_PyInt_AsInt</span><span class="p">(</span><span class="n">pyb</span><span class="p">);</span>
-    <span class="k">return</span> <span class="n">PyInt_FromLong</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">);</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">add</span><span class="p">(</span><span class="n">pya</span><span class="p">,</span> <span class="n">pyb</span><span class="p">);</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div></li>
 </ul>
 </div>
-<div class="slide" id="cdef-early-binding">
-<h1>cdef Early binding</h1>
-<p>cdef</p>
+<div class="slide" id="python-c">
+<h1>给Python加入类型签名，无限接近纯C</h1>
+<ul>
+<li><div class="first"><div class="highlight"><pre><span class="n">cdef</span> <span class="nb">int</span> <span class="n">add</span><span class="p">(</span><span class="nb">int</span> <span class="n">a</span><span class="p">,</span> <span class="nb">int</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="n">cdef</span> <span class="nb">int</span> <span class="n">i</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div></li>
+</ul>
+<ul class="incremental">
+<li><div class="first"><div class="highlight"><pre><span class="kt">int</span> <span class="nf">add</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PyObject</span> <span class="o">*</span><span class="nf">test</span><span class="p">(</span><span class="n">PyObject</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">pya</span> <span class="o">=</span> <span class="n">PyTuple_GET_ITEM</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">pyb</span> <span class="o">=</span> <span class="n">PyTuple_GET_ITEM</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">__Pyx_PyInt_AsInt</span><span class="p">(</span><span class="n">pya</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="n">__Pyx_PyInt_AsInt</span><span class="p">(</span><span class="n">pyb</span><span class="p">);</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div></li>
+</ul>
 </div>
-<div class="slide" id="cdef-method">
-<h1>cdef Method</h1>
+<div class="slide" id="extension-type">
+<h1>Extension Type</h1>
+<p>TODO</p>
 </div>
 </div>
 </body>

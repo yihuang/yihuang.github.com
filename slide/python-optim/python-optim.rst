@@ -362,8 +362,6 @@ object model
 
 * 没什么好说的
 
-* 就像
-
 大纲
 ====
 
@@ -380,17 +378,15 @@ object model
 * 完全兼容python2/3的语法
 * 提供扩展语法用于对接c
 
-编译纯Python的好处
-==================
-
-.. class:: incremental
-
-* 没有解释执行的开销
+编译纯Python，消除解释执行的开销
+================================
 
 * .. code-block:: python
 
     def test(a, b):
         return a + b
+
+.. class:: incremental
 
 * .. code-block:: c
 
@@ -400,30 +396,64 @@ object model
         return PyNumber_Add(a, b);
     }
 
-给Python加入类型签名
-====================
-
-.. class:: incremental
+cdef 消除名字查找和函数调用的开销
+=================================
 
 * .. code-block:: python
 
-    def test(int a, int b):
+    cdef add(a, b):
         return a + b
+
+    def test(a, b):
+        cdef int i
+        for i in range(100):
+            add(a, b)
+
+cdef 消除名字查找和函数调用的开销
+=================================
 
 * .. code-block:: c
 
     PyObject *test(PyObject *args) {
         PyObject *pya = PyTuple_GET_ITEM(args, 0);
         PyObject *pyb = PyTuple_GET_ITEM(args, 1);
-        int a = __Pyx_PyInt_AsInt(pya);
-        int b = __Pyx_PyInt_AsInt(pyb);
-        return PyInt_FromLong(a + b);
+        for(int i=0; i<100; i++) {
+            add(pya, pyb);
+        }
     }
 
-cdef Early binding
-==================
+给Python加入类型签名，无限接近纯C
+=================================
 
-cdef 
+* .. code-block:: python
 
-cdef Method
-===========
+    cdef int add(int a, int b):
+        return a + b
+
+    def test(a, b):
+        cdef int i
+        for i in range(100):
+            add(a, b)
+
+.. class:: incremental
+
+* .. code-block:: c
+
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    PyObject *test(PyObject *args) {
+        PyObject *pya = PyTuple_GET_ITEM(args, 0);
+        PyObject *pyb = PyTuple_GET_ITEM(args, 1);
+        int a = __Pyx_PyInt_AsInt(pya);
+        int b = __Pyx_PyInt_AsInt(pyb);
+        for(int i=0; i<100; i++) {
+            add(a, b);
+        }
+    }
+
+Extension Type
+==============
+
+TODO
