@@ -4,7 +4,7 @@
 <script>
 
 // IE5.5+ PNG Alpha Fix v1.0 by Angus Turnbull http://www.twinhelix.com
-// Free usage permitted as long as this notice remains intact.
+// This is licensed under the GNU LGPL, version 2.1 or later. 
 
 // This must be a path to a blank image. That's all the configuration you need here.
 var blankImg = 'ui/default/blank.gif';
