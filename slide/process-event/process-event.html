@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.10: http://docutils.sourceforge.net/" />
+<meta name="version" content="S5 1.1" />
+<title>进程、线程、微线程和事件驱动</title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 7514 2012-09-14 14:27:12Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title, .code .error {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math, pre.code {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+pre.code .ln { color: grey; } /* line numbers */
+pre.code, code { background-color: #eeeeee }
+pre.code .comment, code .comment { color: #5C6576 }
+pre.code .keyword, code .keyword { color: #3B0D06; font-weight: bold }
+pre.code .literal.string, code .literal.string { color: #0C5404 }
+pre.code .name.builtin, code .name.builtin { color: #352B84 }
+pre.code .deleted, code .deleted { background-color: #DEB0A1}
+pre.code .inserted, code .inserted { background-color: #A3D289}
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+<!-- configuration parameters -->
+<meta name="defaultView" content="slideshow" />
+<meta name="controlVis" content="hidden" />
+<!-- style sheet links -->
+<script src="ui/default/slides.js" type="text/javascript"></script>
+<link rel="stylesheet" href="ui/default/slides.css"
+      type="text/css" media="projection" id="slideProj" />
+<link rel="stylesheet" href="ui/default/outline.css"
+      type="text/css" media="screen" id="outlineStyle" />
+<link rel="stylesheet" href="ui/default/print.css"
+      type="text/css" media="print" id="slidePrint" />
+<link rel="stylesheet" href="ui/default/opera.css"
+      type="text/css" media="projection" id="operaFix" />
+
+<style type="text/css">
+#currentSlide {display: none;}
+</style>
+</head>
+<body>
+<div class="layout">
+<div id="controls"></div>
+<div id="currentSlide"></div>
+<div id="header">
+
+</div>
+<div id="footer">
+<h1>进程、线程、微线程和事件驱动</h1>
+
+</div>
+</div>
+<div class="presentation">
+<div class="slide" id="slide0">
+<h1 class="title">进程、线程、微线程和事件驱动</h1>
+
+
+</div>
+<div class="slide" id="vs">
+<h1>内核级 VS 用户级</h1>
+<ul class="simple">
+<li>普通程序运行于用户级</li>
+<li>通过system call调用内核程序 (TRAP指令)</li>
+</ul>
+</div>
+<div class="slide" id="id2">
+<h1>进程 - 一段程序的顺序执行</h1>
+<ul class="simple">
+<li>抢占式调度</li>
+<li>独立的地址空间</li>
+</ul>
+</div>
+<div class="slide" id="id3">
+<h1>线程</h1>
+<ul class="simple">
+<li>共享地址空间的进程</li>
+<li>对调度器来说和进程没有区别</li>
+</ul>
+</div>
+<div class="slide" id="id4">
+<h1>内核调度时机 - 事件驱动</h1>
+<ul class="simple">
+<li>时钟中断触发抢占式调度</li>
+<li>IO中断触发内核线程的阻塞和唤醒</li>
+</ul>
+</div>
+<div class="slide" id="id5">
+<h1>用户级线程 - 微线程/绿线程/协程</h1>
+<ul class="simple">
+<li>在用户级调度不同的代码执行序列</li>
+<li>好处：开销小</li>
+<li>坏处：需要避开阻塞的系统调用</li>
+</ul>
+</div>
+<div class="slide" id="id6">
+<h1>用户级调度器的调度时机</h1>
+<ul class="simple">
+<li>由解释器进行调度</li>
+<li>代码主动切换 (协作式调度)</li>
+</ul>
+</div>
+<div class="slide" id="id7">
+<h1>抢占式调度 VS 协作式调度</h1>
+<ul class="simple">
+<li>抢占式调度容易出现: 关键区域(Critical Section)的同步</li>
+<li>协作式调度容易出现：饥饿</li>
+</ul>
+</div>
+<div class="slide" id="id8">
+<h1>线程模型</h1>
+<p>线程数量:内核调度单元</p>
+<ul class="simple">
+<li>1:1 系统线程</li>
+<li>M:1 greenlet的线程</li>
+<li>M:N golang/haskell的线程</li>
+</ul>
+</div>
+<div class="slide" id="id9">
+<h1>事件驱动编程</h1>
+<ul class="simple">
+<li>内核的事件驱动：中断</li>
+<li>多播IO：select/poll/epoll/kqueue/IOCP</li>
+</ul>
+</div>
+<div class="slide" id="id10">
+<h1>事件驱动主循环</h1>
+<div class="highlight"><pre><span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="n">events</span> <span class="o">=</span> <span class="n">epoll_wait</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">fd</span><span class="p">,</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="p">[(</span><span class="n">fd</span><span class="p">,</span> <span class="n">event</span><span class="p">)]:</span>
+            <span class="n">callback</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="slide" id="id11">
+<h1>注册事件接口</h1>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">register_fd</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+    <span class="n">epoll_ctl</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">ADD</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
+    <span class="n">callbacks</span><span class="p">[(</span><span class="n">fd</span><span class="p">,</span> <span class="n">event</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">unregister_fd</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+    <span class="n">epoll_ctl</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">DEL</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">callbacks</span><span class="p">[(</span><span class="n">fd</span><span class="p">,</span> <span class="n">event</span><span class="p">)]</span>
+</pre></div>
+</div>
+<div class="slide" id="id12">
+<h1>使用</h1>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">sendall</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">def</span> <span class="nf">callback</span><span class="p">():</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">send</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">msg</span><span class="p">[:</span><span class="n">offset</span><span class="p">])</span>
+        <span class="n">offset</span> <span class="o">+=</span> <span class="n">count</span>
+        <span class="k">if</span> <span class="n">offset</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+            <span class="n">unregister_fd</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">EV_WRITE</span><span class="p">)</span>
+    <span class="n">register_fd</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">EV_WRITE</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="slide" id="id13">
+<h1>对比系统线程+阻塞接口</h1>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">sendall</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">offset</span><span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">send</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">msg</span><span class="p">[</span><span class="n">offset</span><span class="p">:])</span>
+        <span class="n">offset</span> <span class="o">+=</span> <span class="n">count</span>
+</pre></div>
+</div>
+<div class="slide" id="id14">
+<h1>微线程+事件驱动+非阻塞接口</h1>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">sendall</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">offset</span><span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">send</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">msg</span><span class="p">[</span><span class="n">offset</span><span class="p">:])</span>
+        <span class="n">offset</span> <span class="o">+=</span> <span class="n">count</span>
+</pre></div>
+</div>
+<div class="slide" id="send">
+<h1>区别在send的实现</h1>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">wait_fd</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+    <span class="n">thread</span> <span class="o">=</span> <span class="n">getcurrent</span><span class="p">()</span>
+    <span class="n">register_fd</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">thread</span><span class="o">.</span><span class="n">switch</span><span class="p">)</span>
+    <span class="c"># 主动挂起当前微线程</span>
+    <span class="c"># 协作式调度</span>
+    <span class="n">hub</span><span class="o">.</span><span class="n">switch</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+    <span class="n">wait_fd</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">WRITE</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">c_send</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="slide" id="id15">
+<h1>线程安全 - 识别何时会切换</h1>
+<ul class="simple">
+<li>抢占式调度：随时可能切换</li>
+<li>协作式调度：通常是阻塞操作的接口会切换或主动切换</li>
+<li>事件驱动：不同回调函数之间</li>
+</ul>
+</div>
+<div class="slide" id="id16">
+<h1>线程安全 - 识别何时会切换 - 例子</h1>
+<ul class="simple">
+<li>executeSQL 切换, async_executeSQL 不切换</li>
+<li>socket.send 切换，socket.async_send 不切换</li>
+</ul>
+</div>
+<div class="slide" id="id17">
+<h1>线程安全 - 示例</h1>
+<div class="highlight"><pre><span class="n">player</span> <span class="o">=</span> <span class="n">players</span><span class="p">[</span><span class="n">new_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">Player</span><span class="p">()</span>
+<span class="n">value</span> <span class="o">=</span> <span class="n">executeSQL</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">player</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="slide" id="id18">
+<h1>线程安全 - 示例 - 事件驱动</h1>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">on_success</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="n">player</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+<span class="n">player</span> <span class="o">=</span> <span class="n">players</span><span class="p">[</span><span class="n">new_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">Player</span><span class="p">()</span>
+<span class="n">async_executeSQL</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">on_success</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</body>
+</html>
