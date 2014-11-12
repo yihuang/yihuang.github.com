@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="Docutils 0.10: http://docutils.sourceforge.net/" />
 <meta name="version" content="S5 1.1" />
-<title>Python 代码优化</title>
+<title>Keep simple things simple and high performance</title>
 <meta name="author" content="yihuang" />
 <style type="text/css">
 
@@ -349,13 +349,13 @@ ul.auto-toc {
 
 </div>
 <div id="footer">
-<h1>Python 代码优化</h1>
+<h1>Keep simple things simple and high performance</h1>
 
 </div>
 </div>
 <div class="presentation">
 <div class="slide" id="slide0">
-<h1 class="title">Python 代码优化</h1>
+<h1 class="title">Keep simple things simple and high performance</h1>
 <table class="docinfo" frame="void" rules="none">
 <col class="docinfo-name" />
 <col class="docinfo-content" />
@@ -370,8 +370,9 @@ ul.auto-toc {
 </table>
 
 </div>
-<div class="slide" id="redis-api">
-<h1>Redis API</h1>
+<div class="slide" id="id1">
+<h1>定义简单</h1>
+<p>Redis client API:</p>
 <div class="highlight"><pre><span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&#39;get&#39;</span><span class="p">,</span> <span class="s">&#39;key&#39;</span><span class="p">)</span>
 
 <span class="c"># VS</span>
@@ -379,8 +380,9 @@ ul.auto-toc {
 <span class="n">conn</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;key&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="slide" id="redis-api-pipeline">
-<h1>Redis API Pipeline</h1>
+<div class="slide" id="id2">
+<h1>定义简单</h1>
+<p>Redis client pipeline API:</p>
 <div class="highlight"><pre><span class="n">conn</span><span class="o">.</span><span class="n">execute_pipeline</span><span class="p">(</span>
     <span class="p">(</span><span class="s">&#39;get&#39;</span><span class="p">,</span> <span class="s">&#39;key&#39;</span><span class="p">),</span>
     <span class="p">(</span><span class="s">&#39;set&#39;</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;bar&#39;</span><span class="p">)</span>
@@ -394,11 +396,11 @@ ul.auto-toc {
 <span class="n">pipe</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="slide" id="id1">
-<h1>Redis API Pipeline</h1>
-<div class="highlight"><pre><span class="n">conn</span><span class="o">.</span><span class="n">execute_pipeline</span><span class="p">(</span>
-    <span class="o">*</span><span class="p">[(</span><span class="s">&#39;get&#39;</span><span class="p">,</span> <span class="s">&#39;key</span><span class="si">%d</span><span class="s">&#39;</span><span class="o">%</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
-<span class="p">)</span>
+<div class="slide" id="id3">
+<h1>定义简单</h1>
+<p>Redis client pipeline API:</p>
+<div class="highlight"><pre><span class="n">cmds</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&#39;get&#39;</span><span class="p">,</span> <span class="s">&#39;key</span><span class="si">%d</span><span class="s">&#39;</span><span class="o">%</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">execute_pipeline</span><span class="p">(</span><span class="o">*</span><span class="n">cmds</span><span class="p">)</span>
 
 <span class="c"># VS</span>
 
@@ -408,8 +410,21 @@ ul.auto-toc {
 <span class="n">pipe</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="slide" id="protocol-buffer">
-<h1>Protocol Buffer</h1>
+<div class="slide" id="id4">
+<h1>定义简单</h1>
+<ul class="simple">
+<li>更少的接口</li>
+<li>更简单的实现</li>
+<li>No magic</li>
+</ul>
+</div>
+<div class="slide" id="credis">
+<h1>credis</h1>
+<p><a class="reference external" href="https://github.com/yihuang/credis">https://github.com/yihuang/credis</a></p>
+</div>
+<div class="slide" id="id5">
+<h1>更简单的实现</h1>
+<p>Protocol Buffer</p>
 <div class="highlight"><pre><span class="kd">message</span> <span class="nc">Test</span> <span class="p">{</span>
     <span class="k">required</span> <span class="kt">int32</span> <span class="na">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
     <span class="k">optional</span> <span class="kt">int32</span> <span class="na">b</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
@@ -419,18 +434,109 @@ ul.auto-toc {
 <span class="err">#</span> <span class="n">image</span> <span class="k">to</span> <span class="n">explain</span> <span class="n">encoding</span> <span class="n">of</span> <span class="n">Test</span> <span class="kd">message</span>
 </pre></div>
 </div>
-<div class="slide" id="id2">
-<h1>Protocol Buffer</h1>
+<div class="slide" id="id6">
+<h1>更简单的实现</h1>
+<p>Protocol Buffer 简单的编码规则</p>
+<p>[(index, type, content), ...]</p>
 <ul class="simple">
-<li>A simple design with a huge implementation.</li>
+<li>向后兼容，向前兼容。</li>
 </ul>
 </div>
-<div class="slide" id="pythonic-protocol-buffer">
-<h1>Pythonic Protocol Buffer</h1>
+<div class="slide" id="id7">
+<h1>更简单的实现</h1>
+<ul class="simple">
+<li>Protocol Buffer 复杂的官方实现
+( 排除编译器，12万行c++代码，2万行python代码 )</li>
+<li>cprotobuf, 804行cython代码加185行python代码。</li>
+</ul>
+</div>
+<div class="slide" id="cprotobuf">
+<h1>cprotobuf</h1>
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">ProtoEntity</span><span class="p">):</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="s">&#39;int32&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="s">&#39;int32&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="n">req</span> <span class="o">=</span> <span class="n">Person</span><span class="p">()</span>
+<span class="n">req</span><span class="o">.</span><span class="n">ParseFromString</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="n">req</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">()</span>
 </pre></div>
+<ul class="simple">
+<li>接口命名兼容官方版本</li>
+</ul>
+</div>
+<div class="slide" id="id8">
+<h1>cprotobuf</h1>
+<p><a class="reference external" href="https://github.com/yihuang/cprotobuf">https://github.com/yihuang/cprotobuf</a></p>
+</div>
+<div class="slide" id="python">
+<h1>普通python程序的性能</h1>
+<ul class="simple">
+<li>变量获取</li>
+<li>对象构建</li>
+<li>属性访问</li>
+<li>函数调用</li>
+</ul>
+</div>
+<div class="slide" id="cython">
+<h1>Cython作为一门语言</h1>
+<ul class="simple">
+<li>融合python和c的语法</li>
+<li>完全兼容python2和3的语法
+(升级python3不用改代码)</li>
+</ul>
+</div>
+<div class="slide" id="id9">
+<h1>Cython典型用途</h1>
+<ul class="simple">
+<li>包装C库</li>
+<li>加速python代码</li>
+<li>直接编写cython代码</li>
+</ul>
+</div>
+<div class="slide" id="c">
+<h1>调用C代码</h1>
+<div class="highlight"><pre><span class="k">from</span> <span class="nn">libc.stdlib</span> <span class="k">cimport</span> <span class="n">atoi</span>
+
+<span class="k">cdef</span> <span class="kr">extern</span> <span class="kt">const</span> <span class="kt">char</span>* <span class="nf">getenv</span><span class="p">(</span><span class="n">const</span> <span class="n">char</span><span class="o">*</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">getenv</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">atoi</span><span class="p">(</span><span class="n">getenv</span><span class="p">(</span><span class="o">&lt;</span><span class="n">const</span> <span class="n">char</span><span class="o">*&gt;</span><span class="n">s</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="slide" id="cpython">
+<h1>给C传递Python回调</h1>
+<div class="highlight"><pre><span class="k">from</span> <span class="nn">libc.stdlib</span> <span class="k">cimport</span> <span class="n">qsort</span>
+
+<span class="k">cdef</span> <span class="kt">int</span> <span class="nf">c_cmp</span><span class="p">(</span><span class="n">const</span> <span class="n">void</span> <span class="o">*</span> <span class="n">a</span><span class="p">,</span> <span class="n">const</span> <span class="n">void</span> <span class="o">*</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="o">&lt;</span><span class="nb">int</span><span class="o">*&gt;</span><span class="n">a</span><span class="p">)[</span><span class="mf">0</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="o">&lt;</span><span class="nb">int</span><span class="o">*&gt;</span><span class="n">b</span><span class="p">)[</span><span class="mf">0</span><span class="p">]</span>
+
+<span class="k">cdef</span> <span class="kt">int</span>* <span class="nf">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">]</span>
+<span class="n">qsort</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="mf">5</span><span class="p">,</span> <span class="n">sizeof</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">c_cmp</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="slide" id="id10">
+<h1>给变量加类型签名</h1>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">double</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">-</span><span class="n">x</span>
+</pre></div>
+</div>
+<div class="slide" id="id11">
+<h1>使用C的循环</h1>
+<div class="highlight"><pre><span class="k">cdef</span> <span class="kt">int</span> <span class="nf">i</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">10</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+<div class="highlight"><pre><span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="mi">10</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="p">{}</span>
+</pre></div>
+</div>
+<div class="slide" id="memoryview">
+<h1>memoryview</h1>
+</div>
+<div class="slide" id="cython-a">
+<h1>cython -a</h1>
+<p>学习Python c-api的好工具。</p>
+<p>demo.html</p>
 </div>
 </div>
 </body>
