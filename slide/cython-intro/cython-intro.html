@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.10: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.12: http://docutils.sourceforge.net/" />
 <meta name="version" content="S5 1.1" />
 <title>Keep simple things simple and high performance</title>
 <meta name="author" content="yihuang" />
@@ -11,7 +11,7 @@
 
 /*
 :Author: David Goodger (goodger@python.org)
-:Id: $Id: html4css1.css 7514 2012-09-14 14:27:12Z milde $
+:Id: $Id: html4css1.css 7614 2013-02-21 15:55:51Z milde $
 :Copyright: This stylesheet has been placed in the public domain.
 
 Default cascading style sheet for the HTML output of Docutils.
@@ -314,6 +314,21 @@ table.docutils th.field-name, table.docinfo th.docinfo-name {
   text-align: left ;
   white-space: nowrap ;
   padding-left: 0 }
+
+/* "booktabs" style (no vertical lines) */
+table.docutils.booktabs {
+  border: 0px;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  border-collapse: collapse;
+}
+table.docutils.booktabs * {
+  border: 0px;
+}
+table.docutils.booktabs th {
+  border-bottom: thin solid;
+  text-align: left;
+}
 
 h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
 h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
@@ -637,7 +652,6 @@ ul.auto-toc {
     <span class="k">cdef</span> <span class="nf">revert</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
 <span class="c">#foo.pyx 实现</span>
-<span class="k">from</span> <span class="nn">foo</span> <span class="k">cimport</span> <span class="n">Matrix</span>
 <span class="k">cdef</span> <span class="k">class</span> <span class="nf">Matrix</span><span class="p">:</span>
     <span class="k">cdef</span> <span class="nf">revert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Matrix</span> <span class="n">b</span><span class="p">):</span>
         <span class="c"># implementation</span>
@@ -707,6 +721,10 @@ ul.auto-toc {
 <li>gdb</li>
 <li>cygdb</li>
 </ul>
+</div>
+<div class="slide" id="thanks">
+<h1>Thanks</h1>
+<p class="huge center">Q &amp; A</p>
 </div>
 </div>
 </body>
