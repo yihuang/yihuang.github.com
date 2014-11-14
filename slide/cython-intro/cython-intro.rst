@@ -400,5 +400,5 @@ Killer App: cython -a
 调试
 ====
 
-#. gdb 像其他扩展模块一样调试
-#. 
+* gdb
+* cygdb

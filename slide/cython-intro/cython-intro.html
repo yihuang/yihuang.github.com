@@ -496,10 +496,10 @@ ul.auto-toc {
 <h1>调用C代码</h1>
 <div class="highlight"><pre><span class="k">from</span> <span class="nn">libc.stdlib</span> <span class="k">cimport</span> <span class="n">atoi</span>
 
-<span class="k">cdef</span> <span class="kr">extern</span> <span class="kt">const</span> <span class="kt">char</span>* <span class="nf">getenv</span><span class="p">(</span><span class="n">const</span> <span class="n">char</span><span class="o">*</span><span class="p">)</span>
+<span class="k">cdef</span> <span class="kr">extern</span> <span class="kt">const</span> <span class="kt">char</span>* <span class="kt">c_getenv</span> <span class="s">&quot;getenv&quot;</span><span class="p">(</span><span class="n">const</span> <span class="n">char</span><span class="o">*</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">getenv</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">atoi</span><span class="p">(</span><span class="n">getenv</span><span class="p">(</span><span class="o">&lt;</span><span class="n">const</span> <span class="n">char</span><span class="o">*&gt;</span><span class="n">s</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">atoi</span><span class="p">(</span><span class="n">c_getenv</span><span class="p">(</span><span class="o">&lt;</span><span class="n">const</span> <span class="n">char</span><span class="o">*&gt;</span><span class="n">s</span><span class="p">))</span>
 </pre></div>
 </div>
 <div class="slide" id="id12">
@@ -698,8 +698,10 @@ ul.auto-toc {
 </div>
 <div class="slide" id="id23">
 <h1>调试</h1>
-<p>#. gdb 像其他扩展模块一样调试
-#.</p>
+<ul class="simple">
+<li>gdb</li>
+<li>cygdb</li>
+</ul>
 </div>
 </div>
 </body>
