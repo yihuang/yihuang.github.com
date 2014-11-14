@@ -6,6 +6,12 @@ Keep simple things simple and high performance
 :email: yi.codeplayer@gmail.com
 :company: 深圳云悦科技
 
+PyCon2014
+=========
+
+.. image:: PyConChina2014-stick-logo.png
+
+
 定义简单
 ========
 
@@ -66,6 +72,7 @@ VS
 * 更容易维护和优化
 
 .. class:: incremental
+
     credis (https://github.com/yihuang/credis)
 
 更简单的实现
