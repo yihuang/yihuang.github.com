@@ -15,14 +15,14 @@ Redis client API:
 
     conn.execute('get', 'key')
 
-    # VS
+VS
+
+.. code-block:: python
 
     conn.get('key')
 
 定义简单
 ========
-
-Redis client pipeline API:
 
 .. code-block:: python
 
@@ -31,7 +31,9 @@ Redis client pipeline API:
         ('set', 'foo', 'bar')
     )
 
-    # VS
+VS
+
+.. code-block:: python
 
     pipe = conn.pipeline()
     pipe.get('key')
@@ -41,14 +43,14 @@ Redis client pipeline API:
 定义简单
 ========
 
-Redis client pipeline API:
-
 .. code-block:: python
 
     cmds = [('get', 'key%d'%i) for i in range(10)]
     conn.execute_pipeline(*cmds)
 
-    # VS
+VS
+
+.. code-block:: python
 
     pipe = conn.pipeline()
     for i in range(10):
@@ -59,13 +61,12 @@ Redis client pipeline API:
 ========
 
 * 更少的接口
+* 更容易理解
 * 更简单的实现
-* No magic
+* 更容易维护和优化
 
-credis
-======
-
-https://github.com/yihuang/credis
+.. class:: incremental
+    credis (https://github.com/yihuang/credis)
 
 更简单的实现
 ============
@@ -79,17 +80,19 @@ Protocol Buffer
         optional int32 b = 2;
     }
 
-    Test(10, 10)
-    # image to explain encoding of Test message
+    Test(a=10, b=10)
 
 更简单的实现
 ============
 
-Protocol Buffer 简单的编码规则
+简单的编码规则
 
-[(index, type, content), ...]
+.. class:: huge center
+.. code-block:: python
 
-* 向后兼容，向前兼容。
+    [(index, type, content), ...]
+
+支持向后/向前兼容的协议升级。
 
 更简单的实现
 ============
@@ -112,27 +115,17 @@ cprotobuf
     req.ParseFromString(s)
     req.SerializeToString()
 
-* 接口命名兼容官方版本
-
 cprotobuf
 =========
 
 https://github.com/yihuang/cprotobuf
 
-普通python程序的性能
-====================
+下面开始
+========
 
-* 变量获取
-* 对象构建
-* 属性访问
-* 函数调用
+.. class:: huge center
 
-Cython作为一门语言
-==================
-
-* 融合python和c的语法
-* 完全兼容python2和3的语法
-  (升级python3不用改代码)
+Cython简明教程
 
 Cython典型用途
 ==============
@@ -141,6 +134,28 @@ Cython典型用途
 * 加速python代码
 * 直接编写cython代码
 
+普通python代码的开销
+====================
+
+* 变量获取
+* 属性访问
+* 函数调用
+* 对象构建
+
+Cython作为一门语言
+==================
+
+* 融合python和c的语法
+* 完全兼容python2和3的语法
+  (升级python3不用改代码)
+
+三种定义
+========
+
+* ``def`` 定义python函数和方法
+* ``cdef`` 定义C的函数或其他声明
+* ``cpdef`` 同时提供两种接口
+
 调用C代码
 =========
 
@@ -148,10 +163,23 @@ Cython典型用途
 
     from libc.stdlib cimport atoi
 
-    cdef extern const char* getenv(const char*)
+    cdef extern const char* c_getenv "getenv"(const char*)
 
     def getenv(s):
-        return atoi(getenv(<const char*>s))
+        return atoi(c_getenv(<const char*>s))
+
+引入C的枚举
+===========
+
+.. code-block:: cython
+
+    cdef extern from "c_maze.h":
+        cpdef extern enum eDirection:
+            eDirection_Invalid
+            eDirection_Up
+            eDirection_Right
+            eDirection_Down
+            eDirection_Left
 
 给C传递Python回调
 =================
@@ -166,16 +194,92 @@ Cython典型用途
     cdef int* arr = [1,2,3,4,5]
     qsort(arr, 5, sizeof(int), c_cmp)
 
-给变量加类型签名
-================
+封装C结构体
+===========
 
+.. code-block:: cython
+
+    cdef class Matrix:
+        cdef t_matrix* _matrix
+        def __cinit__(self):
+            self._matrix = malloc_matrix()
+
+        def __dealloc__(self):
+            free_matrix(self._matrix)
+
+        def revert(self):
+            revert_matrix(self._matrix)
+
+类型签名加速python代码
+======================
+
+.. class:: huge
 .. code-block:: cython
 
     def f(double x):
         return x**2-x
 
-使用C的循环
+字符串处理
+==========
+
+* 支持 ``bytes``, ``unicode``
+* ``str`` 编译时确定是 ``bytes`` 还是 ``unicode``
+
+C字符串转换
 ===========
+
+.. code-block:: cython
+
+    from libc.stdlib cimport malloc
+
+    cdef char* c_str = "hello world"
+    cdef bytes s = c_str
+    # PyBytes_FromString
+
+    cdef char* c_buf = <char*>malloc(1024)
+    cdef bytes buf = c_buf[:1024]
+    # PyBytes_FromStringAndSize
+
+C字符串转换
+===========
+
+.. code-block:: cython
+
+    cdef bytes s = b"hello world"
+
+    cdef char* c_s = s
+    # PyObject_AsString
+
+    cdef Py_ssize_t size = len(s)
+    # PyBytes_GET_SIZE
+
+遍历字符串
+==========
+
+.. code-block:: cython
+
+    cdef bytes s = b"hello world"
+    cdef char c
+    for c in s:
+        if c == 'A':
+            ...
+
+遍历字符串
+==========
+
+.. code-block:: c
+
+    char* p = PyBytes_AS_STRING(s)
+    int size = PyBytes_GET_SIZE(s)
+    char c
+    for(char* pp = p; pp<p+size; pp++) {
+        c = *pp;
+        if (c == 'A')
+            ...
+    }
+
+编译range
+=========
 
 .. code-block:: cython
 
@@ -183,18 +287,118 @@ Cython典型用途
     for i in range(10):
         pass
 
+.. class:: incremental
 .. code-block:: c
 
     for(int i=0; i<10; i++)
     {}
 
-memoryview
-==========
+释放GIL
+=======
 
-cython -a
-=========
+.. code-block:: cython
 
-学习Python c-api的好工具。
+    cdef compute():
+        ...
+        with nogil:
+            纯计算
 
-demo.html
+pxd文件：共享C声明
+==================
 
+.. code-block:: cython
+
+    #foo.pxd
+    cdef extern from "gl_redirect.h":
+        cdef void glActiveTexture(GLenum texture) nogil
+
+    #foo.pyx
+    from foo cimport glActiveTexture
+
+pxd文件：共享扩展类
+===================
+
+.. code-block:: cython
+
+    #foo.pxd 声明
+    cdef class Matrix:
+        cdef float data[16]
+        cdef revert(self)
+
+    #foo.pyx 实现
+    from foo cimport Matrix
+    cdef class Matrix:
+        cdef revert(self, Matrix b):
+            # implementation
+
+pxd文件：共享扩展类
+===================
+
+.. code-block:: cython
+
+    #main.pyx 使用
+    from foo cimport Matrix
+    m = Matrix()
+
+Typed Memoryviews
+=================
+
+.. code-block:: cython
+
+    cdef fill_buffer(unsigned char[:] buf):
+        c_fill(&buf[0], buf.shape[0])
+
+    fill_buffer( bytes | bytearray | numpy array )
+
+Using Cython Declarations from C
+================================
+
+.. code-block:: cython
+
+    #foo.pyx
+    cdef public struct Bunny:
+        int vorpalness
+
+    cdef public int spam
+
+    cdef public void grail():
+        print "Ready the holy hand grenade"
+
+Using Cython Declarations from C
+================================
+
+.. code-block:: c
+
+    #foo.h
+    struct Bunny {
+      int vorpalness;
+    };
+
+    __PYX_EXTERN_C DL_IMPORT(void) grail(void);
+    __PYX_EXTERN_C DL_IMPORT(int) spam;
+
+其他特性
+========
+
+* yield from
+* OpenMP并行
+* numpy
+* c++
+
+Killer App: cython -a
+=====================
+
+.. code-block:: bash
+
+    cython -a demo.pyx
+
+* `demo.html <demo.html>`_
+* `cprotobuf.internal.html <cprotobuf.internal.html>`_
+* `cprotobuf.utils.html <cprotobuf.utils.html>`_
+* `credis.base.html <credis.base.html>`_
+
+调试
+====
+
+#. gdb 像其他扩展模块一样调试
+#. 
