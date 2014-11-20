@@ -333,7 +333,6 @@ pxd文件：共享扩展类
         cdef revert(self)
 
     #foo.pyx 实现
-    from foo cimport Matrix
     cdef class Matrix:
         cdef revert(self, Matrix b):
             # implementation
@@ -409,3 +408,10 @@ Killer App: cython -a
 
 * gdb
 * cygdb
+
+Thanks
+======
+
+.. class:: huge center
+
+    Q & A
