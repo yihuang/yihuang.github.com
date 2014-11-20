@@ -1,0 +1,3 @@
+@Start
+ f \circ (g \circ h) = (f \circ g) \circ h
+@End
