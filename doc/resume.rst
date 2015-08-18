@@ -51,3 +51,12 @@
 * 珠三角技术沙龙
 
   演讲主题： Python性能优化实践 http://techparty.org/2013/12/08/et16-pycon-zh/
+
+开源项目
+========
+
+* https://github.com/yihuang/cprotobuf
+
+* https://github.com/yihuang/credis
+
+* https://github.com/yihuang/tagstream-conduit
