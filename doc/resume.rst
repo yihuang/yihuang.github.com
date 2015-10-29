@@ -19,7 +19,7 @@
 
   我们基于cocos2d-x引擎开发了一套使用flash进行美术制作的工具，让美术可以使用flash进行手机游戏制作，大大提高了生产力。
 
-  服务器使用python gevent开发长链接游戏服务器。
+  服务器使用python gevent开发长链接游戏服务器，可承载1W同时在线。
 
   涉及技术：cocos2d-x,c++,lua,python等。
 
