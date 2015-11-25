@@ -8,6 +8,8 @@ Yi Huang
 
 * Github：https://github.com/yihuang
 
+* Location: LongHua district, ShenZhen, GuangDong, China.
+
 Experience
 ==========
 
