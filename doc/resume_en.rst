@@ -21,7 +21,7 @@ Experience
 
   We built a set of tools so we can use flash as game designer.
 
-  We used python/cython/gevent to develop a high performance TCP long connection game server, which is capable of horizontally scale.
+  We used python/cython/gevent to develop a high performance TCP long connection game server, which is capable of horizontally scaling.
 
   We built our persistence solution based on redis-nds, which embed lmdb library with redis, allow for some keys to be stay on disk rather than memory. What we contribute is fixing several serious pointer-related bug which is hard to track, including memory leak and dangling pointers. (https://github.com/yihuang/redis/tree/nds-2.6)
 
@@ -44,12 +44,12 @@ Education
 
 * Wuhan University. 2003.07 - 2007-07
 
-  Bachelor Computer Science and Technology
+  Bachelor of Computer Science and Technology
 
   Wuhan University is one of the best universities in China.
 
-Speeches(in Chinese)
-=====================
+Talks(in Chinese)
+==================
 
 * QCon Beijing 2012.
 
