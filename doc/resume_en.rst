@@ -29,7 +29,9 @@ Experience
 
   Tech Leader, Full stack developer.
 
-  We've built several services on web, including fund news portal, fund simulation service, and fund trade system, using python, jquery, jquery-ui, postgresql.
+  We've built fund news portal, fund simulation service, and fund trade system with web technology.
+ 
+  Was using python, django, jquery, jquery-ui, postgresql.
 
 * Tencent Inc. 2007.07 - 2010.09
 
