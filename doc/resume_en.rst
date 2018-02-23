@@ -8,36 +8,52 @@ Yi Huang
 
 * Github：https://github.com/yihuang
 
-* Location: LongHua district, ShenZhen, GuangDong, China.
+* Location: Shenzhen, China.
 
-Experience
-==========
+Work Experience
+===============
 
-* YunYue Inc. 2012.10 - 2015.10
+* **Boyaa Interactive, Senior game engine developer**  (2015.11 - 2017.12)
 
-  Co-founder, Tech Leader, Full stack developer.
-
-  We developed cross platform mobile games for iOS/android.
-
-  We built a set of tools so we can use flash as game designer.
-
-  We used python/cython/gevent to develop a high performance TCP long connection game server, which is capable of horizontally scaling.
-
-  We built our persistence solution based on redis-nds, which embed lmdb library with redis, allow for some keys to be stay on disk rather than memory. What we contribute is fixing several serious pointer-related bug which is hard to track, including memory leak and dangling pointers. (https://github.com/yihuang/redis/tree/nds-2.6)
-
-* ZhongLu Fund Inc. 2010.09 - 2012.10
-
-  Tech Leader, Full stack developer.
-
-  We've built fund news portal, fund simulation service, and fund trade system with web technology.
+  I joined Boyaa to help to improve their in-house mobile 2d game engine.
  
-  Was using python, django, jquery, jquery-ui, postgresql.
+  In the end, I wrote a brand new engine and UI framework with backward compatibility and migrated most of their products
+  to the new engine.
 
-* Tencent Inc. 2007.07 - 2010.09
+  The engine is written in c++ and Lua, running on both iOS and Android, based on opengles2.0.
 
-  C++ Server Developer
+* **YunYue Tech, Co-founder** (2012.10 - 2015.10)
 
-  Tencent is the biggest social networking company in China, I've developed web services in c++ to handle huge amount of concurrency.
+  I co-founded this company and lead the tech team. We made mobile RPG games for iOS/Android.
+
+  I used python/cython/gevent to develop a high-performance long connection game server, which is capable of horizontally scaling.
+  Some parts of the project are open sourced on my Github page.
+
+  I built our persistence solution based on redis-nds, which embed lmdb library with redis, providing a lovely database solution for game server.
+  What I contribute is fixing several serious memory-related bugs which is hard to track, including memory leak and dangling pointers. (https://github.com/yihuang/redis/tree/nds-2.6)
+
+  I also built our game engine and UI framework solution based on cocos2d-x.
+
+* **ZhongLu Fund, Tech Leader** (2010.09 - 2012.10)
+
+  I lead the tech team(5 people) to build fund news portal, fund investment simulation service, and fund trade system with web technology.
+ 
+  I'm the tech leader and full stack developer, used python, django, jquery, jquery-ui, postgresql.
+
+* **Tencent, C++ Developer** 2007.07 - 2010.09
+
+  I joined QQ Music team of Tencent after graduation and developed high concurrency server applications in c++.
+
+Haskell Experience
+==================
+
+I've spent much time to learn Haskell and read a lot papers about the language and GHC implementation,
+
+I've written a streamlined parsing library in Haskell which is used by Yesod project.
+
+I've given several talks about Haskell.
+
+I'm quite confident in writing real-world Haskell code.
 
 Education
 =========
@@ -66,12 +82,12 @@ Open Source Projects
 
 * https://github.com/yihuang/tagstream-conduit
 
-  Error tolerant streamlined html tag parse library in Haskell
+  Error-tolerant streamlined HTML tag parse library in Haskell
 
 * https://github.com/yihuang/cprotobuf
 
-  High performance implementation of protobuf in cython
+  High-performance implementation of protobuf in cython
 
 * https://github.com/yihuang/credis
 
-  High performance implementation of redis client in cython
+  High-performance implementation of redis client in cython
