@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 class Klass(object):
     def __init__(self, d):
         self.__dict__.update(d)

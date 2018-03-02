@@ -15,10 +15,12 @@
 	<div id="wrapper">
         <%include file="header.mako"/>
 
+        <!--
         <div class="widget-wrapper">
             <div id="recentcomments" class="dsq-widget"><h3 class="dsq-widget-title">Recent Comments</h3><script type="text/javascript" src="http://yi-programmer.disqus.com/recent_comments_widget.js?num_items=5&hide_avatars=0&avatar_size=32&excerpt_length=200"></script></div>
             <div id="popularthreads" class="dsq-widget"><h3 class="dsq-widget-title">Popular Threads</h3><script type="text/javascript" src="http://yi-programmer.disqus.com/popular_threads_widget.js?num_items=5"></script></div>
         </div>
+        -->
         <div id="content">
             <div id="right">
                 % for article in articles:
