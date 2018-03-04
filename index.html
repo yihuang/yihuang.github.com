@@ -45,6 +45,43 @@
         <div id="content">
             <div id="right">
                 <div class="post">
+                    <a href="2018-03-04_kaleidoscope.html"><h1>Kaleidoscope: 一个安全的密码学扑克协议 <span class="date">2018-03-04</span></h1></a>
+                    <div class="note">
+<p class="first admonition-title">注解</p>
+<p class="last">翻译自 <a class="reference external" href="https://iohk.io/blog/kaleidoscope-a-cryptographic-protocol-for-securely-playing-poker">https://iohk.io/blog/kaleidoscope-a-cryptographic-protocol-for-securely-playing-poker</a></p>
+</div>
+<p>扑克是世界上最流行的游戏之一，在赌场里和互联网上都很受欢迎。2000年后在线扑克迎来一阵风潮，产生了一个上百亿美元的市场。然后目前的机制依赖用户对在线赌场无条件的信任，赌场实际上可以随意进行暗箱操作，就算赌场不想，也难保他的员工不会想要赚点块钱，这在现实世界中都有先例。</p>
+<p>而使用密码学协议能让你安全的玩线上扑克，不需要信任任何第三方。事实上这方面的研究在现代密码学早期就已经开始了。
+就在著名的RSA公钥加密模式提出后不久，Shamir, Rivest和Adleman就提出了第一代这种协议，并引发后续许多的研究成果。
+然而由于下列一些原因，这方面的应用一直没有落地：</p>
+<ol class="arabic simple">
+<li>安全：现有协议的安全性保证并不明确，很难搞清楚他们具体的安全等级和可靠性。</li>
+<li>效率：大部分现有协议都使用开销大的密码学技术，导致过高的计算和通讯开销，进而导致游戏延迟太长。</li>
+<li>经济：尽管经典密码学技术能够保证游戏的公平性（也就是没有玩家可以作弊或者查看其他玩家的隐私数据），
+但是目前的扑克协议还是无法保证赢家一定得到经济奖励。</li>
+</ol>
+<p>我们最近给金融密码学2018会议上提交了一篇论文，其中构建了叫Kaleidoscope的协议，
+这是第一个能解决上面三个问题的密码学扑克协议。Kaleidoscope是第一个在扑克游戏通常需要的安全模型下被证明安全的协议，另外通过使用区块链技术，可以保证赢家得到奖励，并且作弊者会收到经济上的惩罚。同时它还比以前那些不能证明安全性的方案更加高效。</p>
+<p>设计Kaleidoscope的第一步，需要形式化地定义清楚扑克协议需要做到的安全保证。
+因为这种形式定义还不存在，我们提供“仿真”模型下首个针对扑克协议的安全性定义。
+我们的安全性定义考虑到了扑克游戏的所有阶段。并且只要只有一方是诚实的，在这个安全模型就不会被打破。
+因为我们需要考虑这种所有玩家联合起来针对一个玩家作弊的情况。</p>
+<p>有了这个的形式化模型，我们进一步开发了这套能够实现这些安全保证的协议。
+这套协议建立在最新的洗牌零知识证明上，并且做到了计算和通讯两方面最佳的效率。
+事实上，我们随后的工作进一步表明，Kaleidoscope在提供极高安全性保证的同时，
+计算量比以前的方案少了三倍，通讯量少了八倍。</p>
+<p>Kaleidoscope另一个重要特性是能够保证赢家收到奖励，同时作弊者得到惩罚并被踢出游戏。
+大概流程是这样的：游戏开始前，玩家先要把用于下注的资金和一定量的押金打到一个智能合约里。
+游戏结束后，智能合约根据游戏结局分发下注资金并返还押金，
+如果有玩家被发现作弊，他的押金会被分给正常游戏的人。并且我们把对智能合约通讯量和链上存储的需求降到了最低。</p>
+<p>虽然Kaleidoscope协议成功地解决了以上扑克协议面临的三个问题，但它只能用来玩扑克游戏。
+有些人错误地认为扑克协议可以用来玩各种牌类游戏，但其实这会导致一些严重的安全问题。
+但是针对我们这个协议，我们能够把它的安全性模型、协议和证明扩展到通用的牌类游戏。
+在这个过程中，我们又创建了Robale, 一种能够安全地玩各种牌类游戏的协议，并且和Kaleidoscope一样高效。
+我们会在后续的视频和博客中继续描述Royale的特性。</p>
+
+                </div>
+                <div class="post">
                     <a href="2018-03-02_zero-coin.html"><h1>匿名区块链和零知识证明 <span class="date">2018-03-02</span></h1></a>
                     <p>比特币有隐私问题。比特币的匿名性只体现在地址没有关联真人身份，但是所有交易信息却是完全公开的。
 一旦别人知道你的比特币地址（比如他给你转过帐），他就可以从链上查到你所有的交易历史和余额。
@@ -447,71 +484,6 @@ server {
 <h2>结论</h2>
 <p>warp pong 测试结果很惊人，看来 static app 还有不小的优化空间的。nginx主要是用来做个对照，没看过nginx代码，不一定公平。期待大家在不同环境下去测试测试，看结果如何。</p>
 </div>
-
-                </div>
-                <div class="post">
-                    <a href="2011-11-03_.html"><h1>无题 <span class="date">2011-11-03</span></h1></a>
-                    <p>写 parser 的时候需要写这样的代码：</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">takeTill</span> <span class="n">pred</span>
-</div></pre></div>
-<p>其中 <cite>pred</cite> 是个判别函数，签名为： <cite>Char -&gt; Bool</cite> 。 <cite>takeTill</cite> 的作用就是一直解析到 <cite>pred</cite> 返回 <cite>True</cite> 为止。</p>
-<p>比如你要解析到下一个 <cite>&gt;</cite> 或者 <cite>=</cite> ，你就写：</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">takeTill</span> <span class="p">(</span><span class="n">inClass</span> <span class="s">&quot;&gt;=&quot;</span><span class="p">)</span>
-</div></pre></div>
-<p>想解析到下一个空白字符为止，就写：</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">takeTill</span> <span class="n">isSpace</span>
-</div></pre></div>
-<p>想解析各种空白字符呢，就在上面的基础上取个反：</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">takeTill</span> <span class="p">(</span><span class="n">not</span> <span class="o">.</span> <span class="n">isSpace</span><span class="p">)</span>
-</div></pre></div>
-<p>这个例子是想提醒大家 <cite>isSpace</cite> 是个函数，所以这里需要进行函数组合，而不是直接调用 <cite>not</cite> 。</p>
-<p>那我今天想说的是什么呢。现在我想解析到下一个 <cite>&gt;</cite> 或 <cite>=</cite> 或空白字符为止，也就是说需要把前两个拼起来，直接写起来是这样的：</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">takeTill</span> <span class="p">(</span><span class="nf">\</span><span class="n">c</span> <span class="ow">-&gt;</span> <span class="n">inClass</span> <span class="s">&quot;&gt;=&quot;</span> <span class="n">c</span> <span class="o">||</span> <span class="n">isSpace</span> <span class="n">c</span><span class="p">)</span>
-</div></pre></div>
-<p>也不麻烦，只不过对于患有 <a class="reference external" href="http://www.douban.com/group/purecoding/">代码洁癖</a> 的我来说，视觉上还不太给力。于是，我继续重构如下：</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">takeTill</span> <span class="p">(</span><span class="n">inClass</span> <span class="s">&quot;&gt;=&quot;</span> <span class="o">||.</span> <span class="n">isSpace</span><span class="p">)</span>
-</div></pre></div>
-<p>多实现一个组合函数 <cite>||.</cite> ：</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="p">(</span><span class="o">||.</span><span class="p">)</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
-</div><div class="line" id="LC1"><span class="p">(</span><span class="o">||.</span><span class="p">)</span> <span class="n">f</span> <span class="n">g</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">f</span> <span class="n">a</span> <span class="o">||</span> <span class="n">g</span> <span class="n">a</span>
-</div></pre></div>
-<p>把两个判别函数组合成一个新的判别函数。</p>
-<p>为了将它推广到其他的组合操作，我们进一步泛化一个通用函数，姑且取名叫 <cite>fn</cite> 吧 ：</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">fn</span> <span class="ow">::</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span>
-</div><div class="line" id="LC1"><span class="nf">fn</span> <span class="n">op</span> <span class="n">f</span> <span class="n">g</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">f</span> <span class="n">a</span> <span class="p">`</span><span class="n">op</span><span class="p">`</span> <span class="n">g</span> <span class="n">a</span>
-</div></pre></div>
-<p>前面的 <cite>||.</cite> 就成为：</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="p">(</span><span class="o">||.</span><span class="p">)</span> <span class="ow">=</span> <span class="n">fn</span> <span class="p">(</span><span class="o">||</span><span class="p">)</span>
-</div></pre></div>
-<p>大功告成，正当我准备好好欣赏一下最终的产物 <cite>fn</cite> 的时候，却突然发现， <cite>fn</cite> 的作用不就是把 <cite>b</cite> 层面的二元函数提升到 <cite>(a -&gt; b)</cite> 层面么，正如 <cite>||</cite> 和 <cite>||.</cite> 都是或操作，只不过一个作用在 <cite>Bool</cite> 值层面，一个作用在 <cite>a -&gt; Bool</cite> 判别函数层面。如此通用的概念，我意识到我很可能重造轮子了。</p>
-<p>于是我请 <a class="reference external" href="http://www.haskell.org/haskellwiki/Lambdabot">lambdabot</a> mm帮我诊断一下：</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="o">&lt;</span><span class="n">huangyi</span><span class="o">&gt;</span> <span class="o">@</span><span class="n">pl</span> <span class="n">fn</span> <span class="n">op</span> <span class="n">g</span> <span class="n">k</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">g</span> <span class="n">a</span> <span class="p">`</span><span class="n">op</span><span class="p">`</span> <span class="n">k</span> <span class="n">a</span>
-</div><div class="line" id="LC1"><span class="o">&lt;</span><span class="n">lambdabot</span><span class="o">&gt;</span> <span class="n">fn</span> <span class="ow">=</span> <span class="n">liftM2</span>
-</div></pre></div>
-<p>果然，小mm告诉我， <cite>fn</cite> 其实就是 <cite>liftM2</cite> 。 <cite>liftM2</cite> 是专门用来把二元函数提升到 <cite>Monad</cite> 中去的，而 <cite>((-&gt;) a)</cite> 正是 <cite>Monad</cite> 的实例。</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Monad</span> <span class="p">((</span><span class="ow">-&gt;</span><span class="p">)</span> <span class="n">a</span><span class="p">)</span> <span class="kr">where</span>
-</div><div class="line" id="LC1">    <span class="n">return</span> <span class="ow">=</span> <span class="n">const</span>
-</div><div class="line" id="LC1">    <span class="c1">-- (&gt;&gt;=) :: (a -&gt; b) -&gt; (b -&gt; a -&gt; c) -&gt; (a -&gt; c)</span>
-</div><div class="line" id="LC1">    <span class="n">f</span> <span class="o">&gt;&gt;=</span> <span class="n">g</span> <span class="ow">=</span> <span class="n">g</span> <span class="o">.</span> <span class="n">f</span>
-</div><div class="line" id="LC1">
-</div><div class="line" id="LC1"><span class="nf">liftM2</span> <span class="ow">::</span> <span class="kt">Monad</span> <span class="n">m</span> <span class="ow">=&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="n">c</span>
-</div><div class="line" id="LC1"><span class="nf">liftM2</span> <span class="n">op</span> <span class="n">ma</span> <span class="n">mb</span> <span class="ow">=</span> <span class="kr">do</span>
-</div><div class="line" id="LC1">    <span class="n">a</span> <span class="ow">&lt;-</span> <span class="n">ma</span>
-</div><div class="line" id="LC1">    <span class="n">b</span> <span class="ow">&lt;-</span> <span class="n">mb</span>
-</div><div class="line" id="LC1">    <span class="n">return</span> <span class="p">(</span><span class="n">a</span> <span class="p">`</span><span class="n">op</span><span class="p">`</span> <span class="n">b</span><span class="p">)</span>
-</div></pre></div>
-<p>其实只需要提升一下抽象层次的话，还不需动用 <cite>Monad</cite> 这样的大杀器， <cite>Applicative</cite> 也可以搞定。</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">instance</span> <span class="kt">Applicative</span> <span class="p">((</span><span class="ow">-&gt;</span><span class="p">)</span> <span class="n">a</span><span class="p">)</span> <span class="kr">where</span>
-</div><div class="line" id="LC1">    <span class="c1">-- &lt;$&gt; :: (b -&gt; c) -&gt; (a -&gt; b) -&gt; (a -&gt; c)</span>
-</div><div class="line" id="LC1">    <span class="n">f</span> <span class="o">&lt;$&gt;</span> <span class="n">g</span> <span class="ow">=</span> <span class="n">f</span> <span class="o">.</span> <span class="n">g</span>
-</div><div class="line" id="LC1">    <span class="c1">-- (&lt;*&gt;) :: (a -&gt; b -&gt; c) -&gt; (a -&gt; b) -&gt; (a -&gt; c)</span>
-</div><div class="line" id="LC1">    <span class="n">f</span> <span class="o">&lt;*&gt;</span> <span class="n">g</span> <span class="ow">=</span> <span class="nf">\</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">g</span> <span class="n">a</span><span class="p">)</span>
-</div></pre></div>
-<p>用 <cite>Applicative</cite> 的话，前面的 <cite>fn</cite> 就等价于 <cite>liftA2</cite> 了。</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="nf">liftA2</span> <span class="ow">::</span> <span class="kt">Application</span> <span class="n">f</span> <span class="ow">=&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">c</span>
-</div><div class="line" id="LC1"><span class="nf">liftA2</span> <span class="n">op</span> <span class="n">fa</span> <span class="n">fb</span> <span class="ow">=</span> <span class="n">op</span> <span class="o">&lt;$&gt;</span> <span class="n">fa</span> <span class="o">&lt;*&gt;</span> <span class="n">fb</span>
-</div></pre></div>
-<p>绕了一圈，最后还是没逃出Haskell最基本的框框。</p>
 
                 </div>
                 <p class="more"><a href="list.html">查看全部文章>></a></p>
