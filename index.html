@@ -45,39 +45,100 @@
         <div id="content">
             <div id="right">
                 <div class="post">
+                    <a href="2018-03-06_blockchain-fp.html"><h1>区块链与函数式编程 <span class="date">2018-03-06</span></h1></a>
+                    <p>区块链是对软件正确性要求极高的领域。过去软件bug和安全漏洞带来的损失，一般就是停止维护，被拖库就已经是很重大的影响了。而区块链软件的漏洞被利用，那将是灾难性的，因为上面跑的都是真金白银。随着区块链技术对传统经济领域渗透的加深，这种风险将会大大提升。</p>
+<p>传统软件工程只重视产品的快速上线快速迭代，从来没有把软件的正确性摆在一个优先级很高的位置，究其根本还是传统领域软件出bug带来的成本不高。</p>
+<p>行业里其实已经有一些关键领域是对软件的正确性要求极高的，比如航天系统，金融领域一些核心系统等。1962年软件bug造成火箭偏航，损失1850万美元；1978年CAD软件bug造成体育竞技场倒塌，损失上亿美元；1985年放射机软件bug导致病人受到大量辐射，1987年金融交易软件bug导致美国股灾，等等。</p>
+<p>这些问题促使人们去思考如何保证软件正确性，而这些年来业界针对这种对软件正确性要求高的领域，也确实发展了一套技术手段来支持，形式验证、类型系统、纯函数式编程等。这些方法对程序员要求更高，开发时间也更长，所以在大部分编程领域，这种方法显得不是那么经济，换句话说99%的程序员其实并不了解这个领域的技术。而现在传统程序员开始进入区块链软件的开发，如果不能在思维、流程、工具各方面作出相应调整的话，是很危险的事情。</p>
+<p>但是真正的形式验证成本巨大，只好用来解决一些最核心的问题。而另一种同时兼顾实用性的方案是函数式编程（函数式编程这个词语这些年有些定义模糊，这里特指静态类型纯函数式语言，基本上就是ML一族的语言），而Haskell是其中的佼佼者，也是Cardano项目使用的开发语言。</p>
+<p>Haskell是一门 <em>纯函数式</em> <em>静态类型</em> 惰性求值的语言，这里关键字有几个：</p>
+<ul class="simple">
+<li>纯函数式是说，函数除了将输入转换为输出以外，不能有其他副作用（比如执行IO操作、修改全局变量、或者发射个导弹啥的），并且对于相同的输入永远返回相同的输出。这意味着不存在变量的概念，数据结构也都是immutable的。显然这样的函数会有很多良好的性质：好测试, 线程安全, 代码可重用, 可读性强等等。另外这样的代码还有一个性质是可证明，因为你可以机械地把函数的调用替代成函数的实现，而不改变其语意，所以你可以形式地证明比如说两个函数等价。还有一些其他的好处，比如一些代码重构工具能够自动调整代码，编译器也可以更激进地对代码进行优化，因为可以他们能够确保对程序的语意没有影响。</li>
+<li>静态类型系统，按照“柯里-霍华德同构”定理，类型对应于命题，而程序对应于证明。当我们把问题的模型编码成类型后，编译器通过类型检查可以保证程序的正确性。在实践中，类型是可以逐步细化的，越细化，能够通过编译的实现就越少，甚至可能细化到只剩下一个有意义的实现，这种情况下甚至可以通过工具实现自动生成实现代码。类型系统还带来其他一些便利的工具，比如hoogle，可以根据类型签名搜索现有库提供的函数实现。</li>
+</ul>
+<p>关于Haskell语言其实可以说的还有很多，未来会继续写一些具体的编程模式，尤其是与区块链相关的，以及它在Cardano项目中的具体实践，敬请期待。</p>
+
+                </div>
+                <div class="post">
+                    <a href="2018-03-05_cardano_africa.html"><h1>ADA的非洲和发展中国家计划 <span class="date">2018-03-05</span></h1></a>
+                    <div class="note">
+<p class="first admonition-title">注解</p>
+<p class="last">翻译自：<a class="reference external" href="https://iohk.io/blog/cardanos-goals-for-africa-and-the-developing-world">https://iohk.io/blog/cardanos-goals-for-africa-and-the-developing-world</a></p>
+</div>
+<p>伦敦经济学院与非洲有着悠久的历史。1895年，布尔战争爆发前四年，学校刚成立，就开始了关于一个时代的辩论。一些新独立的非洲国家的第一批领导人曾在这里学习，学校里渐进主义和反帝国主义的立场被看到，并且参与了反种族隔离运动。</p>
+<p>有了这样的历史，Charles Hoskinson选在这所大学来介绍Cardano接下来的计划再适合不过，那就是让这项技术服务于发展中国家，从非洲开始。
+该讲座由Cardano基金会和伦敦经济学院区块链协会组织，在学校的Saw Swee Hock中心举行，听众数量是预计的两倍。</p>
+<p>在星期二晚上开门之前，已经有数百人排起了长队，大部分是二三十岁的年轻人。</p>
+<p>面对拥挤的人群，Charles阐述了Cardano今年将在非洲展开的愿景。</p>
+<p>“你必须去到你想要帮助的国家和当地的人交谈。要改变世界的唯一方法就是你必须去到那里。实际操作的人不会是你，必须由当地人自己来做。“</p>
+<p>IOHK使用一套在过去一年中已经在雅典和巴巴多斯试验过的课程，给这个地区的人传授技能。我们向年轻的程序员培训Haskell编程语言，这也是Cardano项目开发所使用的语言。培训结束后，他们可以选择加入Cardano项目，或者把他们的技术用于发展当地的经济。作为该计划的一个样板，我们和西印度群岛大学联合举办了Haskell课程，这是这个国家第一次教授Haskell语言。
+甚至连Haskell创始人之一Philip Wadler教授也加入进来了，他同时也在帮助开发Cardano项目。</p>
+<p>“下一阶段可能会在埃塞俄比亚进行，我们已经在进行商谈，”查尔斯说。“你必须在这个国家内部建立这么一群人，他们有动力去改善自己的国家并且真正理解如何运用科技。”</p>
+<p>同样重要的是与当地政府合作，探索合作的机会。探索Cardano项目的潜在落地应用，例如与土地登记，身份或投票相关的应用。</p>
+<div class="center-figure figure align-center">
+<img alt="images/charles1.jpg" src="images/charles1.jpg" />
+<p class="caption">Charles Hoskinson与Michael Parsons</p>
+<div class="legend">
+Cardano基金会主席</div>
+</div>
+<p>在非洲落地区块链应用的关键在于试验项目的成功运行，这能展示区块链技术作为一种更便宜更高效解决方案的优越性。“试验项目可以展示为什么区块链方案更快更好。
+可以展示这项技术是可行的，并且人们可以从中赚很多钱，然后大家会说'我也要来一套'，
+竞争会推动更多人加入这波浪潮，其中甚至还会出现我们的区块链竞争对手，“Charles说。</p>
+<p>他认为非洲会是一个很重要的区块链案例。区块链技术的巨大潜力可以帮助他们token化自然资源、劳动力和财产，从而解锁这些国家的财富。“token不光可以用来玩以太猫，也可以用来干些实实在在的事情，我们要来尝试一下。”</p>
+<p>“如果你去计算一下这些国家被锁住的资产，有数万亿美元的规模。讽刺的是，这些地方其实有着巨大的潜在价值，只要能被开发出来，并且公平地分配给当地的人，贫困将会消失，这些地方会成为一些最富有的国家。”</p>
+<p>Charles说，这不会很容易，但是区块链的应用是不可避免的。当地政客有可能需要经济上激励才会支持这项技术，可能要通过预挖矿的方式。还有其他需要跨越的障碍，例如非洲零散的网络覆盖，这会妨碍区块链系统的连接。为了解决这个问题，IOHK正在探索卫星覆盖的方案，估计成本在5千万至1亿美元之间。可信硬件也能提供第二种解决方案，可以通过蓝牙进行离线交易，并在恢复网络时注册到区块链中。</p>
+<p>另一个障碍是要提供兑换当地货币的兑换点。为此，IOHK正在研究如何以可承受的成本安装ATM终端网络，并且能够离网(off grid)工作。最后，加密货币的长期目标是开发一种价值稳定的货币，它与美元等法币挂钩，为商业提供稳定性，并且抵御数字货币的价格波动。
+Charles宣布，IOHK正在启动一项研究工作来探索价值稳定的货币。尽管“没有银弹”，但他承诺将在这个问题上进行一系列的实验。</p>
+<p>“这就是Cardano为发展中国家所做的，”Charles说。“我们有义务去尝试和探索这种技术，并把它提供给尽量多的人。”</p>
+<div class="center-figure figure align-center">
+<img alt="images/charles2.jpg" src="images/charles2.jpg" />
+<p class="caption">Charles Hoskinson在伦敦经济学院演讲</p>
+</div>
+<p>演讲过后进行了问答环节，问题很宽泛，从中国区块链的未来，到Cardano的交易费，以及建立受监管的加密货币业务。</p>
+<p>观众有着不同的背景，从观看了大量项目视频的严肃的Cardano粉丝到好奇的加密货币爱好者。</p>
+<p>蒂莫27岁，是伦敦摄政商学院萨尔茨堡的一名学生。一年多以来他都对加密货币很感兴趣，他说他看过Charles的Ted演讲，看过他的采访，然后买了Ada。“这个项目比其他项目更加实在，这一点从团队还有web展示以及Charles的许多访谈中可以看出。”</p>
+<p>“自从互联网以来，区块链是最具革命性的技术，”他的朋友托马斯23岁，来自安特卫普，在去年一次和父亲三小时的聊天中第一次了解到加密货币。“这激发了我的兴趣，然后我遇到了Charles的视频，并发现他是一个很聪明的人。
+我喜欢Cardano解决区块链当前问题所用的方法 - 它是学术性的，把大学里的人拉了进来，里面还有有一些客观的成果的。”</p>
+<p>其他人想在那里了解更多关于加密货币的信息。Ana，24岁，是伦敦经济学院法学专业的一名研究生。她对编写智能合约方面的论文感兴趣，因为她认为区块链是法律中新兴的领域。“我想更多地了解区块链，”她说。“其中的法律方面非常有趣，有很多问题需要解决。例如，如果您没有法院或法官参与，自行执行的合同是否合法？”</p>
+<p>未来会有更多有关IOHK和非洲战略的信息，并将由非洲业务总监John O'Connor提供。</p>
+
+                </div>
+                <div class="post">
                     <a href="2018-03-04_kaleidoscope.html"><h1>Kaleidoscope: 一个安全的密码学扑克协议 <span class="date">2018-03-04</span></h1></a>
                     <div class="note">
 <p class="first admonition-title">注解</p>
 <p class="last">翻译自 <a class="reference external" href="https://iohk.io/blog/kaleidoscope-a-cryptographic-protocol-for-securely-playing-poker">https://iohk.io/blog/kaleidoscope-a-cryptographic-protocol-for-securely-playing-poker</a></p>
 </div>
-<p>扑克是世界上最流行的游戏之一，在赌场里和互联网上都很受欢迎。2000年后在线扑克迎来一阵风潮，产生了一个上百亿美元的市场。然后目前的机制依赖用户对在线赌场无条件的信任，赌场实际上可以随意进行暗箱操作，就算赌场不想，也难保他的员工不会想要赚点块钱，这在现实世界中都有先例。</p>
-<p>而使用密码学协议能让你安全的玩线上扑克，不需要信任任何第三方。事实上这方面的研究在现代密码学早期就已经开始了。
-就在著名的RSA公钥加密模式提出后不久，Shamir, Rivest和Adleman就提出了第一代这种协议，并引发后续许多的研究成果。
-然而由于下列一些原因，这方面的应用一直没有落地：</p>
+<p>扑克是世界上最流行的游戏之一，在赌场和互联网上都很受欢迎。尤其2000年后在线扑克迎来一阵风潮，产生了一个上百亿美元的市场。
+然而目前的在线游戏形式要求用户无条件地信任在线赌场提供商，赌场可以随意进行暗箱操作，就算赌场不想，也难保他的员工不会想要赚点快钱。这些在现实世界中都有先例。</p>
+<p>使用密码学安全的扑克协议可以让你安全地进行线上扑克，不需要信任任何第三方。事实上这方面的研究在现代密码学早期的时候就已经开始。
+就在著名的RSA公钥加密模式提出几年后，Shamir, Rivest和Adleman就提出了第一代这种协议，并引发后续许多的相关研究。
+然而由于下列原因，这方面的应用一直没有落地：</p>
 <ol class="arabic simple">
 <li>安全：现有协议的安全性保证并不明确，很难搞清楚他们具体的安全等级和可靠性。</li>
-<li>效率：大部分现有协议都使用开销大的密码学技术，导致过高的计算和通讯开销，进而导致游戏延迟太长。</li>
+<li>效率：大部分现有协议都使用开销大的密码学技术，导致过高的计算和通讯开销，进而导致游戏延迟大，玩起来太卡。</li>
 <li>经济：尽管经典密码学技术能够保证游戏的公平性（也就是没有玩家可以作弊或者查看其他玩家的隐私数据），
 但是目前的扑克协议还是无法保证赢家一定得到经济奖励。</li>
 </ol>
 <p>我们最近给金融密码学2018会议上提交了一篇论文，其中构建了叫Kaleidoscope的协议，
-这是第一个能解决上面三个问题的密码学扑克协议。Kaleidoscope是第一个在扑克游戏通常需要的安全模型下被证明安全的协议，另外通过使用区块链技术，可以保证赢家得到奖励，并且作弊者会收到经济上的惩罚。同时它还比以前那些不能证明安全性的方案更加高效。</p>
-<p>设计Kaleidoscope的第一步，需要形式化地定义清楚扑克协议需要做到的安全保证。
-因为这种形式定义还不存在，我们提供“仿真”模型下首个针对扑克协议的安全性定义。
-我们的安全性定义考虑到了扑克游戏的所有阶段。并且只要只有一方是诚实的，在这个安全模型就不会被打破。
-因为我们需要考虑这种所有玩家联合起来针对一个玩家作弊的情况。</p>
-<p>有了这个的形式化模型，我们进一步开发了这套能够实现这些安全保证的协议。
+这是第一个能解决上面三个问题的密码学扑克协议。Kaleidoscope是第一个在扑克游戏通常需要的安全模型下被证明安全的协议，另外通过使用区块链技术，可以保证赢家得到奖励，并且作弊者收到经济上的惩罚。同时它还比以前那些不能证明安全性的方案更加高效。</p>
+<p>设计Kaleidoscope的第一步，就是要形式化地定义扑克协议需要做到的安全保证。
+因为这种形式定义目前还不存在，所以我们提供了“仿真”模型下首个针对扑克协议的安全性定义。
+我们的安全性定义考虑到了扑克游戏的所有阶段。并且只要有一方是诚实的，这个安全模型就不会被打破。
+在扑克游戏中，所有玩家联合起来针对一个玩家作弊的情况并不少见。</p>
+<p>有了这个的形式化模型后，我们又进一步开发了一套能够实现这些安全保证的协议。
 这套协议建立在最新的洗牌零知识证明上，并且做到了计算和通讯两方面最佳的效率。
-事实上，我们随后的工作进一步表明，Kaleidoscope在提供极高安全性保证的同时，
-计算量比以前的方案少了三倍，通讯量少了八倍。</p>
+事实上，我们随后的工作表明，Kaleidoscope在提供极高安全性保证的同时，
+计算量比以前的协议少了三倍，通讯量少了八倍。</p>
 <p>Kaleidoscope另一个重要特性是能够保证赢家收到奖励，同时作弊者得到惩罚并被踢出游戏。
 大概流程是这样的：游戏开始前，玩家先要把用于下注的资金和一定量的押金打到一个智能合约里。
-游戏结束后，智能合约根据游戏结局分发下注资金并返还押金，
-如果有玩家被发现作弊，他的押金会被分给正常游戏的人。并且我们把对智能合约通讯量和链上存储的需求降到了最低。</p>
+游戏结束后，智能合约会根据游戏结局分发下注资金并返还押金，
+如果有玩家被发现作弊，他的押金会被分给正常游戏的人。
+我们的协议把对智能合约通讯量和链上存储的需求降到了最低。</p>
 <p>虽然Kaleidoscope协议成功地解决了以上扑克协议面临的三个问题，但它只能用来玩扑克游戏。
-有些人错误地认为扑克协议可以用来玩各种牌类游戏，但其实这会导致一些严重的安全问题。
-但是针对我们这个协议，我们能够把它的安全性模型、协议和证明扩展到通用的牌类游戏。
-在这个过程中，我们又创建了Robale, 一种能够安全地玩各种牌类游戏的协议，并且和Kaleidoscope一样高效。
+有些人错误地认为扑克协议一定可以用来玩各种牌类游戏，但其实这会导致一些严重的安全问题。
+但是具体到我们这个协议，还是能够把它的安全性模型、协议和证明扩展到通用的牌类游戏。
+在这个过程中，我们创建了Royale, 一种能够安全地玩各种牌类游戏的协议，并且和Kaleidoscope一样高效。
 我们会在后续的视频和博客中继续描述Royale的特性。</p>
 
                 </div>
@@ -207,283 +268,6 @@ P(x) = a0 + a1 * x + a2 * x^2 + … + ad * x^d
 </div><div class="line" id="LC1"><span class="nf">insert</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Hashable</span> <span class="n">k</span><span class="p">,</span> <span class="kt">Ord</span> <span class="n">k</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="n">v</span> <span class="ow">-&gt;</span> <span class="kt">HashMap</span> <span class="n">k</span> <span class="n">v</span> <span class="ow">-&gt;</span> <span class="kt">HashMap</span> <span class="n">k</span> <span class="n">v</span>
 </div></pre></div>
 <p>不过，语法糖也并不总是比原始语法更好用，语法糖用得别扭的时候考虑一下更原始的方案，也许会有新思路。</p>
-
-                </div>
-                <div class="post">
-                    <a href="2012-05-04_gadt.html"><h1>利用类型系统表达约束 <span class="date">2012-05-04</span></h1></a>
-                    <p>看邮件列表有一个回答很精彩，是一个很典型的利用类型系统表达约束的案例，故翻译过来。</p>
-<p>原讨论：[<a class="reference external" href="http://article.gmane.org/gmane.comp.lang.haskell.cafe/98103">http://article.gmane.org/gmane.comp.lang.haskell.cafe/98103</a>]</p>
-<p>问题：</p>
-<blockquote>
-<p>我有一个这样的程序：</p>
-<pre class="literal-block">
-data B = B Int
-data A = Safe Int | Unsafe Int
-
-createB :: A -&gt; B
-createB (Safe i) = B i
-createB (Unsafe i) = error &quot;禁止出现&quot;
-</pre>
-<p>问题是，使用 Unsafe 调用 createB 的情况只能在运行时才能检查，而如果去掉第二条分支，又变成了模式匹配不完备的错误了 :-(</p>
-<p>有没有办法把它变成编译错误？</p>
-</blockquote>
-<p>以下答复使用文学化Haskell(literate Haskell)写就。</p>
-<pre class="literal-block">
-{-# LANGUAGE DataKinds, KindSignatures, GADTs #-}
-</pre>
-<p>要让类型系统介入进来，关键在于把信息放在类型系统能看到的地方，也就是类型签名里面。</p>
-<p>所以我们要把 <tt class="docutils literal">A</tt> 类型改成这样，让 Safe/Unsafe 的信息出现在里面：</p>
-<pre class="literal-block">
-data A safety = A Int
-</pre>
-<p>这就是所谓的“phantom类型”了，因为 <cite>safety</cite> 类型变量只出现的类型定义的左边。B的类型可以保持不变：</p>
-<pre class="literal-block">
-data B        = B Int
-</pre>
-<p>现在，我们需要表达 &quot;Safe&quot; 和 &quot;Unsafe&quot;：</p>
-<pre class="literal-block">
-data Safe
-data Unsafe
-</pre>
-<p>通常数据类型定义会有一个或多个数据构造器。而这两个类型没有数据构造器，因为我们只打算把他们当作phantom类型参数用，不需要用到他们的值。我们需要两个独立的类型，是因为我们想在编译时区分两种情况。如果只定义一个类型带两个构造器的话，就没办法在编译时获得足够的约束能力了。</p>
-<p>现在我们再定义两个函数把值标记成 Safe 或者 Unsafe：</p>
-<pre class="literal-block">
-unsafe :: A safety -&gt; A Unsafe
-unsafe  (A x) = (A x)
-
-safe :: A safety -&gt; A Safe
-safe    (A x) = (A x)
-</pre>
-<p>然后我们把 <tt class="docutils literal">createB</tt> 改成只接受 <tt class="docutils literal">Safe</tt> 参数：</p>
-<pre class="literal-block">
-createB :: A Safe -&gt; B
-createB (A x) = B x
-</pre>
-<p>这样，我们就只能传给它 <tt class="docutils literal">Safe</tt> 的参数：</p>
-<pre class="literal-block">
-b :: B
-b = createB (safe (A 1))
-</pre>
-<p>而不能传 <tt class="docutils literal">Unsafe</tt> 的参数：</p>
-<pre class="literal-block">
-{-
-
-b2 :: B
-b2 = createB (unsafe (A 1))
-
-编译错误：
-
-   Couldn't match expected type `Safe' with actual type `Unsafe'
-   Expected type: A Safe
-     Actual type: A Unsafe
-
--}
-</pre>
-<p>可惜，我们还是可以给 createB 传没标记过的值：</p>
-<pre class="literal-block">
-b3 :: B
-b3 = createB (A 1)
-</pre>
-<p>有时候这是个好事，不过针对楼主的问题，应该是不想这种情况发生。有一个方案是不要导出 <tt class="docutils literal">A</tt> 这个构造器，同时导出这样两个函数：</p>
-<pre class="literal-block">
-unsafeA :: Int -&gt; A Unsafe
-unsafeA  x = (A x)
-
-safeA :: Int -&gt; A Safe
-safeA    x = (A x)
-</pre>
-<p>如果只能通过这两个函数创建类型 <cite>A</cite> 的值的话，那就不会存在没标记过的值了。</p>
-<p>目前这个方案可以让我们把值标记成 Safe 或 Unsafe，并在编译时阻止某些函数的调用。
-然而，要想写一个函数同时对两种情况进行处理却很麻烦，需要建个type class（译注：可以作为练习）。</p>
-<p>不如还是把 <cite>A</cite> 改回成两个构造器的版本：</p>
-<pre class="literal-block">
-] data A' safety = SafeA' Int | UnsafeA' Int
-</pre>
-<p>现在，我们需要解决一个棘手的问题，就是如何保证 <tt class="docutils literal">SafeA'</tt> 构造出来的值会带上phantom类型 <tt class="docutils literal">Safe</tt> ，而 <tt class="docutils literal">UnsafeA'</tt> 构造出来的值带phantom类型 <tt class="docutils literal">Unsafe</tt> ？</p>
-<p>要解决这个问题就要用 GADTs 类型扩展了，我们可以这么写：</p>
-<pre class="literal-block">
-data A' safety where
-    UnsafeInt :: Int -&gt; A' Unsafe
-    SafeInt   :: Int -&gt; A' Safe
-</pre>
-<p>这个定义和常规的数据类型定义很类似：</p>
-<pre class="literal-block">
-] data A' safety
-]     = UnsafeInt Int
-]     | SafeInt Int
-</pre>
-<p>但在 GADT 版本里面，我们可以指定当使用 <tt class="docutils literal">UnsafeInt</tt> 的时候，phantom类型变量一定是 <tt class="docutils literal">Unsafe</tt> ，而用 <tt class="docutils literal">SafeInt</tt> 的时候一定是 <tt class="docutils literal">Safe</tt> 。</p>
-<p>这样就把上面说的两个问题都解决了，我们既可以对safe和unsafe两个构造器进行模式匹配，也可以保证 <tt class="docutils literal">A'</tt> 类型一定会被标记成&quot;Safe&quot;或&quot;Unsafe&quot;。如果我们确实想要不标记的值，我们可以加一个构造器：</p>
-<pre class="literal-block">
-UnknownInt   :: Int -&gt; A' safety
-</pre>
-<p>现在我们可以把 <tt class="docutils literal">createB</tt> 改成这样了：</p>
-<pre class="literal-block">
-createB' :: A' Safe -&gt; B
-createB' (SafeInt i) = B i
-</pre>
-<p>这里， <tt class="docutils literal">createB'</tt> 的定义是完备的，因为编译器知道它的参数不可能是 <tt class="docutils literal">UnsafeInt</tt> 。如果你非要加上：</p>
-<pre class="literal-block">
-] createB' (UnsafeInt i) = B i
-</pre>
-<p>会得到编译错误：</p>
-<pre class="literal-block">
-Couldn't match type `Safe' with `Unsafe'
-Inaccessible code in
-  a pattern with constructor
-    UnsafeInt :: Int -&gt; A' Unsafe,
-</pre>
-<p>到现在， <tt class="docutils literal">A</tt> and <tt class="docutils literal">A'</tt> 两个版本都还存在的一个问题是，phantom类型变量可以是任何类型。比如我们可以这么写：</p>
-<pre class="literal-block">
-nonsense :: A' Char
-nonsense = UnknownInt 1
-</pre>
-<p>我们只希望支持Safe和Unsafe，但 <tt class="docutils literal">A' Char</tt> 也是一个合法——但是不合理的类型。</p>
-<p>GHC 7.4 里面我们可以使用数据类型提升来约束phantom类型参数能接受的类型。</p>
-<p>我们先定义一个普通的数据类型：</p>
-<pre class="literal-block">
-data Safety = IsSafe | IsUnsafe
-</pre>
-<p>只要启用了 DataKind 扩展，我们就可以把这个类型用作phantom类型参数的签名。这样，类型 <tt class="docutils literal">Safety</tt> 会自动变成kind <tt class="docutils literal">Safety</tt> ，而数据构造器 <tt class="docutils literal">IsSafe</tt> 和 <tt class="docutils literal">IsUnsafe</tt> 自动变成类型构造器。现在我们就可以这么写：</p>
-<pre class="literal-block">
-data Alpha (safetype :: Safety) where
-    SafeThing    :: Int -&gt; Alpha IsSafe
-    UnsafeThing  :: Int -&gt; Alpha IsUnsafe
-    UnknownThing :: Int -&gt; Alpha safetype
-</pre>
-<p>然后，我们可以这么写：</p>
-<pre class="literal-block">
-foo :: Alpha IsUnsafe
-foo  = UnknownThing 1
-</pre>
-<p>但是，如果我们尝试这么写的话：</p>
-<pre class="literal-block">
-] foo' :: Alpha Char
-] foo'  = UnknownThing 1
-</pre>
-<p>就会得到一个编译错误：</p>
-<pre class="literal-block">
-Kind mis-match
-The first argument of `Alpha' should have kind `Safety',
-but `Char' has kind `*'
-In the type signature for foo': foo' :: Alpha Char
-</pre>
-<p>希望这些能帮到你！</p>
-
-                </div>
-                <div class="post">
-                    <a href="2011-11-12_wai-static-app.html"><h1>warp静态文件服务器评测 <span class="date">2011-11-12</span></h1></a>
-                    <div class="section" id="id1">
-<h2>安装</h2>
-<ol class="arabic">
-<li><p class="first">安装GHC和Cabal，参考： <a class="reference external" href="http://book.realworldhaskell.org/read/installing-ghc-and-haskell-libraries.html">http://book.realworldhaskell.org/read/installing-ghc-and-haskell-libraries.html</a></p>
-</li>
-<li><p class="first">使用Cabal安装 <a class="reference external" href="https://github.com/yesodweb/wai/tree/master/warp">Warp</a> 服务器和 <a class="reference external" href="https://github.com/yesodweb/wai/tree/master/wai-app-static">wai-app-static</a> ，Cabal将自动下载安装依赖的一些库：</p>
-<pre class="literal-block">
-cabal install warp wai-app-static
-</pre>
-</li>
-<li><p class="first">编写我们的静态文件服务器：</p>
-</li>
-</ol>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Control.Applicative</span> <span class="p">(</span> <span class="p">(</span><span class="o">&lt;$&gt;</span><span class="p">)</span> <span class="p">)</span>
-</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Data.Maybe</span> <span class="p">(</span><span class="nf">fromMaybe</span><span class="p">,</span> <span class="nf">listToMaybe</span><span class="p">)</span>
-</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">System.Environment</span> <span class="p">(</span><span class="nf">getArgs</span><span class="p">)</span>
-</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Network.Wai.Handler.Warp</span> <span class="p">(</span><span class="nf">run</span><span class="p">)</span>
-</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Network.Wai.Application.Static</span> <span class="p">(</span> <span class="nf">staticApp</span>
-</div><div class="line" id="LC1">                                      <span class="p">,</span> <span class="nf">defaultFileServerSettings</span><span class="p">)</span>
-</div><div class="line" id="LC1">
-</div><div class="line" id="LC1"><span class="nf">main</span> <span class="ow">::</span> <span class="kt">IO</span> <span class="nb">()</span>
-</div><div class="line" id="LC1"><span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
-</div><div class="line" id="LC1">    <span class="n">port</span> <span class="ow">&lt;-</span> <span class="n">read</span> <span class="o">.</span> <span class="n">fromMaybe</span> <span class="s">&quot;3000&quot;</span> <span class="o">.</span> <span class="n">listToMaybe</span> <span class="o">&lt;$&gt;</span> <span class="n">getArgs</span>
-</div><div class="line" id="LC1">    <span class="n">run</span> <span class="n">port</span> <span class="o">$</span> <span class="n">staticApp</span> <span class="n">defaultFileServerSettings</span>
-</div></pre></div>
-</div>
-<div class="section" id="id3">
-<h2>特性</h2>
-<p>一个完善的静态文件服务器：</p>
-<ol class="arabic simple">
-<li>能以高阶函数的方式定制文件查找逻辑</li>
-<li>根据文件扩展名产生mimetype</li>
-<li>304响应，支持If-Modified-Since，支持If-None-Match匹配文件哈希值</li>
-<li>目录末尾自动添加'/' ，自动查找可配置的index文件等等。</li>
-</ol>
-</div>
-<div class="section" id="id4">
-<h2>性能</h2>
-<ul class="simple">
-<li>环境：Thinkpad X61, T8100 双核，Linux 2.6.38，GHC 7.2.1</li>
-<li>编译选项： <tt class="docutils literal">ghc <span class="pre">-O3</span> <span class="pre">-threaded</span> Main.hs</tt></li>
-<li>执行选项： <tt class="docutils literal">./Main +RTS <span class="pre">-N1</span> <span class="pre">-qa</span></tt></li>
-<li>对照nginx：worker 1, sendfile on</li>
-</ul>
-<p>因为我这个破本只有两个核，一个用来运行 <cite>ab</cite> ，一个可以用来运行web server，所以上面都只配置一个worker进程。</p>
-<p>测试命令： <tt class="docutils literal">ab <span class="pre">-c</span> 100 <span class="pre">-n</span> 100000 <span class="pre">-r</span> <span class="pre">http://localhost:3000/test.html</span></tt>
-测试6次，平均每秒请求数分别为：</p>
-<pre class="literal-block">
-1 7174.23
-2 6946.33
-3 6120.31
-4 6819.33
-5 7373.51
-6 6776.65
-</pre>
-<p>对比nginx：</p>
-<pre class="literal-block">
-1 13543
-2 13601.69
-3 13512.38
-4 13654.39
-5 13680.97
-6 13630.64
-</pre>
-</div>
-<div class="section" id="warp-pong-test">
-<h2>warp pong test</h2>
-<p>顺便再测下warp，把静态文件app去掉，换上一个最简单的app：</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="cm">{-# LANGUAGE OverloadedStrings #-}</span>
-</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Control.Applicative</span> <span class="p">(</span> <span class="p">(</span><span class="o">&lt;$&gt;</span><span class="p">)</span> <span class="p">)</span>
-</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Data.Maybe</span> <span class="p">(</span><span class="nf">fromMaybe</span><span class="p">,</span> <span class="nf">listToMaybe</span><span class="p">)</span>
-</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">System.Environment</span> <span class="p">(</span><span class="nf">getArgs</span><span class="p">)</span>
-</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Network.HTTP.Types</span>
-</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Network.Wai</span>
-</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Network.Wai.Handler.Warp</span> <span class="p">(</span><span class="nf">run</span><span class="p">)</span>
-</div><div class="line" id="LC1"><span class="kr">import</span> <span class="nn">Blaze.ByteString.Builder</span> <span class="p">(</span><span class="nf">fromByteString</span><span class="p">)</span>
-</div><div class="line" id="LC1">
-</div><div class="line" id="LC1"><span class="nf">pong</span> <span class="ow">::</span> <span class="kt">Application</span>
-</div><div class="line" id="LC1"><span class="nf">pong</span> <span class="n">req</span> <span class="ow">=</span> <span class="n">return</span> <span class="o">$</span> <span class="kt">ResponseBuilder</span>
-</div><div class="line" id="LC1">                      <span class="n">statusOK</span>
-</div><div class="line" id="LC1">                      <span class="p">[(</span><span class="s">&quot;Content-Type&quot;</span><span class="p">,</span> <span class="s">&quot;text/plain&quot;</span><span class="p">)]</span>
-</div><div class="line" id="LC1">                      <span class="p">(</span><span class="n">fromByteString</span> <span class="s">&quot;pong&quot;</span><span class="p">)</span>
-</div><div class="line" id="LC1">
-</div><div class="line" id="LC1"><span class="nf">main</span> <span class="ow">::</span> <span class="kt">IO</span> <span class="nb">()</span>
-</div><div class="line" id="LC1"><span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
-</div><div class="line" id="LC1">    <span class="n">port</span> <span class="ow">&lt;-</span> <span class="n">read</span> <span class="o">.</span> <span class="n">fromMaybe</span> <span class="s">&quot;3000&quot;</span> <span class="o">.</span> <span class="n">listToMaybe</span> <span class="o">&lt;$&gt;</span> <span class="n">getArgs</span>
-</div><div class="line" id="LC1">    <span class="n">run</span> <span class="n">port</span> <span class="n">pong</span>
-</div></pre></div>
-<p>相同条件下测试，平均每秒请求数为：</p>
-<pre class="literal-block">
-1 22184.93
-2 22232.89
-3 22150.83
-4 22189.02
-5 22267.33
-6 22125.08
-</pre>
-<p>nginx的话，好像没有办法构造一个等价测试案例，我配置了一个最简单的server block：</p>
-<pre class="literal-block">
-server {
-    server_name localhost;
-    location = / {
-    }
-}
-</pre>
-<p>然后测试 <a class="reference external" href="http://localhost/">http://localhost/</a> 这个 404 的响应，结果跟上面nginx返回静态文件的结果类似。</p>
-</div>
-<div class="section" id="id5">
-<h2>结论</h2>
-<p>warp pong 测试结果很惊人，看来 static app 还有不小的优化空间的。nginx主要是用来做个对照，没看过nginx代码，不一定公平。期待大家在不同环境下去测试测试，看结果如何。</p>
-</div>
 
                 </div>
                 <p class="more"><a href="list.html">查看全部文章>></a></p>
