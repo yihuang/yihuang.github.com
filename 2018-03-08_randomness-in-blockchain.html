@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.12: http://docutils.sourceforge.net/" />
+<title>区块链中的随机数</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="index.html"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="新浪微博" href="http://weibo.com/1897911954" class=""><img src="images/icons/weibo.png" alt="新浪微博"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">区块链中的随机数</h1>
+
+                    <p class="author">2018-03-08 黄毅</p>
+                    <p>随机数对于区块链技术来说很关键。
+本质上，分布式账本的核心问题就是随机选择出块人的问题，这个随机性要能被全网确认，并且不能被操控，也不能被预测，
+否则恶意节点通过操控这个随机数就可以操控长链，从而实现双花攻击。</p>
+<p>PoW的方案是让大家进行算力竞赛，设置一个计算哈希的难题，谁先算出来谁赢，算力高的赢的概率高，算力低的赢的概率低。投入的算力能够提现在哈希值上，
+这样全网能够验证，并选择包含最多算力的那条链。恶意节点只能通过提升自己的算力来增加攻击成功的概率。</p>
+<p>PoS的方案是选举，大家不用浪费电力去进行算力竞赛，而是文明一点，随机选举一个节点来出块，并且被选中的概率和它拥有的份额相关。
+如果“随机”这一步没有问题的话，恶意节点只能通过增加自己的份额，增加自己被选中的概率，从而增加双花攻击的成功概率。
+这里有一点比PoW的方案要好就是，要实现攻击，先得成为持币大户，如果攻击成功币价大跌，攻击者也会承受最大的损失。
+而PoW方案中虽然算力要花钱，但是如果攻击者没有持币，那么他的利益和币价不一定是正相关的，不能排除仍然存在攻击的动力。</p>
+<p>那么接下来的核心问题就是，这个不能被操控不能被预测的随机数从哪来。</p>
+<p>传统地PoS方案尝试从链上现有的数据入手，比如使用上一个区块的哈希值，上一个区块的时间戳等等来作为随机数的来源，但这些会带来额外的安全风险。
+因为区块本身的信息就是节点写进去的，然后又要根据里面的信息来选举后续的出块者，存在循环论证的嫌疑，安全性不会太好。
+这也是传统地认为PoS方案不如PoW可靠的部分原因。</p>
+<p>Cardano项目采用的Ouroboros协议是被密码学界证明安全的一个PoS协议，也是唯一一个被工业界采用的可证明安全性的PoS协议。
+它采用密码学的手段来生成这个随机数。为了弄清楚这个过程，我们先从更基础的密码学工具开始：</p>
+<ol class="arabic">
+<li><p class="first">承诺(Commitment)和打开(Open)</p>
+<p>假设张三李四要玩剪刀石头布，用传统方式作弊者如果稍微出的晚一点，可以等看到对方的手势后再做选择。
+为了防止这种情况，他们：</p>
+<ul class="simple">
+<li>先各自做出选择，然后把自己的选择做个哈希；</li>
+<li>交换这个哈希；</li>
+<li>等双方都收到对方的哈希后，再交换双方的选择；</li>
+</ul>
+<p>这样双方都知道了对方的选择，也能确认对方的选择是提前就做好的。
+这个哈希值就叫做承诺，因为它里面包含了保密信息，但又没有泄漏保密信息，而最终发送对应的保密信息，就叫做打开承诺。</p>
+<p>承诺和打开是一种模式，哈希只是实现手段之一。</p>
+</li>
+<li><p class="first">简单随机数协议（Coin-Tossing）</p>
+<p>现在我们可以设计一个多方生成随机数的协议：</p>
+<ul class="simple">
+<li>每个节点在本地产生一个随机数，并把它的承诺广播给其他人</li>
+<li>当它收到所有人广播的承诺后，再把打开也广播给其他人。</li>
+<li>最后大家把得到的随机数异或到一起，因为异或操作满足交换律和结合律，所以操作顺序不影响结果。</li>
+</ul>
+<p>最终大家都得到了一个一致的无法被操纵的随机数。
+但这个简单协议的问题在于，恶意节点可以选择终止协议，也就是不发送自己的打开，会使得其他人无法进行下去。要解决这个问题，我们还需要另一个工具。</p>
+</li>
+<li><p class="first">可验证秘密共享（Verifiable Secret Sharing）</p>
+<p>秘密共享是说，一个人可以把一个需要保密的信息，拆分成n份，分别发送给n个人，只要恶意节点不超过一定数量，最终大家可以综合各自的信息片段把原始信息还原出来。
+并且就算分发者如果作弊，大家也可以检查出来。具体的实现方式也有多种，这里就不深入了。</p>
+</li>
+</ol>
+<p>结合这几个技术，我们就可以有一个完整的随机数生成协议了。最后，因为我们本来就是个区块链，所以协议过程中需要广播的信息，我们可以直接写到链上去，
+这样可以简化实现，并且也不需要所有投票节点同时在线，并且如果有人作弊，作弊的记录将会永远保存在链上。</p>
+<p>最后综合一下整个协议流程：</p>
+<ol class="arabic simple">
+<li>在提交阶段，每个节点本地生成随机数和对应的承诺，同时把随机数拆成n份匹配其他的投票节点，
+并且用相应投票节点的公钥对每一份信息进行加密，保证它只能被对应的节点解密，
+然后把承诺和加密后的拆分信息一起广播给区块链。</li>
+<li>当大家收到大部分节点的承诺和拆分信息后，就进入打开阶段，每个节点把自己的打开发到链上。</li>
+<li>然后是恢复阶段，每个节点检查是否有节点发送了承诺但没有发送打开，
+如果有，则解密自己对应的那份拆分信息并发布，然后根据大家发布的拆分信息恢复出该节点的随机数。</li>
+<li>现在大家就有了所有节点的随机数，把它们异或到一起，最终得到了一个一致的随机数，并用它来选择下一轮的出块人。</li>
+</ol>
+<p>最后，这个随机数不光可以用来选择出块人，也可以给智能合约用，这是PoS另一个好处；
+而PoW体系虽然出块人是随机的，但并没有产生一个具体的随机数，所以智能合约能用随机数，还是得从区块链本身的数据里面去获取了。</p>
+<p>以后会继续介绍Ouroboros协议其他方面的细节。</p>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2018-03-08_randomness-in-blockchain';
+                        var disqus_url = 'http://www.yi-programmer.com/2018-03-08_randomness-in-blockchain.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/2018-03-08_randomness-in-blockchain.html&title=区块链中的随机数"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/2018-03-08_randomness-in-blockchain.html&title=区块链中的随机数"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=区块链中的随机数&uri=http://www.yi-programmer.com/2018-03-08_randomness-in-blockchain.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/2018-03-08_randomness-in-blockchain.html&title=区块链中的随机数"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/2018-03-08_randomness-in-blockchain.html&it=区块链中的随机数&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/2018-03-08_randomness-in-blockchain.html&title=区块链中的随机数&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/2018-03-08_randomness-in-blockchain.html&t=区块链中的随机数"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/2018-03-08_randomness-in-blockchain.html&title=区块链中的随机数"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=区块链中的随机数&rurl=http://www.yi-programmer.com/2018-03-08_randomness-in-blockchain.html&rcontent=http://www.yi-programmer.com/2018-03-08_randomness-in-blockchain.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/2018-03-08_randomness-in-blockchain.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/2018-03-08_randomness-in-blockchain.html&t=区块链中的随机数"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2018-03-08_randomness-in-blockchain.txt">View document source</a>.
+Generated on: 2018-03-08.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>
