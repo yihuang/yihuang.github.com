@@ -32,6 +32,24 @@ bloom filter
 
 TODO
 
+UTXO VS Account
+===============
+
+* 验证简单
+* 可以不重用地址(隐私)
+* 与智能合约结合更复杂
+
+HD Wallet
+==========
+
+* 产生新地址
+* 管理余额
+
+Sidechain(PoPoW)
+================
+
+figure TODO
+
 p2p网络
 ========
 
@@ -72,17 +90,34 @@ PoS(Ouroboros)
 如何产生随机数
 ==============
 
+TODO
+
 Commit和Open
 =============
+
+TODO
 
 Coin-Tossing
 =============
 
+TODO
+
 Verifiable Secret Sharing
 ==========================
+
+TODO
 
 完整随机数协议
 ===============
 
+TODO
+
+比特币安全性证明
+================
+
+TODO
+
 Ouroboros安全性证明
 ===================
+
+TODO
