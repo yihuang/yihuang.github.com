@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.12: http://docutils.sourceforge.net/" />
+<title>区块链和P2P网络</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="index.html"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="新浪微博" href="http://weibo.com/1897911954" class=""><img src="images/icons/weibo.png" alt="新浪微博"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">区块链和P2P网络</h1>
+
+                    <p class="author">2018-03-04 黄毅</p>
+                    <p>其实在互联网刚萌芽的时候，网络就是p2p状态的，每一台机器都有一个固定的地址，互相之间可以访问。</p>
+<p>但是随着互联网发展，一方面ipv4设计上的不周全导致地址不够用，普通人的电脑慢慢的就不能简单地直接被人访问了。
+另一方面互联网业务本身也走向了客户端-服务器模式，并且客户端越来越轻，客户端软件逐渐被web技术取代，相对应的服务器越来越重要。</p>
+<p>但在这个发展过程中，还是出现过一个惊艳的技术潮流，就是以BT下载为代表的P2P文件分享。
+普通互联网用户不通过服务器，也可以直接建立网络结构，完成文件分享和下载的任务。
+但是由于版权等问题，这个技术没有成为主流。</p>
+<p>区块链技术从某种意义上，可以看做是P2P技术的一次重生。这一次，它实现了数字货币的功能，顺便解决了做种的人(现在叫矿工了)的激励问题。
+同时，因为有了经济上的激励，它同时还要从根本上解决作弊的问题。</p>
+<p>我们介绍一下区块链技术最底层的部分：P2P网络协议。</p>
+<p>P2P网络协议有很多种，传统BT下载类应用常用分布式哈希表(DHT)算法，具体的就是Kademlia算法。</p>
+<p>区块链应用中，比特币使用的是gossip protocol, 以太坊和Cardano(ADA)使用的是Kademlia DHT。</p>
+<p>gossip protocol是一种非结构化的p2p网络，基本上是随机连上一些节点就可以了，网络拓扑会呈现更随机的形状，
+比特币的参数是每个节点最多主动连8个节点，最多接受117个外来连接。</p>
+<p>Kademlia DHT是一种结构化的p2p网络，这也是根据文件分享应用的需求来的。
+完美的网络结构当然是最好按照物理距离来，每个节点连接和它物理距离最近的节点。
+但是使用物理距离比较困难，Kademlia算法使用节点id之间的异或操作来当作节点之间的距离。
+因为异或操作拥有的一些性质使得它适合来做这件事情：
+* 交换律，路由表对称。
+* 三角关系：d(x, y) + d(y, z) &gt;= d(x, z)</p>
+<p>Kademlia网络中查找节点内容的通讯复杂度是对数级别，路由表缓存效率更高，网络扩展性更好。
+但是目前阶段的区块链应用基本上只需要广播，而不需要查找特定节点，其实用不上Kademlia的一些特性；
+反而不小心的话，Kademlia网络的结构化特征给Eclipse Attack带来了便利，所以比特币的选择也有他的道理。</p>
+<div class="section" id="eclipse-attack">
+<h2>Eclipse Attack</h2>
+<p>Eclipse Attack是指恶意节点通过某种手段“包围”了目标节点，使得目标节点所有连接的都是恶意节点，之后恶意节点可以过滤或伪造消息，进一步对目标节点发起各种攻击，比如：</p>
+<ul>
+<li><p class="first">攻击共识算法</p>
+<p>双花，自私挖矿等。</p>
+</li>
+<li><p class="first">攻击闪电网络等二级网络</p>
+<p>当闪电网络的通道关闭后，不告诉商家节点通道已关闭，继续发送付费消息并得到服务。</p>
+</li>
+<li><p class="first">攻击智能合约</p>
+<p>恶意节点可以引导受害节点的智能合约存储错误的状态，智能合约的逻辑的是依赖这些状态的，经过智能合约的运算，这种错误会得到放大，产生不可预料的问题。</p>
+</li>
+</ul>
+<p>2015年就有研究人员研究过对比特币网络进行Eclipse Attack的成本[1]_，
+bitcoin后续也进行了相关的加强，现在进行类似攻击起码需要ISP级别的能力才能够进行。
+2018年初有研究人员发表了针对以太坊网络的Eclipse Attack研究，发现攻击成本非常低，
+两台普通机器连上以太坊就能成功发起攻击，当然以太坊后续版本已经加上了反制措施。
+我们可以了解一下大概的攻击方法：</p>
+<ul>
+<li><p class="first">连接垄断</p>
+<p>以太坊设定的每个节点维持最多13个连接，并且外部发起的和自己发起的连接是平等的。
+攻击者可以等待目标节点重启（或者给目标节点发送&quot;重启包&quot;强制重启），然后主动连上去，占满目标节点的可用连接。</p>
+<p>解决方案：要求节点至少要有一部分主动对外的连接。</p>
+</li>
+<li><p class="first">占有路由表</p>
+<p>因为以太坊节点ID就是一个ECDSA公钥，而公钥生成成本很低，并且同一台电脑上就可以运行大量节点。
+攻击者可以根据目标节点ID生成大量和目标节点ID距离很近的节点，并主动ping目标节点。
+当目标节点重启后，路由表清空，会迅速被恶意节点占领。
+当目标节点主动发起连接，依然会大概率连上恶意节点。</p>
+<p>解决方案：</p>
+<ul class="simple">
+<li>因为这个攻击方式利用了Kademlia距离函数是公开并且对称的特点，如果我们把距离函数改成非对称的，
+引入本地生成的随机数： <tt class="docutils literal">dist(s1, SHA3(n, s2))</tt> ，这样攻击节点就无法批量生成和目标节点距离短的节点ID了。
+目前以太坊没有实现这个策略，因为它其实破坏了Kademlia网络的结构，会提高查找特定节点的通讯复杂度，虽然区块链应用场景下目前并不需要这种操作。</li>
+<li>目前以太坊的反制措施是限制路由表中来自同一个网段中节点数量，让这种攻击方式的成本提高一些。</li>
+</ul>
+</li>
+</ul>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2018-03-04_blockchain-network';
+                        var disqus_url = 'http://www.yi-programmer.com/2018-03-04_blockchain-network.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/2018-03-04_blockchain-network.html&title=区块链和P2P网络"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/2018-03-04_blockchain-network.html&title=区块链和P2P网络"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=区块链和P2P网络&uri=http://www.yi-programmer.com/2018-03-04_blockchain-network.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/2018-03-04_blockchain-network.html&title=区块链和P2P网络"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/2018-03-04_blockchain-network.html&it=区块链和P2P网络&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/2018-03-04_blockchain-network.html&title=区块链和P2P网络&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/2018-03-04_blockchain-network.html&t=区块链和P2P网络"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/2018-03-04_blockchain-network.html&title=区块链和P2P网络"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=区块链和P2P网络&rurl=http://www.yi-programmer.com/2018-03-04_blockchain-network.html&rcontent=http://www.yi-programmer.com/2018-03-04_blockchain-network.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/2018-03-04_blockchain-network.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/2018-03-04_blockchain-network.html&t=区块链和P2P网络"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2018-03-04_blockchain-network.txt">View document source</a>.
+Generated on: 2018-03-14.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>
