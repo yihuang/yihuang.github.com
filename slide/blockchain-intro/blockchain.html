@@ -6,6 +6,7 @@
 <meta name="generator" content="Docutils 0.14: http://docutils.sourceforge.net/" />
 <meta name="version" content="S5 1.1" />
 <title>区块链介绍</title>
+<meta name="author" content="yihuang" />
 <style type="text/css">
 
 /*
@@ -392,125 +393,414 @@ ul.auto-toc {
 <div class="presentation">
 <div class="slide" id="slide0">
 <h1 class="title">区块链介绍</h1>
-
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>yihuang</td></tr>
+<tr class="email field"><th class="docinfo-name">email:</th><td class="field-body"><a class="reference external" href="mailto:yi.codeplayer&#64;gmail.com">yi.codeplayer&#64;gmail.com</a></td>
+</tr>
+<tr class="home field"><th class="docinfo-name">home:</th><td class="field-body"><a class="reference external" href="http://yi-programmer.com">http://yi-programmer.com</a></td>
+</tr>
+</tbody>
+</table>
 
 </div>
 <div class="slide" id="id2">
-<h1>行业特点</h1>
-<ul class="simple">
-<li>开源</li>
-<li>p2p理念</li>
-<li>安全性(理论安全，和实现安全)</li>
+<h1>区块链</h1>
+<ul class="incremental">
+<li><p class="first">新一代的P2P网络应用</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="52%" />
+<col width="48%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Bitcoin</th>
+<th class="head">BT下载</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>分布式账本</td>
+<td>文件分享</td>
+</tr>
+<tr><td>矿工</td>
+<td>做种</td>
+</tr>
+<tr><td>币</td>
+<td>?</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p class="first">能融到资的开源项目</p>
+</li>
+<li><p class="first">也许能诞生新的互联网形态</p>
+</li>
 </ul>
-</div>
-<div class="slide" id="id3">
-<h1>数据结构</h1>
-<ul class="simple">
-<li>hash list</li>
-<li>hash chain</li>
-<li>hash tree(Merkle tree)</li>
-<li>blockchain</li>
-</ul>
-</div>
-<div class="slide" id="blockchain">
-<h1>BlockChain</h1>
-<p>figure TODO.</p>
-</div>
-<div class="slide" id="spv-proof">
-<h1>SPV Proof</h1>
-<p>figure TODO.</p>
-</div>
-<div class="slide" id="bloom-filter">
-<h1>bloom filter</h1>
-<p>TODO</p>
-</div>
-<div class="slide" id="utxo-vs-account">
-<h1>UTXO VS Account</h1>
-<ul class="simple">
-<li>验证简单</li>
-<li>可以不重用地址(隐私)</li>
-<li>与智能合约结合更复杂</li>
-</ul>
-</div>
-<div class="slide" id="hd-wallet">
-<h1>HD Wallet</h1>
-<ul class="simple">
-<li>产生新地址</li>
-<li>管理余额</li>
-</ul>
-</div>
-<div class="slide" id="sidechain-popow">
-<h1>Sidechain(PoPoW)</h1>
-<p>figure TODO</p>
 </div>
 <div class="slide" id="p2p">
-<h1>p2p网络</h1>
-<ul class="simple">
-<li>gossip network</li>
-<li>kademlida DHT</li>
+<h1>P2P网络</h1>
+<ul class="incremental">
+<li><p class="first">bitcoin: gossip network(out:8, in:117)</p>
+<p>随机网络结构</p>
+</li>
+<li><p class="first">eth/ada: kademlida DHT</p>
+<p>结构化网络，使用XOR操作定义节点之间虚拟距离</p>
+</li>
 </ul>
 </div>
 <div class="slide" id="eclipse-attack">
 <h1>eclipse attack</h1>
-<p>figure TODO</p>
-<ul class="simple">
-<li>路由表优先旧节点</li>
-<li>提高伪造地址难度（hash+nouce)</li>
-<li>限制相同地址下节点数量</li>
+<ul class="incremental">
+<li><p class="first">使用恶意节点包围目标节点，通过过滤/伪造消息进行进一步的攻击</p>
+</li>
+<li><p class="first">2015 Eclipse Attacks on Bitcoin’s Peer-to-Peer Network</p>
+</li>
+<li><p class="first">2018 Low-Resource Eclipse Attacks on Ethereum’s Peer-to-Peer Network</p>
+<p>攻击成本：两台电脑</p>
+</li>
 </ul>
 </div>
+<div class="slide" id="id3">
+<h1>eclipse attack</h1>
+<p>攻击方式：</p>
+<blockquote>
+<ul class="simple">
+<li>连接垄断</li>
+<li>占领路由表</li>
+</ul>
+</blockquote>
+</div>
 <div class="slide" id="id4">
+<h1>密码学哈希函数</h1>
+<ul class="simple">
+<li>把任意长度的输入转换到固定长度的输出</li>
+<li>不可逆</li>
+<li>不碰撞</li>
+<li>实现：sha256</li>
+</ul>
+</div>
+<div class="slide" id="id5">
+<h1>非对称加密</h1>
+<ul class="simple">
+<li>私钥生成公钥，公钥不能反推私钥。</li>
+<li>公钥加密，私钥解密</li>
+<li>私钥签名，公钥验证</li>
+<li>实现：RSA和椭圆曲线</li>
+</ul>
+</div>
+<div class="slide" id="id6">
+<h1>数据结构</h1>
+<ul class="incremental">
+<li><p class="first">hash list</p>
+<p>哈希链表</p>
+</li>
+<li><p class="first">hash chain:</p>
+<pre class="literal-block">
+H(H(H(H(...H(data)...))))
+</pre>
+</li>
+</ul>
+</div>
+<div class="slide" id="id7">
+<h1>数据结构</h1>
+<ul>
+<li><p class="first">hash tree(Merkle tree)</p>
+<img alt="../../images/merkle_tree.png" src="../../images/merkle_tree.png" />
+</li>
+</ul>
+</div>
+<div class="slide" id="blockchain">
+<h1>BlockChain</h1>
+<object data="../../images/Bitcoin_Block_Data.svg" type="image/svg+xml">
+../../images/Bitcoin_Block_Data.svg</object>
+<ul class="simple">
+<li>可以不存储历史Merkle Tree，降低存储需求</li>
+</ul>
+</div>
+<div class="slide" id="spv-proof">
+<h1>SPV Proof</h1>
+<ul class="simple">
+<li>减少同步数据</li>
+</ul>
+<img alt="../../images/spv_verification.png" src="../../images/spv_verification.png" />
+</div>
+<div class="slide" id="bloom-filter">
+<h1>Bloom Filter</h1>
+<ul class="simple">
+<li>数据哈希后添加到BitSet</li>
+<li>允许低概率的false positive</li>
+</ul>
+</div>
+<div class="slide" id="proof-of-work">
+<h1>Proof of Work</h1>
+<pre class="literal-block">
+h ≤ T
+</pre>
+<ul class="simple">
+<li>h 是区块的哈希，通过调整nouce值，调整哈希结果。</li>
+<li>T 是当前难度，通过调整难度，调整出块时间。</li>
+<li>防DoS攻击（和验证码的区别？）</li>
+</ul>
+</div>
+<div class="slide" id="sidechain">
+<h1>Sidechain</h1>
+<ul class="simple">
+<li>在一个链上销毁资金</li>
+<li>在另一个链上创建资金</li>
+<li>如何在另一个链上验证交易？</li>
+</ul>
+</div>
+<div class="slide" id="id8">
+<h1>Sidechain</h1>
+<p>Proofs of Proof of Work</p>
+<ul class="simple">
+<li>μ-superblocks: h ≤ T/(2^μ)</li>
+</ul>
+<img alt="../../images/sidechain.png" src="../../images/sidechain.png" />
+</div>
+<div class="slide" id="utxo">
+<h1>记账模型(UTxO)</h1>
+<pre class="code haskell literal-block">
+<span class="keyword reserved">data</span> <span class="keyword type">Transaction</span> <span class="operator word">=</span> <span class="keyword type">Transaction</span><span class="punctuation">{</span>
+    <span class="name">txid</span> <span class="operator word">::</span> <span class="keyword type">TxId</span><span class="punctuation">,</span>
+    <span class="name">inputs</span> <span class="operator word">::</span> <span class="punctuation">[</span><span class="keyword type">Input</span><span class="punctuation">],</span>
+    <span class="name">outputs</span> <span class="operator word">::</span> <span class="punctuation">[</span><span class="keyword type">Output</span><span class="punctuation">],</span>
+    <span class="name">proofs</span> <span class="operator word">::</span> <span class="punctuation">[(</span><span class="keyword type">PubKey</span><span class="punctuation">,</span> <span class="keyword type">Signature</span><span class="punctuation">)]}</span>
+<span class="keyword reserved">data</span> <span class="keyword type">Input</span> <span class="operator word">=</span> <span class="keyword type">Input</span> <span class="punctuation">{</span>
+    <span class="name">txid</span> <span class="operator word">::</span> <span class="keyword type">TxId</span><span class="punctuation">,</span>
+    <span class="name">index</span> <span class="operator word">::</span> <span class="keyword type">Int</span> <span class="punctuation">}</span>
+<span class="keyword reserved">data</span> <span class="keyword type">Output</span> <span class="operator word">=</span> <span class="keyword type">Output</span> <span class="punctuation">{</span>
+    <span class="name">address</span> <span class="operator word">::</span> <span class="keyword type">Address</span><span class="punctuation">,</span>
+    <span class="name">value</span> <span class="operator word">::</span> <span class="keyword type">Value</span> <span class="punctuation">}</span>
+</pre>
+</div>
+<div class="slide" id="id9">
+<h1>记账模型(UTxO)</h1>
+<pre class="code haskell literal-block">
+<span class="keyword reserved">type</span> <span class="keyword type">Ledger</span> <span class="operator word">=</span> <span class="punctuation">[</span><span class="keyword type">Transaction</span><span class="punctuation">]</span>
+
+<span class="comment single">-- global state.</span>
+<span class="name function">utxos</span> <span class="operator word">::</span> <span class="keyword type">Set</span> <span class="keyword type">Input</span> <span class="comment single">-- Why not set of Output?</span>
+</pre>
+</div>
+<div class="slide" id="id10">
+<h1>记账模型(账户余额)</h1>
+<pre class="code haskell literal-block">
+<span class="keyword reserved">data</span> <span class="keyword type">Transaction</span> <span class="operator word">=</span> <span class="keyword type">Transaction</span><span class="punctuation">{</span>
+    <span class="name">from</span> <span class="operator word">::</span> <span class="keyword type">Address</span><span class="punctuation">,</span>
+    <span class="name">to</span> <span class="operator word">::</span> <span class="keyword type">Address</span><span class="punctuation">,</span>
+    <span class="name">value</span> <span class="operator word">::</span> <span class="keyword type">Value</span><span class="punctuation">,</span>
+    <span class="name">fee</span> <span class="operator word">::</span> <span class="keyword type">Value</span><span class="punctuation">,</span>
+    <span class="name">nonce</span> <span class="operator word">::</span> <span class="keyword type">Unique</span><span class="punctuation">,</span> <span class="comment single">-- 防止重放攻击</span>
+<span class="punctuation">}</span>
+<span class="keyword reserved">type</span> <span class="keyword type">Ledger</span> <span class="operator word">=</span> <span class="punctuation">[</span><span class="keyword type">Transaction</span><span class="punctuation">]</span>
+
+<span class="comment single">-- global state.</span>
+<span class="name function">balances</span> <span class="operator word">::</span> <span class="keyword type">Map</span> <span class="keyword type">Address</span> <span class="keyword type">Value</span>
+</pre>
+</div>
+<div class="slide" id="id11">
+<h1>记账模型</h1>
+<ul class="simple">
+<li>Bitcoin/ADA：UTxO<ul>
+<li>可以不重用地址，隐私性</li>
+<li>可批量</li>
+</ul>
+</li>
+<li>Eth：账户余额<ul>
+<li>智能合约可以直接修改余额，更方便。</li>
+</ul>
+</li>
+<li>等价，可以相互转换。</li>
+</ul>
+</div>
+<div class="slide" id="id12">
 <h1>共识算法</h1>
 <ul class="simple">
 <li>目的：需要一个节点来处理写请求（共识+随机）</li>
 <li>PoW：算力竞赛+最长链</li>
-<li>PoS：随机选择+最长链</li>
-<li>PBFT: TODO</li>
+<li>PoS：加权随机+最长链</li>
+</ul>
+</div>
+<div class="slide" id="id13">
+<h1>安全属性</h1>
+<ul>
+<li><p class="first">Persistence</p>
+<p>有一定深度的区块不能被推翻</p>
+</li>
+<li><p class="first">Liveness</p>
+<p>有效的交易请求一定会进入Persistence状态</p>
+</li>
 </ul>
 </div>
 <div class="slide" id="pow">
 <h1>PoW</h1>
-<ul class="simple">
-<li>利用哈希值证明工作量(防DoS)</li>
-<li>简洁，安全性论证简单</li>
-<li>不环保</li>
-<li>矿工利益和币价不必然挂钩</li>
+<ul>
+<li><p class="first">简洁</p>
+<p>安全性证明, 2015 The Bitcoin Backbone Protocol: Analysis and Applications</p>
+</li>
+<li><p class="first">不环保</p>
+</li>
+<li><p class="first">矿工利益和币价不必然挂钩</p>
+</li>
 </ul>
 </div>
-<div class="slide" id="pos-ouroboros">
-<h1>PoS(Ouroboros)</h1>
+<div class="slide" id="pos">
+<h1>PoS</h1>
 <ul class="simple">
-<li>多方共同产生一个随机数</li>
-<li>执行 follow-the-satoshi 算法</li>
+<li>得到某个随机数</li>
+<li>按照份额比例加权随机选取节点打包区块</li>
+<li>份额越大，攻击成本越大</li>
+<li>性能上有更大的扩展余地</li>
 </ul>
 </div>
-<div class="slide" id="id5">
-<h1>如何产生随机数</h1>
-<p>TODO</p>
+<div class="slide" id="id14">
+<h1>PoS</h1>
+<p>难点：</p>
+<ul class="simple">
+<li>打包区块没有成本，恶意节点很容易产生分叉</li>
+<li>从区块数据本身获取随机性可能不安全</li>
+</ul>
 </div>
-<div class="slide" id="commitopen">
-<h1>Commit和Open</h1>
-<p>TODO</p>
+<div class="slide" id="ouroboros-pos">
+<h1>Ouroboros(PoS)</h1>
+<ul class="simple">
+<li>第一个可证明安全性的PoS协议（Cardano团队）</li>
+<li>使用Secure Multi-Party Computation得到随机数</li>
+</ul>
+</div>
+<div class="slide" id="id15">
+<h1>Ouroboros(PoS)</h1>
+<img alt="images/ouroboros.png" src="images/ouroboros.png" style="width: 80%;" />
+</div>
+<div class="slide" id="id16">
+<h1>Ouroboros(PoS)</h1>
+<p>Forkable String is Rare.</p>
+<img alt="../../images/forkable-string.png" src="../../images/forkable-string.png" />
+</div>
+<div class="slide" id="id17">
+<h1>生成随机数</h1>
+<p>基础密码学工具:</p>
+<ul class="simple">
+<li>Commitment</li>
+<li>Coin-Tossing</li>
+<li>Verifiable Secret Sharing</li>
+</ul>
+</div>
+<div class="slide" id="commitment-schema">
+<h1>Commitment Schema</h1>
+<ul>
+<li><p class="first">Commit Phase</p>
+<p>发送 <tt class="docutils literal">C = Enc(k, r, m)</tt>, 对方收到C</p>
+</li>
+<li><p class="first">Open Phase</p>
+<p>发送 <tt class="docutils literal">k, r, m</tt>, 对方验证 <tt class="docutils literal">Enc(k, r, <span class="pre">m)==C</span></tt></p>
+</li>
+</ul>
+</div>
+<div class="slide" id="id18">
+<h1>Commitment Schema</h1>
+<ul class="incremental">
+<li><p class="first">Hiding:  commit不能泄漏原值的信息</p>
+</li>
+<li><p class="first">Binding: 只有用原来那个值才可以打开commit</p>
+</li>
+<li><p class="first">perfectly/computational binding</p>
+<p>就算无限算力也无法修改commit的值</p>
+</li>
+<li><p class="first">perfectly/computational hiding</p>
+<p>就算无限算力也无法从commit反推原值</p>
+</li>
+<li><p class="first">实现：加密、哈希 (他们的安全属性如何?)</p>
+</li>
+</ul>
 </div>
 <div class="slide" id="coin-tossing">
 <h1>Coin-Tossing</h1>
-<p>TODO</p>
+<ul class="incremental simple">
+<li>A-&gt;B, <tt class="docutils literal">COMMIT(n, s1)</tt></li>
+<li>B-&gt;A, <tt class="docutils literal">s2</tt></li>
+<li>A-&gt;B, <tt class="docutils literal">OPEN(n, s1)</tt>, B得到s1</li>
+<li>A, B 分别计算 <tt class="docutils literal">s = xor s1 s2</tt></li>
+<li>问题: A收到s2后不发送OPEN, Abort!</li>
+</ul>
+</div>
+<div class="slide" id="secret-sharing">
+<h1>Secret Sharing</h1>
+<ul class="simple">
+<li><tt class="docutils literal">SHARES(S) <span class="pre">-&gt;</span> S1, S2, ... Sm</tt></li>
+<li><tt class="docutils literal">RECONSTRUCT(S1, S2, ... St) <span class="pre">-&gt;</span> S</tt></li>
+<li>t-OUT-OF-m secret sharing</li>
+</ul>
+</div>
+<div class="slide" id="id19">
+<h1>Secret Sharing</h1>
+<p>Example for <tt class="docutils literal"><span class="pre">t==m</span></tt>:</p>
+<pre class="literal-block">
+# SHARES(S)
+Sa = xor S Ra
+Sb = xor S Rb
+Sc = xor S Rc
+Sd = xor Ra Rb Rc
+
+# RECONSTRUCT(Sa, Sb, Sc, Sd)
+xor Sa Sb Sc Sd = S
+</pre>
 </div>
 <div class="slide" id="verifiable-secret-sharing">
 <h1>Verifiable Secret Sharing</h1>
-<p>TODO</p>
+<ul class="simple">
+<li><tt class="docutils literal">VERIFY(Si) <span class="pre">-&gt;</span> Bool</tt></li>
+<li>防止分发share的人作弊</li>
+</ul>
 </div>
-<div class="slide" id="id6">
+<div class="slide" id="id20">
 <h1>完整随机数协议</h1>
-<p>TODO</p>
+<ul class="incremental">
+<li><p class="first">Commit阶段</p>
+<p>产生secret，广播commit。</p>
+<p>产生shares，使用对应节点公钥加密并发送。</p>
+</li>
+<li><p class="first">Open阶段</p>
+<p>广播open</p>
+</li>
+</ul>
 </div>
-<div class="slide" id="id7">
-<h1>比特币安全性证明</h1>
-<p>TODO</p>
+<div class="slide" id="id21">
+<h1>完整随机数协议</h1>
+<ul class="incremental">
+<li><p class="first">Recovery阶段</p>
+<p>没有收到open的，使用shares恢复其secret。</p>
+</li>
+<li><p class="first">所有secrets合并，得到所有人一致认可的随机数。</p>
+</li>
+</ul>
 </div>
-<div class="slide" id="ouroboros">
-<h1>Ouroboros安全性证明</h1>
-<p>TODO</p>
+<div class="slide" id="id22">
+<h1>综合起来</h1>
+<ul class="simple">
+<li>使用链代替广播</li>
+<li>随机数协议和区块链协议并行执行</li>
+</ul>
+</div>
+<div class="slide" id="id23">
+<h1>Ouroboros(PoS)</h1>
+<img alt="images/ouroboros.png" src="images/ouroboros.png" style="width: 80%;" />
+</div>
+<div class="slide" id="id24">
+<h1>参考资料</h1>
+<ul class="simple">
+<li><a class="reference external" href="https://iohk.io/research/papers/">https://iohk.io/research/papers/</a></li>
+<li><a class="reference external" href="https://www.youtube.com/channel/UCBJ0p9aCW-W82TwNM-z3V2w">https://www.youtube.com/channel/UCBJ0p9aCW-W82TwNM-z3V2w</a></li>
+<li>Wikipedia.</li>
+</ul>
+</div>
+<div class="slide" id="q-a">
+<h1>Q &amp; A</h1>
+<p>Thanks.</p>
 </div>
 </div>
 </body>
