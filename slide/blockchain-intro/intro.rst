@@ -58,8 +58,9 @@ PoW的问题
 
 * Cardano
 
-Thanks
+Q & A
 ======
 
-Q & A
+.. image:: images/bijin_logo.png
 
+.. image:: images/bijin_qrcode.png
