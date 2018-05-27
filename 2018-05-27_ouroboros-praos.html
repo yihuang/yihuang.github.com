@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.12: http://docutils.sourceforge.net/" />
+<title>Ouroboros Praos</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="index.html"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="新浪微博" href="http://weibo.com/1897911954" class=""><img src="images/icons/weibo.png" alt="新浪微博"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">Ouroboros Praos</h1>
+
+                    <p class="author">2018-05-27 黄毅</p>
+                    <p><a class="reference external" href="https://iohk.io/research/papers/#XJ6MHFXX">Ouroboros Praos</a> 是IOHK发布的Ouroboros协议第二个版本。</p>
+<div class="note">
+<p class="first admonition-title">注解</p>
+<ul class="last simple">
+<li>第三个版本Genesis(已发布) 解决了PoS协议的Long Range Attack问题。</li>
+<li>第四个版本Hydra(未发布) 将会解决分片问题。</li>
+</ul>
+</div>
+<p>在 <a class="reference external" href="http://yi-programmer.com/2018-03-08_randomness-in-blockchain.html">区块链中的随机数</a>
+一文中，我们介绍了第一个版本的Ouroboros PoS协议。我们看到随机数在slot leader选择中的重要作用，以及使用MPC生成安全可验证的随机数的方法。</p>
+<p>但是原始 Ouroboros 协议存在这样一些问题：</p>
+<ul class="simple">
+<li>伪随机函数是公开的，也就是在epoch开始的时候，实际上恶意节点已经可以知道整个epoch中所有slot leader是谁了。恶意节点从而可以利用这一点进行攻击，比如贿赂和针对性的DDoS攻击。</li>
+<li>MPC的性能是随着参与节点数量增加而降低的。</li>
+<li>安全性论证基于对同步网络模型的假设。</li>
+</ul>
+<p>所以slot需要一定时长(20秒)确保诚实节点之间的同步。Praos的主要改进是采用可验证随机函数(VRF)代替公开伪随机函数进行slot leader选择。</p>
+<div class="section" id="vrf">
+<h2>可验证随机函数(VRF)</h2>
+<p>可验证随机函数是一个密码学的工具，一种伪随机函数，可以使用私钥参与随机数的计算，同时别人可以使用公钥对计算结果进行验证。</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="c1">-- 计算随机数</span>
+</div><div class="line" id="LC1"><span class="nf">vrf</span> <span class="ow">::</span> <span class="kt">PrivateKey</span> <span class="ow">-&gt;</span> <span class="kt">Seed</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="kt">VrfProof</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="c1">-- 验证随机数</span>
+</div><div class="line" id="LC1"><span class="nf">verifyVrf</span> <span class="ow">::</span> <span class="kt">PublicKey</span> <span class="ow">-&gt;</span> <span class="kt">Seed</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="kt">VrfProof</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+</div><div class="line" id="LC1"><span class="c1">-- 区分不同slot</span>
+</div><div class="line" id="LC1"><span class="nf">slotSeed</span> <span class="ow">::</span> <span class="kt">SlotIndex</span> <span class="ow">-&gt;</span> <span class="kt">EpochSeed</span> <span class="ow">-&gt;</span> <span class="kt">Seed</span>
+</div></pre></div>
+<p>使用这个工具，每个节点可以使用不同的伪随机函数判定自己是否是slot leader，具体方法是判定产生的随机数是否低于一个阀值，该阀值的值和节点stake比例相关。
+如果是leader则直接出块，并在块中包含验证需要的proof信息。其他节点直到收到区块，才知道谁是slot leader。</p>
+<p>因为每个节点随机函数是独立的，所以并不能像原始Ouroboros那样保证每个slot都刚好有且只有一个leader，可能没有人选中，也可能选中多个。不过praos新的安全性论证，已经考虑进这些情况，并且建立在半同步网络模型上，依然可以保证原来的安全属性。意味着praos的slot时长可以大大降低，也意味着这个版本性能将大大提升。</p>
+<p>最后每个区块出块者会额外生成一个随机数放在区块中，用于产生下一个epoch的seed。</p>
+</div>
+<div class="section" id="key-evolving-signature-schemes">
+<h2>Key Evolving Signature Schemes</h2>
+<p>Praos引入KES解决另一个PoS的问题，就是恶意用户如果盗用了stake holder的私钥的情况，可以对它任意时刻出的块重新签名。</p>
+<p>KES模式下，每次签名后都产生新的key，并抛弃旧的key。这样就算被黑掉当前的key，也无法伪造过去产生的区块签名。</p>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2018-05-27_ouroboros-praos';
+                        var disqus_url = 'http://www.yi-programmer.com/2018-05-27_ouroboros-praos.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/2018-05-27_ouroboros-praos.html&title=Ouroboros Praos"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/2018-05-27_ouroboros-praos.html&title=Ouroboros Praos"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=Ouroboros Praos&uri=http://www.yi-programmer.com/2018-05-27_ouroboros-praos.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/2018-05-27_ouroboros-praos.html&title=Ouroboros Praos"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/2018-05-27_ouroboros-praos.html&it=Ouroboros Praos&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/2018-05-27_ouroboros-praos.html&title=Ouroboros Praos&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/2018-05-27_ouroboros-praos.html&t=Ouroboros Praos"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/2018-05-27_ouroboros-praos.html&title=Ouroboros Praos"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=Ouroboros Praos&rurl=http://www.yi-programmer.com/2018-05-27_ouroboros-praos.html&rcontent=http://www.yi-programmer.com/2018-05-27_ouroboros-praos.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/2018-05-27_ouroboros-praos.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/2018-05-27_ouroboros-praos.html&t=Ouroboros Praos"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2018-05-27_ouroboros-praos.txt">View document source</a>.
+Generated on: 2018-05-27.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>

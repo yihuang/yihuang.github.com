@@ -1,0 +1,51 @@
+===============
+Ouroboros Praos
+===============
+
+`Ouroboros Praos <https://iohk.io/research/papers/#XJ6MHFXX>`_ 是IOHK发布的Ouroboros协议第二个版本。
+
+.. note::
+
+    * 第三个版本Genesis(已发布) 解决了PoS协议的Long Range Attack问题。
+    * 第四个版本Hydra(未发布) 将会解决分片问题。
+
+在 `区块链中的随机数 <http://yi-programmer.com/2018-03-08_randomness-in-blockchain.html>`_
+一文中，我们介绍了第一个版本的Ouroboros PoS协议。我们看到随机数在slot leader选择中的重要作用，以及使用MPC生成安全可验证的随机数的方法。
+
+但是原始 Ouroboros 协议存在这样一些问题：
+
+* 伪随机函数是公开的，也就是在epoch开始的时候，实际上恶意节点已经可以知道整个epoch中所有slot leader是谁了。恶意节点从而可以利用这一点进行攻击，比如贿赂和针对性的DDoS攻击。
+
+* MPC的性能是随着参与节点数量增加而降低的。
+
+* 安全性论证基于对同步网络模型的假设。
+
+所以slot需要一定时长(20秒)确保诚实节点之间的同步。Praos的主要改进是采用可验证随机函数(VRF)代替公开伪随机函数进行slot leader选择。
+
+可验证随机函数(VRF)
+====================
+
+可验证随机函数是一个密码学的工具，一种伪随机函数，可以使用私钥参与随机数的计算，同时别人可以使用公钥对计算结果进行验证。
+
+.. code-block:: haskell
+
+    -- 计算随机数
+    vrf :: PrivateKey -> Seed -> (a, VrfProof)
+    -- 验证随机数
+    verifyVrf :: PublicKey -> Seed -> (a, VrfProof) -> Bool
+    -- 区分不同slot
+    slotSeed :: SlotIndex -> EpochSeed -> Seed
+
+使用这个工具，每个节点可以使用不同的伪随机函数判定自己是否是slot leader，具体方法是判定产生的随机数是否低于一个阀值，该阀值的值和节点stake比例相关。
+如果是leader则直接出块，并在块中包含验证需要的proof信息。其他节点直到收到区块，才知道谁是slot leader。
+
+因为每个节点随机函数是独立的，所以并不能像原始Ouroboros那样保证每个slot都刚好有且只有一个leader，可能没有人选中，也可能选中多个。不过praos新的安全性论证，已经考虑进这些情况，并且建立在半同步网络模型上，依然可以保证原来的安全属性。意味着praos的slot时长可以大大降低，也意味着这个版本性能将大大提升。
+
+最后每个区块出块者会额外生成一个随机数放在区块中，用于产生下一个epoch的seed。
+
+Key Evolving Signature Schemes
+==============================
+
+Praos引入KES解决另一个PoS的问题，就是恶意用户如果盗用了stake holder的私钥的情况，可以对它任意时刻出的块重新签名。
+
+KES模式下，每次签名后都产生新的key，并抛弃旧的key。这样就算被黑掉当前的key，也无法伪造过去产生的区块签名。

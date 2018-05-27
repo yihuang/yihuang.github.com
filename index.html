@@ -45,6 +45,47 @@
         <div id="content">
             <div id="right">
                 <div class="post">
+                    <a href="2018-05-27_ouroboros-praos.html"><h1>Ouroboros Praos <span class="date">2018-05-27</span></h1></a>
+                    <p><a class="reference external" href="https://iohk.io/research/papers/#XJ6MHFXX">Ouroboros Praos</a> 是IOHK发布的Ouroboros协议第二个版本。</p>
+<div class="note">
+<p class="first admonition-title">注解</p>
+<ul class="last simple">
+<li>第三个版本Genesis(已发布) 解决了PoS协议的Long Range Attack问题。</li>
+<li>第四个版本Hydra(未发布) 将会解决分片问题。</li>
+</ul>
+</div>
+<p>在 <a class="reference external" href="http://yi-programmer.com/2018-03-08_randomness-in-blockchain.html">区块链中的随机数</a>
+一文中，我们介绍了第一个版本的Ouroboros PoS协议。我们看到随机数在slot leader选择中的重要作用，以及使用MPC生成安全可验证的随机数的方法。</p>
+<p>但是原始 Ouroboros 协议存在这样一些问题：</p>
+<ul class="simple">
+<li>伪随机函数是公开的，也就是在epoch开始的时候，实际上恶意节点已经可以知道整个epoch中所有slot leader是谁了。恶意节点从而可以利用这一点进行攻击，比如贿赂和针对性的DDoS攻击。</li>
+<li>MPC的性能是随着参与节点数量增加而降低的。</li>
+<li>安全性论证基于对同步网络模型的假设。</li>
+</ul>
+<p>所以slot需要一定时长(20秒)确保诚实节点之间的同步。Praos的主要改进是采用可验证随机函数(VRF)代替公开伪随机函数进行slot leader选择。</p>
+<div class="section" id="vrf">
+<h2>可验证随机函数(VRF)</h2>
+<p>可验证随机函数是一个密码学的工具，一种伪随机函数，可以使用私钥参与随机数的计算，同时别人可以使用公钥对计算结果进行验证。</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="c1">-- 计算随机数</span>
+</div><div class="line" id="LC1"><span class="nf">vrf</span> <span class="ow">::</span> <span class="kt">PrivateKey</span> <span class="ow">-&gt;</span> <span class="kt">Seed</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="kt">VrfProof</span><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="c1">-- 验证随机数</span>
+</div><div class="line" id="LC1"><span class="nf">verifyVrf</span> <span class="ow">::</span> <span class="kt">PublicKey</span> <span class="ow">-&gt;</span> <span class="kt">Seed</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="kt">VrfProof</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+</div><div class="line" id="LC1"><span class="c1">-- 区分不同slot</span>
+</div><div class="line" id="LC1"><span class="nf">slotSeed</span> <span class="ow">::</span> <span class="kt">SlotIndex</span> <span class="ow">-&gt;</span> <span class="kt">EpochSeed</span> <span class="ow">-&gt;</span> <span class="kt">Seed</span>
+</div></pre></div>
+<p>使用这个工具，每个节点可以使用不同的伪随机函数判定自己是否是slot leader，具体方法是判定产生的随机数是否低于一个阀值，该阀值的值和节点stake比例相关。
+如果是leader则直接出块，并在块中包含验证需要的proof信息。其他节点直到收到区块，才知道谁是slot leader。</p>
+<p>因为每个节点随机函数是独立的，所以并不能像原始Ouroboros那样保证每个slot都刚好有且只有一个leader，可能没有人选中，也可能选中多个。不过praos新的安全性论证，已经考虑进这些情况，并且建立在半同步网络模型上，依然可以保证原来的安全属性。意味着praos的slot时长可以大大降低，也意味着这个版本性能将大大提升。</p>
+<p>最后每个区块出块者会额外生成一个随机数放在区块中，用于产生下一个epoch的seed。</p>
+</div>
+<div class="section" id="key-evolving-signature-schemes">
+<h2>Key Evolving Signature Schemes</h2>
+<p>Praos引入KES解决另一个PoS的问题，就是恶意用户如果盗用了stake holder的私钥的情况，可以对它任意时刻出的块重新签名。</p>
+<p>KES模式下，每次签名后都产生新的key，并抛弃旧的key。这样就算被黑掉当前的key，也无法伪造过去产生的区块签名。</p>
+</div>
+
+                </div>
+                <div class="post">
                     <a href="2018-03-14_blockchain-network.html"><h1>区块链和P2P网络 <span class="date">2018-03-14</span></h1></a>
                     <p>其实在互联网刚萌芽的时候，网络就是p2p状态的，每一台机器都有一个固定的地址，互相之间可以访问。</p>
 <p>但是随着互联网发展，一方面ipv4设计上的不周全导致地址不够用，普通人的电脑慢慢的就不能简单地直接被人访问了。
@@ -249,45 +290,6 @@ Charles宣布，IOHK正在启动一项研究工作来探索价值稳定的货币
 我喜欢Cardano解决区块链当前问题所用的方法 - 它是学术性的，把大学里的人拉了进来，里面还有有一些客观的成果的。”</p>
 <p>其他人想在那里了解更多关于加密货币的信息。Ana，24岁，是伦敦经济学院法学专业的一名研究生。她对编写智能合约方面的论文感兴趣，因为她认为区块链是法律中新兴的领域。“我想更多地了解区块链，”她说。“其中的法律方面非常有趣，有很多问题需要解决。例如，如果您没有法院或法官参与，自行执行的合同是否合法？”</p>
 <p>未来会有更多有关IOHK和非洲战略的信息，并将由非洲业务总监John O'Connor提供。</p>
-
-                </div>
-                <div class="post">
-                    <a href="2018-03-04_kaleidoscope.html"><h1>Kaleidoscope: 一个安全的密码学扑克协议 <span class="date">2018-03-04</span></h1></a>
-                    <div class="note">
-<p class="first admonition-title">注解</p>
-<p class="last">翻译自 <a class="reference external" href="https://iohk.io/blog/kaleidoscope-a-cryptographic-protocol-for-securely-playing-poker">https://iohk.io/blog/kaleidoscope-a-cryptographic-protocol-for-securely-playing-poker</a></p>
-</div>
-<p>扑克是世界上最流行的游戏之一，在赌场和互联网上都很受欢迎。尤其2000年后在线扑克迎来一阵风潮，产生了一个上百亿美元的市场。
-然而目前的在线游戏形式要求用户无条件地信任在线赌场提供商，赌场可以随意进行暗箱操作，就算赌场不想，也难保他的员工不会想要赚点快钱。这些在现实世界中都有先例。</p>
-<p>使用密码学安全的扑克协议可以让你安全地进行线上扑克，不需要信任任何第三方。事实上这方面的研究在现代密码学早期的时候就已经开始。
-就在著名的RSA公钥加密模式提出几年后，Shamir, Rivest和Adleman就提出了第一代这种协议，并引发后续许多的相关研究。
-然而由于下列原因，这方面的应用一直没有落地：</p>
-<ol class="arabic simple">
-<li>安全：现有协议的安全性保证并不明确，很难搞清楚他们具体的安全等级和可靠性。</li>
-<li>效率：大部分现有协议都使用开销大的密码学技术，导致过高的计算和通讯开销，进而导致游戏延迟大，玩起来太卡。</li>
-<li>经济：尽管经典密码学技术能够保证游戏的公平性（也就是没有玩家可以作弊或者查看其他玩家的隐私数据），
-但是目前的扑克协议还是无法保证赢家一定得到经济奖励。</li>
-</ol>
-<p>我们最近给金融密码学2018会议上提交了一篇论文，其中构建了叫Kaleidoscope的协议，
-这是第一个能解决上面三个问题的密码学扑克协议。Kaleidoscope是第一个在扑克游戏通常需要的安全模型下被证明安全的协议，另外通过使用区块链技术，可以保证赢家得到奖励，并且作弊者收到经济上的惩罚。同时它还比以前那些不能证明安全性的方案更加高效。</p>
-<p>设计Kaleidoscope的第一步，就是要形式化地定义扑克协议需要做到的安全保证。
-因为这种形式定义目前还不存在，所以我们提供了“仿真”模型下首个针对扑克协议的安全性定义。
-我们的安全性定义考虑到了扑克游戏的所有阶段。并且只要有一方是诚实的，这个安全模型就不会被打破。
-在扑克游戏中，所有玩家联合起来针对一个玩家作弊的情况并不少见。</p>
-<p>有了这个的形式化模型后，我们又进一步开发了一套能够实现这些安全保证的协议。
-这套协议建立在最新的洗牌零知识证明上，并且做到了计算和通讯两方面最佳的效率。
-事实上，我们随后的工作表明，Kaleidoscope在提供极高安全性保证的同时，
-计算量比以前的协议少了三倍，通讯量少了八倍。</p>
-<p>Kaleidoscope另一个重要特性是能够保证赢家收到奖励，同时作弊者得到惩罚并被踢出游戏。
-大概流程是这样的：游戏开始前，玩家先要把用于下注的资金和一定量的押金打到一个智能合约里。
-游戏结束后，智能合约会根据游戏结局分发下注资金并返还押金，
-如果有玩家被发现作弊，他的押金会被分给正常游戏的人。
-我们的协议把对智能合约通讯量和链上存储的需求降到了最低。</p>
-<p>虽然Kaleidoscope协议成功地解决了以上扑克协议面临的三个问题，但它只能用来玩扑克游戏。
-有些人错误地认为扑克协议一定可以用来玩各种牌类游戏，但其实这会导致一些严重的安全问题。
-但是具体到我们这个协议，还是能够把它的安全性模型、协议和证明扩展到通用的牌类游戏。
-在这个过程中，我们创建了Royale, 一种能够安全地玩各种牌类游戏的协议，并且和Kaleidoscope一样高效。
-我们会在后续的视频和博客中继续描述Royale的特性。</p>
 
                 </div>
                 <p class="more"><a href="list.html">查看全部文章>></a></p>
