@@ -1,0 +1,72 @@
+=================
+ADA币冲提接入教程
+=================
+
+Cardano 1.2 版本支持了新的 `钱包API <https://cardanodocs.com/technical/wallet/api/v1/>`_ 。新的API设计很简洁，交易所或者其他应用想接入ADA币的冲提变得非常方便。
+本教程教你如何从零开始实现ADA币的冲提功能。
+
+编译运行Cardano钱包后端
+=======================
+
+Windows和Mac系统，直接使用官方发布的钱包安装包即可。
+
+Linux系统需要自己编译，编译过程如下：
+
+#. `安装nix <https://nixos.org/nix/download.html>`_ ，在非root账户下运行: ::
+
+    $ curl https://nixos.org/nix/install | sh
+
+   运行后会自动配置当前环境，重新登录当前终端即可生效。
+
+#. 配置IOHK的Binary Cache： ::
+
+    $ sudo mkdir -p /etc/nix
+    $ sudo vi /etc/nix/nix.conf       # ..or any other editor, if you prefer
+
+   添加： ::
+
+    binary-caches            = https://cache.nixos.org https://hydra.iohk.io
+    binary-cache-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=
+
+#. 取cardano源代码： ::
+
+    $ git clone https://github.com/input-output-hk/cardano-sl.git
+    $ cd cardano-sl
+    $ git checkout -b release/1.2.0 origin/release/1.2.0
+
+#. 编译： ::
+
+    $ nix-env -A cardano-sl-wallet-new --install --file .
+
+   因为有Binary Cache，应该很快，成功后在目录 ``~/.nix-profile/bin/`` 中会多一个 ``cardano-node`` 的可执行文件，这个目录在安装nix的时候已经加入到 ``PATH`` 了。
+
+#. 另外整一个运行的目录，把相关配置拷贝过来： ::
+
+    $ mkdir ~/cardano-wallet
+    $ cd ~/cardano-wallet
+    $ mkdir lib
+    $ cp /path/to/cardano-sl/lib/{configuration.yaml,mainnet-genesis.json} lib
+    $ mkdir scripts
+    $ cp -r /path/to/cardano-sl/scripts/tls-files scripts/
+
+#. 创建文件 ``wallet-topology.yaml`` ，内容如下： ::
+
+    wallet:
+      fallbacks: 7
+      valency: 1
+      relays:
+      - - host: relays.cardano-mainnet.iohk.io
+
+#. 运行: ::
+
+    $ cardano-node --topology wallet-topology.yaml --configuration-key mainnet_wallet_linux64
+
+#. 验证钱包V1 API工作正常： ::
+
+    $ curl --cacert scripts/tls-files/ca.crt https://localhost:8090/api/v1/node-info
+    {"data":{"syncProgress":{"quantity":92,"unit":"percent"},"blockchainHeight":{"quantity":1072633,"unit":"blocks"},"localBlockchainHeight":{"quantity":996101,"unit":"blocks"},"localTimeInformation":{"differenceFromNtpServer":{"quantity":-147487,"unit":"microseconds"}}},"status":"success","meta":{"pagination":{"totalPages":1,"page":1,"perPage":1,"totalEntries":1}}}
+
+使用V1 API实现冲提
+==================
+
+Cardano钱包API是符合swagger规范的，使用任何语言对swagger的封装即可使用，这里提供一个 `使用python的pyswagger的示例 <https://gist.github.com/yihuang/d6fb374bb0786a0c64eb7a1d3cf1703e>`_ 。

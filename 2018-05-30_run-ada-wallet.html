@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.12: http://docutils.sourceforge.net/" />
+<title>ADA币冲提接入教程</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="index.html"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="新浪微博" href="http://weibo.com/1897911954" class=""><img src="images/icons/weibo.png" alt="新浪微博"/></a>
+            <a title="Google Reader Share" href="http://www.google.com/reader/shared/yi.codeplayer" class=""><img src="images/icons/greader.png" alt="Google Reader Share"/></a>
+            <a title="Delicious" href="http://www.delicious.com/huangyi" class=""><img src="images/icons/delicious.png" alt="Delicious"/></a>
+            <a title="42区" href="http://42qu.com/-10000020" class=""><img src="images/icons/42qu.png" alt="42区"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="豆瓣9点" href="http://9.douban.com/subject/9361637/" class=""><img src="images/icons/douban-nine.png" alt="豆瓣9点"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">ADA币冲提接入教程</h1>
+
+                    <p class="author">2018-05-30 黄毅</p>
+                    <p>Cardano 1.2 版本支持了新的 <a class="reference external" href="https://cardanodocs.com/technical/wallet/api/v1/">钱包API</a> 。新的API设计很简洁，交易所或者其他应用想接入ADA币的冲提变得非常方便。
+本教程教你如何从零开始实现ADA币的冲提功能。</p>
+<div class="section" id="cardano">
+<h2>编译运行Cardano钱包后端</h2>
+<p>Windows和Mac系统，直接使用官方发布的钱包安装包即可。</p>
+<p>Linux系统需要自己编译，编译过程如下：</p>
+<ol class="arabic">
+<li><p class="first"><a class="reference external" href="https://nixos.org/nix/download.html">安装nix</a> ，在非root账户下运行:</p>
+<pre class="literal-block">
+$ curl https://nixos.org/nix/install | sh
+</pre>
+<p>运行后会自动配置当前环境，重新登录当前终端即可生效。</p>
+</li>
+<li><p class="first">配置IOHK的Binary Cache：</p>
+<pre class="literal-block">
+$ sudo mkdir -p /etc/nix
+$ sudo vi /etc/nix/nix.conf       # ..or any other editor, if you prefer
+</pre>
+<p>添加：</p>
+<pre class="literal-block">
+binary-caches            = https://cache.nixos.org https://hydra.iohk.io
+binary-cache-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ=
+</pre>
+</li>
+<li><p class="first">取cardano源代码：</p>
+<pre class="literal-block">
+$ git clone https://github.com/input-output-hk/cardano-sl.git
+$ cd cardano-sl
+$ git checkout -b release/1.2.0 origin/release/1.2.0
+</pre>
+</li>
+<li><p class="first">编译：</p>
+<pre class="literal-block">
+$ nix-env -A cardano-sl-wallet-new --install --file .
+</pre>
+<p>因为有Binary Cache，应该很快，成功后在目录 <tt class="docutils literal"><span class="pre">~/.nix-profile/bin/</span></tt> 中会多一个 <tt class="docutils literal"><span class="pre">cardano-node</span></tt> 的可执行文件，这个目录在安装nix的时候已经加入到 <tt class="docutils literal">PATH</tt> 了。</p>
+</li>
+<li><p class="first">另外整一个运行的目录，把相关配置拷贝过来：</p>
+<pre class="literal-block">
+$ mkdir ~/cardano-wallet
+$ cd ~/cardano-wallet
+$ mkdir lib
+$ cp /path/to/cardano-sl/lib/{configuration.yaml,mainnet-genesis.json} lib
+$ mkdir scripts
+$ cp -r /path/to/cardano-sl/scripts/tls-files scripts/
+</pre>
+</li>
+<li><p class="first">创建文件 <tt class="docutils literal"><span class="pre">wallet-topology.yaml</span></tt> ，内容如下：</p>
+<pre class="literal-block">
+wallet:
+  fallbacks: 7
+  valency: 1
+  relays:
+  - - host: relays.cardano-mainnet.iohk.io
+</pre>
+</li>
+<li><p class="first">运行:</p>
+<pre class="literal-block">
+$ cardano-node --topology wallet-topology.yaml --configuration-key mainnet_wallet_linux64
+</pre>
+</li>
+<li><p class="first">验证钱包V1 API工作正常：</p>
+<pre class="literal-block">
+$ curl --cacert scripts/tls-files/ca.crt https://localhost:8090/api/v1/node-info
+{&quot;data&quot;:{&quot;syncProgress&quot;:{&quot;quantity&quot;:92,&quot;unit&quot;:&quot;percent&quot;},&quot;blockchainHeight&quot;:{&quot;quantity&quot;:1072633,&quot;unit&quot;:&quot;blocks&quot;},&quot;localBlockchainHeight&quot;:{&quot;quantity&quot;:996101,&quot;unit&quot;:&quot;blocks&quot;},&quot;localTimeInformation&quot;:{&quot;differenceFromNtpServer&quot;:{&quot;quantity&quot;:-147487,&quot;unit&quot;:&quot;microseconds&quot;}}},&quot;status&quot;:&quot;success&quot;,&quot;meta&quot;:{&quot;pagination&quot;:{&quot;totalPages&quot;:1,&quot;page&quot;:1,&quot;perPage&quot;:1,&quot;totalEntries&quot;:1}}}
+</pre>
+</li>
+</ol>
+</div>
+<div class="section" id="v1-api">
+<h2>使用V1 API实现冲提</h2>
+<p>Cardano钱包API是符合swagger规范的，使用任何语言对swagger的封装即可使用，这里提供一个 <a class="reference external" href="https://gist.github.com/yihuang/d6fb374bb0786a0c64eb7a1d3cf1703e">使用python的pyswagger的示例</a> 。</p>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2018-05-30_run-ada-wallet';
+                        var disqus_url = 'http://www.yi-programmer.com/2018-05-30_run-ada-wallet.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/2018-05-30_run-ada-wallet.html&title=ADA币冲提接入教程"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/2018-05-30_run-ada-wallet.html&title=ADA币冲提接入教程"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=ADA币冲提接入教程&uri=http://www.yi-programmer.com/2018-05-30_run-ada-wallet.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/2018-05-30_run-ada-wallet.html&title=ADA币冲提接入教程"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/2018-05-30_run-ada-wallet.html&it=ADA币冲提接入教程&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/2018-05-30_run-ada-wallet.html&title=ADA币冲提接入教程&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/2018-05-30_run-ada-wallet.html&t=ADA币冲提接入教程"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/2018-05-30_run-ada-wallet.html&title=ADA币冲提接入教程"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=ADA币冲提接入教程&rurl=http://www.yi-programmer.com/2018-05-30_run-ada-wallet.html&rcontent=http://www.yi-programmer.com/2018-05-30_run-ada-wallet.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/2018-05-30_run-ada-wallet.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/2018-05-30_run-ada-wallet.html&t=ADA币冲提接入教程"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2018-05-30_run-ada-wallet.txt">View document source</a>.
+Generated on: 2018-05-30.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>
