@@ -17,13 +17,9 @@ nav_icons = [
 ]
 link_icons = [
     (u'Github', 'https://github.com/yihuang/', 'images/icons/github.png', ''),
+    (u'知乎', 'https://zhuanlan.zhihu.com/fp-blockchain', 'images/icons/zhihu.png', ''),
     (u'豆瓣', 'http://www.douban.com/people/huangyi/', 'images/icons/douban.png',''),
-    (u'新浪微博', 'http://weibo.com/1897911954', 'images/icons/weibo.png',''),
-    (u'Google Reader Share', 'http://www.google.com/reader/shared/yi.codeplayer', 'images/icons/greader.png',''),
-    (u'Delicious', 'http://www.delicious.com/huangyi', 'images/icons/delicious.png',''),
-    (u'42区', 'http://42qu.com/-10000020', 'images/icons/42qu.png',''),
     (u'Blogger', 'http://codeplayer.blogspot.com/', 'images/icons/blogger.png',''),
-    (u'豆瓣9点', 'http://9.douban.com/subject/9361637/', 'images/icons/douban-nine.png',''),
     (u'啄木鸟社区', 'http://wiki.woodpecker.org.cn/moin/HuangYi', 'images/icons/woodpecker.png',''),
 ]
 boxes=[
