@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.12: http://docutils.sourceforge.net/" />
+<title>轻量级连接 - 区块链的网络层设计</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="index.html"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="知乎" href="https://zhuanlan.zhihu.com/fp-blockchain" class=""><img src="images/icons/zhihu.ico" alt="知乎"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">轻量级连接 - 区块链的网络层设计</h1>
+
+                    <p class="author">2018-07-27 黄毅</p>
+                    <p>区块链是一种比较复杂的P2P软件，P2P软件本身也是网络编程中较为复杂的一种，网络编程本身也比传统编程更复杂一点。网络编程的复杂性来自于节点的状态，以及节点之间关系带来的状态空间的爆炸。P2P模糊了客户端服务器角色的界限，而区块链在普通P2P软件基础上则增加了大量的协议。归根结底，复杂性就是来源于状态空间规模的巨大增长。</p>
+<p>节点需要保存的状态可以分为本地状态和远程状态，本地状态就是节点自身的数据，通常需要进行持久化保存，远程状态是用来记录一条连接的远端节点的状态，并由网络消息驱动状态的变迁，通常其生命周期和这条连接本身的生命周期绑定。</p>
+<p>传统网络编程虽然节点之间关系简单，但使用事件驱动的方式编程的话，也会发现状态空间组合起来还是很头疼的。
+这也是为什么微线程技术会成为网络编程的神器，因为线程的模型大大简化了状态之间潜在的组合关系。</p>
+<p>用过微线程的朋友会发现，微线程简化了节点的状态组合，代价其实是对连接资源的独占，多条微线程想公用同一个连接的话，往往很容易会回到事件驱动编程的老路上去。</p>
+<p>偏偏区块链的项目往往要在节点之间运行多套协议，常见的比如：节点发现、共识算法、区块同步、投票等等，未来专用或通用的MPC模型可能也是一个发展方向，除了节点发现往往会单独开一个UDP的端口以外，其他协议都是跑在一个TCP端口下。
+这么复杂的协议如果要用微线程模型来开发的话，每套协议都得要一条甚至多条连接才能来搭配对应的微线程逻辑。然而就像原生线程一样，TCP连接也是成本高昂。</p>
+<p>那么很自然的，轻量级连接的概念就可以提出来了。在一条TCP连接上多播大量的轻量级连接，是今天要介绍的重点。轻量级线程要配合轻量级连接才能发挥它完全的潜力。
+据我所知，这个模式已经在一些项目中应用了，包括 <a class="reference external" href="https://whycardano.com/">Cardano</a> 、 <a class="reference external" href="https://github.com/libp2p">libp2p</a> 。</p>
+<p>Cardano的实现是基于Haskell的 <a class="reference external" href="https://github.com/haskell-distributed/network-transport-tcp">network-transport</a> 库，
+有兴趣的可以看看 <a class="reference external" href="http://haskell-distributed.github.io/tutorials/tutorial-NT2.html">教程</a> 。</p>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2018-07-27_blockchain-network-architecture';
+                        var disqus_url = 'http://www.yi-programmer.com/2018-07-27_blockchain-network-architecture.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/2018-07-27_blockchain-network-architecture.html&title=轻量级连接 - 区块链的网络层设计"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/2018-07-27_blockchain-network-architecture.html&title=轻量级连接 - 区块链的网络层设计"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=轻量级连接 - 区块链的网络层设计&uri=http://www.yi-programmer.com/2018-07-27_blockchain-network-architecture.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/2018-07-27_blockchain-network-architecture.html&title=轻量级连接 - 区块链的网络层设计"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/2018-07-27_blockchain-network-architecture.html&it=轻量级连接 - 区块链的网络层设计&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/2018-07-27_blockchain-network-architecture.html&title=轻量级连接 - 区块链的网络层设计&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/2018-07-27_blockchain-network-architecture.html&t=轻量级连接 - 区块链的网络层设计"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/2018-07-27_blockchain-network-architecture.html&title=轻量级连接 - 区块链的网络层设计"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=轻量级连接 - 区块链的网络层设计&rurl=http://www.yi-programmer.com/2018-07-27_blockchain-network-architecture.html&rcontent=http://www.yi-programmer.com/2018-07-27_blockchain-network-architecture.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/2018-07-27_blockchain-network-architecture.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/2018-07-27_blockchain-network-architecture.html&t=轻量级连接 - 区块链的网络层设计"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2018-07-27_blockchain-network-architecture.txt">View document source</a>.
+Generated on: 2018-07-27.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>
