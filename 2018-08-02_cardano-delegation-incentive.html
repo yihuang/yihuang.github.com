@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.12: http://docutils.sourceforge.net/" />
+<title>Cardano的委托和奖励体系</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="index.html"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="知乎" href="https://zhuanlan.zhihu.com/fp-blockchain" class=""><img src="images/icons/zhihu.ico" alt="知乎"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">Cardano的委托和奖励体系</h1>
+
+                    <p class="author">2018-08-02 黄毅</p>
+                    <p>区块链中除了共识算法以外最重要的可能就是经济系统了，经济系统的设计目的是在大家都追求利益最大化的前提下，让系统进入我们希望达到的目标均衡状态。
+Cardano这方面的规则刚出草案，在正式发布之前都还有可能修改，我们可以先大体了解一下。</p>
+<p>简单介绍一下Cardano的Ouroboros协议。首先这是一个PoS协议，每个人都可以运行一个核心节点(通俗的说就是矿工节点)，即可获得与自己持有份额等比例的出块奖励。</p>
+<p>为了让普通用户不用那么麻烦去维护一个服务器节点，Ouroboros支持委托机制，不想自己维护节点的人可以把自己的份额委托给其他人。
+委托是可选的，并且是递归的，也就是说你可以选择自己挖矿，也可以选择委托别人挖矿，如果别人委托给你了，你还可以继续委托给其他人（递归的最大深度会有限制）。
+也就是所谓的 <a class="reference external" href="https://medium.com/organizer-sandbox/liquid-democracy-true-democracy-for-the-21st-century-7c66f5e53b6f">Liquid Democracy</a> 。
+同时会要求交易所钱包使用不同的地址类型，禁止交易所使用用户的币参与挖矿。</p>
+<p>总之，有这么几种角色：独立挖矿者、矿池主、代理给矿池挖矿的普通持币者。</p>
+<p>作为一个去中心化自治系统，我们又不希望设置太多硬性规定，尽量只设定最基本的规则，其中一些参数可以交给市场去博弈出具体的值，而另外一些固定的参数也可以在未来的财政系统中由大家投票去决定。</p>
+<p>另外，Ouroboros的委托是不需要冻结用户的币的（除了矿池主注册矿池的时候可以主动冻结一些币，后面会提到），系统会在每个epoch开始的时候计算整体份额比例，并在一个epoch过程中保持不变，但是币本身随时都可以自由交易，在目前的设定下一个epoch持续5天。</p>
+<p>奖励规则的设计目的主要是为了：</p>
+<ul>
+<li><p class="first">安全性</p>
+<p>没有绝对的安全性，最终系统的安全性取决于各个角色攻击协议需要付出的成本，比如PoW系统的攻击成本是51%的算力，PoS系统的理论攻击成本是51%的币，但是因为有了委托的存在，矿池主用来出块的币实际上大于他本身持有的币，那么这种情况安全性上受到多大影响，是需要计算的。</p>
+</li>
+<li><p class="first">去中心化程度和稳定性的权衡</p>
+<p>任何一个去中心化网络要保持稳定高效的运行，需要有稳定高效的矿工节点协同工作。作为一个去中心化系统，我们希望通过规则的设置让系统能够自动达到我们希望的稳定状态。</p>
+</li>
+</ul>
+<p>我们先来看看其中涉及到的几个关键参数：</p>
+<ul>
+<li><p class="first">k</p>
+<p>系统希望的均衡状态下矿池数量，默认值100。</p>
+</li>
+<li><p class="first">cost/margin</p>
+<p>矿池运行需要的成本和利润抽成，矿池主的奖励计算大致逻辑是 <tt class="docutils literal">cost + margin * reward</tt> ，</p>
+<p>如果margin为0，矿池主只拿cost数量的固定奖励，如果margin为1，矿池主拿走全部奖励。这个由矿池主注册矿池的时候设定，大家可以根据矿池主的设定选择代理给合适的矿池。</p>
+</li>
+<li><p class="first">s</p>
+<p>矿池主注册矿池的时候主动选择冻结的币的比例，冻结越多，矿池整体奖励越高。</p>
+</li>
+<li><p class="first">σ</p>
+<p>矿池整体拥有的stake比例。</p>
+</li>
+<li><p class="first">a0</p>
+<p>这个系数是控制矿池主冻结份额数量对矿池整体奖励的影响程度，a0越小，影响程度越低。</p>
+</li>
+<li><p class="first">γ</p>
+<p>如果矿池错过了出块，奖励会有减少，这个系数控制具体的减少程度。多出来的奖励并不会分给其他节点，而是全部进入财政系统。这样可以降低矿池之间彼此攻击的动机。</p>
+</li>
+</ul>
+<p>其实从定性的角度大体上就清楚了，具体的定量分析大家可以期待Dr. Wang的分析结果，我这里就截个图大家自己看公式把：</p>
+<div class="figure align-right">
+<img alt="images/pool_reward.jpg" src="images/pool_reward.jpg" style="width: 100%;" />
+<p class="caption">一个矿池在一个epoch中的奖励上限：</p>
+</div>
+<div class="figure align-right">
+<img alt="images/pool_reward1.jpg" src="images/pool_reward1.jpg" style="width: 100%;" />
+<p class="caption">考虑进矿池少出块的惩罚</p>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2018-08-02_cardano-delegation-incentive';
+                        var disqus_url = 'http://www.yi-programmer.com/2018-08-02_cardano-delegation-incentive.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/2018-08-02_cardano-delegation-incentive.html&title=Cardano的委托和奖励体系"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/2018-08-02_cardano-delegation-incentive.html&title=Cardano的委托和奖励体系"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=Cardano的委托和奖励体系&uri=http://www.yi-programmer.com/2018-08-02_cardano-delegation-incentive.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/2018-08-02_cardano-delegation-incentive.html&title=Cardano的委托和奖励体系"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/2018-08-02_cardano-delegation-incentive.html&it=Cardano的委托和奖励体系&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/2018-08-02_cardano-delegation-incentive.html&title=Cardano的委托和奖励体系&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/2018-08-02_cardano-delegation-incentive.html&t=Cardano的委托和奖励体系"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/2018-08-02_cardano-delegation-incentive.html&title=Cardano的委托和奖励体系"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=Cardano的委托和奖励体系&rurl=http://www.yi-programmer.com/2018-08-02_cardano-delegation-incentive.html&rcontent=http://www.yi-programmer.com/2018-08-02_cardano-delegation-incentive.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/2018-08-02_cardano-delegation-incentive.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/2018-08-02_cardano-delegation-incentive.html&t=Cardano的委托和奖励体系"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2018-08-02_cardano-delegation-incentive.txt">View document source</a>.
+Generated on: 2018-08-02.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>
