@@ -41,6 +41,72 @@
         <div id="content">
             <div id="right">
                 <div class="post">
+                    <a href="2018-08-09_security-of-wallet.html"><h1>关于钱包的安全性 <span class="date">2018-08-09</span></h1></a>
+                    <p>由于数字货币相关的一些概念和传统的不太一样，许多不搞技术的同学对于如何有效保护自己数字资产的安全，还是有点搞不清楚。希望本篇可以对非技术同学说清楚钱包的安全问题。</p>
+<p>钱包本身只是一个比喻的说法，而且可能是很有害的一个比喻，因为实际情况跟传统世界的钱包隔了十万八千里。</p>
+<p>打一个更恰当一点的比方：</p>
+<ul class="simple">
+<li>你的地址就像是一个上了锁的存钱罐，别人可以往里面放钱，但是不能随便拿钱走，谁有钥匙谁就能拿钱走。</li>
+<li>存钱罐和钥匙是应该离线生成的，并且是一对一的，你生成一对存钱罐和钥匙后，把存钱罐公布给别人，别人就可以给里面转账。谁拥有这个钥匙，谁就能花这个钱。</li>
+</ul>
+<div class="note">
+<p class="first admonition-title">注解</p>
+<p>助记词</p>
+<p class="last">现在大部分钱包在生成密钥对的时候都是符合统一规范的，助记词就是这个规范的一部分。根据助记词可以推导出你的钥匙，所以只需要保存自己的助记词，就等于是保存了自己的钥匙。</p>
+</div>
+<div class="section" id="id2">
+<h2>私钥存放在哪里</h2>
+<p>所以，你的数字资产的安全性首先取决于这把钥匙是如何保管的，所以使用钱包时，第一个需要确认的就是钥匙被存放在哪里。
+比如有些人把交易所当钱包，这个时候钥匙就是在交易所的手上。还有一些服务器钱包，你的钥匙实际上也是放在钱包服务商的手上。这些情况下，实际上你都是把自己的钱托管给了别人，安不安全就看对方人品了。</p>
+<p>还有一些闭源钱包，比如imtoken以及其他一些，虽然他们说钥匙只会存放在你的设备上，但是理论上来说，不检查他的源代码，我们是无法确切地知道他说的是不是事实的。</p>
+<p>如果真的想要确保数字资产的安全，首先钥匙要保管在自己手上是最基本的，而且为了确保这一点，你最好使用一个开源的并且有一定声望的钱包。</p>
+</div>
+<div class="section" id="id3">
+<h2>私钥是如何被盗的</h2>
+<p>确保钥匙保存在本地的情况下，接下来的风险就是钥匙被盗了。如果保存钥匙的设备（电脑或手机）感染了病毒，那么你的钥匙就有可能被别人拷贝走。</p>
+<p>所以大部分钱包都会对钥匙的存储进一步做加密处理，这些钱包会提示你设置一个密码，这个密码就是用来对你的钥匙进行加密，你本地存储的是加密后的版本。就算病毒或黑客盗取了你的密钥文件，在他不知道你密码的情况下，也无法使用你的钱。（所以如果你忘记了这个密码，也不用太担心，只要你备份的助记词还在，依然可以把私钥重新恢复出来）</p>
+<p>对密钥做加密有一个微妙的地方需要注意就是，不要在内存里留下明文密钥的痕迹，这一点其实很多钱包可能并没有考虑地这么细致。
+因为在钱包运行过程中，当私钥刚创建出来或者被使用的时候，私钥的明文是必然会在内存里出现的，而传统编程的时候，对于不再使用的内存，通常的做法是不管它，这样就很容易把明文的私钥在内存里留下痕迹，给黑客盗取私钥提供了可能性。正确的做法是在使用完后要主动把私钥明文对应的内存区域清零。</p>
+<p>其实只要这几点做到位了，你的私钥的安全性就有了基本的保证。就算钱包软件其他地方有漏洞，或者你的系统本身有漏洞导致被病毒或黑客入侵，你的私钥也不会立刻被泄漏出去。
+要做到整个软件完全没有安全漏洞可能比较难，但是把上面几点做到位，只要有心，一般还是问题不大的。</p>
+</div>
+<div class="section" id="id4">
+<h2>冷钱包</h2>
+<p>但是终极的确保私钥安全性的办法，还是要从一开始就保证私钥不触网，也就是冷钱包的概念。找一台不联网的干净电脑，或者一个开启飞行模式的干净手机，把私钥创建在上面，并且这台设备以后也永远不联网，或者干脆创建后把私钥删掉（如果你只存钱很少花钱并且备份好了助记词的话）
+因为查询余额以及收款的操作是不需要私钥的，只有花钱的时候才需要私钥。
+这甚至可能比硬件钱包还要安全，毕竟硬件钱包还取决于硬件本身设计有没有bug。</p>
+</div>
+<div class="section" id="id5">
+<h2>私钥以外的安全性</h2>
+<p>私钥以外的安全性，主要就是交易数据正确性的风险，也就是双花的风险了。虽然公链项目团队可能花了大力气去设计共识算法保证链上数据的一致性，但是如果钱包这临门一脚撂了挑子，还是白搭。</p>
+<p>所谓双花风险就是，虽然你在钱包上看到对方给你转账成功了，但是等你给对方发货后，发现那笔转账是有问题的。</p>
+<p>从这个维度来说，又可以把钱包分为几种类型：全节点钱包、轻钱包、连轻都算不上钱包。这几种钱包模式的区别就在于他们如何获取区块链上的交易数据。</p>
+<ul class="simple">
+<li>全节点钱包是最传统最安全的模式，它会把整个区块链数据下载下来，然后从里面找出和你有关的那些交易显示出来，并且数据同步的时候也会同时监听多个节点，只要其中有一个节点是诚实的，你都不会被骗。</li>
+<li>轻钱包是对全节点钱包的优化，它只需要下载所有区块头，以及和你有关的交易信息，可以忽略链上大部分数据。因为有了区块头就可以验证数据合法性了，再加上多连几个节点交叉确认后，安全性其实并不会打折扣。唯一的弊端是隐私问题，不过鉴于以太坊这么火，估计一般用户对这个问题也没那么感兴趣，就不多说了。</li>
+<li>还有一些所谓的轻钱包，其实是没有上面的安全性保证的，它连区块头都不下载，直接从服务器获取余额和交易历史等信息，并且通常是只连开发商自己的服务器，这种模式下等于是完全信任钱包开发商服务器提供的数据了，个人认为不能算是去中心化的钱包，虽然它私钥可能还是存放在设备上而不是服务器上。</li>
+</ul>
+</div>
+<div class="section" id="cardano">
+<h2>Cardano的钱包</h2>
+<p>Cardano的官方钱包因为一些细节的技术决策上的问题导致体验不太好，一直被大家所诟病，不过最近版本更新改进不少。</p>
+<p>我自己在阅读Cardano实现的过程中，有时候也会产生一些自己的想法，于是写了一些代码 <a class="reference external" href="https://github.com/safeada/python-cardano">python-cardano</a>
+，目前已经基本能够实现命令行界面的钱包功能，并且能够提供一些超越官方钱包的一些特性，比如：</p>
+<ul class="simple">
+<li>大大降低的磁盘空间占用，目前把整个链数据同步下来只占用2.5G，目前还没做压缩，加上适当的压缩估计还能降低一些。官方1.4版本会对磁盘空间占用过大问题做优化，到时候可以再对比对比
+;D</li>
+<li>支持sign message功能，也就是可以对任意消息进行签名。这样你可以把签名发送给其他人来证明你确实拥有某个地址的所有权，
+比如有些群有持币准入门槛的，这个特性就有点用了。</li>
+<li>短地址编码格式，通过优化一些编码的开销，可以做到ADA地址的长度非常接近比特币和以太坊地址的长度，比如：
+<tt class="docutils literal">12MM1pbyTk2WuZEnfiicX9gHF4YtFYL8ebUkr1hp</tt> ，已和官方沟通，他们也有计划优化地址长度。
+另外等delegation上线之后，地址里包含的信息还要增加一些，所以最终还是很难仅仅通过优化编码方式保持这么短的地址。</li>
+</ul>
+<p>下一步计划基于它开发ADA手机钱包，未来这个项目可能也可以作为Cardano侧链生态中的一个开发平台，目前也可以作为大家学习研究的一个基础。有兴趣的朋友可以加电报群探讨一下：
+<a class="reference external" href="https://t.me/safeadawallet">Safe ADA Wallet</a> 。</p>
+</div>
+
+                </div>
+                <div class="post">
                     <a href="2018-08-02_cardano-delegation-incentive.html"><h1>Cardano的委托和奖励机制 <span class="date">2018-08-02</span></h1></a>
                     <p>区块链中除了共识算法以外最重要的可能就是经济系统了，经济系统的设计目的是在大家都追求利益最大化的前提下，让系统进入我们希望达到的目标均衡状态。
 Cardano这方面的规则刚出草案，在正式发布之前都还有可能修改，我们可以先大体了解一下。</p>
@@ -405,47 +471,6 @@ $ curl --cacert scripts/tls-files/ca.crt https://localhost:8090/api/v1/node-info
 <div class="section" id="v1-api">
 <h2>使用V1 API实现冲提</h2>
 <p>Cardano钱包API是符合swagger规范的，使用任何语言对swagger的封装即可使用，这里提供一个 <a class="reference external" href="https://gist.github.com/yihuang/d6fb374bb0786a0c64eb7a1d3cf1703e">使用python的pyswagger的示例</a> 。</p>
-</div>
-
-                </div>
-                <div class="post">
-                    <a href="2018-05-27_ouroboros-praos.html"><h1>Ouroboros Praos <span class="date">2018-05-27</span></h1></a>
-                    <p><a class="reference external" href="https://iohk.io/research/papers/#XJ6MHFXX">Ouroboros Praos</a> 是IOHK发布的Ouroboros协议第二个版本。</p>
-<div class="note">
-<p class="first admonition-title">注解</p>
-<ul class="last simple">
-<li>第三个版本Genesis(已发布) 解决了PoS协议的Long Range Attack问题。</li>
-<li>第四个版本Hydra(未发布) 将会解决分片问题。</li>
-</ul>
-</div>
-<p>在 <a class="reference external" href="http://yi-programmer.com/2018-03-08_randomness-in-blockchain.html">区块链中的随机数</a>
-一文中，我们介绍了第一个版本的Ouroboros PoS协议。我们看到随机数在slot leader选择中的重要作用，以及使用MPC生成安全可验证的随机数的方法。</p>
-<p>但是原始 Ouroboros 协议存在这样一些问题：</p>
-<ul class="simple">
-<li>伪随机函数是公开的，也就是在epoch开始的时候，实际上恶意节点已经可以知道整个epoch中所有slot leader是谁了。恶意节点从而可以利用这一点进行攻击，比如贿赂和针对性的DDoS攻击。</li>
-<li>MPC的性能是随着参与节点数量增加而降低的。</li>
-<li>安全性论证基于对同步网络模型的假设。</li>
-</ul>
-<p>所以slot需要一定时长(20秒)确保诚实节点之间的同步。Praos的主要改进是采用可验证随机函数(VRF)代替公开伪随机函数进行slot leader选择。</p>
-<div class="section" id="vrf">
-<h2>可验证随机函数(VRF)</h2>
-<p>可验证随机函数是一个密码学的工具，一种伪随机函数，可以使用私钥参与随机数的计算，同时别人可以使用公钥对计算结果进行验证。</p>
-<div class="highlight None"><pre><div class="line" id="LC1"><span class="c1">-- 计算随机数</span>
-</div><div class="line" id="LC1"><span class="nf">vrf</span> <span class="ow">::</span> <span class="kt">PrivateKey</span> <span class="ow">-&gt;</span> <span class="kt">Seed</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="kt">VrfProof</span><span class="p">)</span>
-</div><div class="line" id="LC1"><span class="c1">-- 验证随机数</span>
-</div><div class="line" id="LC1"><span class="nf">verifyVrf</span> <span class="ow">::</span> <span class="kt">PublicKey</span> <span class="ow">-&gt;</span> <span class="kt">Seed</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="kt">VrfProof</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
-</div><div class="line" id="LC1"><span class="c1">-- 区分不同slot</span>
-</div><div class="line" id="LC1"><span class="nf">slotSeed</span> <span class="ow">::</span> <span class="kt">SlotIndex</span> <span class="ow">-&gt;</span> <span class="kt">EpochSeed</span> <span class="ow">-&gt;</span> <span class="kt">Seed</span>
-</div></pre></div>
-<p>使用这个工具，每个节点可以使用不同的伪随机函数判定自己是否是slot leader，具体方法是判定产生的随机数是否低于一个阀值，该阀值的值和节点stake比例相关。
-如果是leader则直接出块，并在块中包含验证需要的proof信息。其他节点直到收到区块，才知道谁是slot leader。</p>
-<p>因为每个节点随机函数是独立的，所以并不能像原始Ouroboros那样保证每个slot都刚好有且只有一个leader，可能没有人选中，也可能选中多个。不过praos新的安全性论证，已经考虑进这些情况，并且建立在半同步网络模型上，依然可以保证原来的安全属性。意味着praos的slot时长可以大大降低，也意味着这个版本性能将大大提升。</p>
-<p>最后每个区块出块者会额外生成一个随机数放在区块中，用于产生下一个epoch的seed。</p>
-</div>
-<div class="section" id="key-evolving-signature-schemes">
-<h2>Key Evolving Signature Schemes</h2>
-<p>Praos引入KES解决另一个PoS的问题，就是恶意用户如果盗用了stake holder的私钥的情况，可以对它任意时刻出的块重新签名。</p>
-<p>KES模式下，每次签名后都产生新的key，并抛弃旧的key。这样就算被黑掉当前的key，也无法伪造过去产生的区块签名。</p>
 </div>
 
                 </div>
