@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.12: http://docutils.sourceforge.net/" />
+<title>UTxO模型下的智能合约</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="index.html"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="知乎" href="https://zhuanlan.zhihu.com/fp-blockchain" class=""><img src="images/icons/zhihu.ico" alt="知乎"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">UTxO模型下的智能合约</h1>
+
+                    <p class="author">2018-12-17 黄毅</p>
+                    <p>大家都熟悉了以太坊风格的智能合约。以太坊的智能合约首先是基于账户模型，每个合约有一个自己独立的账户地址，这个账户地址可以存储合约持有的资产，也可以存储合约的状态。
+以太坊基于这个持久化的状态存储，把智能合约设计成了命令式编程语言的模式，就像传统客户端服务器编程一样，链下代码调用链上代码暴露的API，对合约状态直接进行修改。</p>
+<p>UTxO和账户模型各有特点，这里不一一列举彼此的优劣，但在支持智能合约的状态存储方面，账户模型确实似乎更方便一些。
+但UTxO模型也不是无法实现，一方面比特币早就支持了有限的脚本功能（脚本就可以用来创建智能合约），我们需要考虑的是如何扩展比特币风格的脚本能力，使其能和以太坊风格的智能合约在功能上等价。</p>
+<p>比特币风格的脚本和以太坊很不一样，比特币的脚本其实只做一个校验的工作。比如说你要花费一个普通UTxO，你需要提供地址对应的公钥以及签名，这笔交易就能被校验通过。当你要花费一个脚本UTxO的时候，你需要提供对应的脚本源码和参数，由脚本运行结果决定你这笔交易的合法性。这里有一个特点就是，链上脚本只提供校验功能，可以理解为一个只返回bool类型的函数，而不像以太坊合约可以直接返回计算结果。所以要利用脚本做一些计算，需要和链下代码有更复杂的配合，比如如果要通过动态计算决定output的value的话，需要先在链下计算好结果，然后构造交易并广播，链上代码再验证你提交的结果的正确性，等于实际逻辑需要在链下和链上各执行一遍。而以太坊模式下面，链下代码和链上代码的关系基本上就是传统的客户端服务器的关系。这个倒只是编程模式上的区别，功能上还是一样的。最主要的还是缺乏状态存储，使得比特币脚本无法用来实现让以太坊大放异彩的ICO和编写Token的能力。</p>
+<p>Cardano准备引入一个Extended UTxO的模型，就是在output里面增加一个data script的字段，可以用来给UTxO的脚本提供状态存储的能力。</p>
+<p>Cardano本身其实就是个采用PoS的比特币，和比特币一样基于纯粹的UTxO模型，Cardano专门设计了一门函数式编程语言Plutus来代替比特币脚本来做智能合约的开发。
+Cardano的脚本UTxO里面会涉及三个脚本字段: validator script, redeemer script和data script。
+其中validator script就和比特币脚本的职责一样，校验当前交易的合法性，redeemer script其实对应比特币脚本的参数，在这里表现为一个Plutus表达式，
+data script是新增的字段，以前output只有地址和Value两个字段，现在增加一个data script字段，也是一个Plutus表达式，可以表达任何值。</p>
+<p>举一个ICO的合约为例，对于以太坊来说，大概就是一个map存储每个人的地址及其转入的金额，三个接口：投资(contribute)、融资成功后把钱转走(collect)、融资失败后用相同的地址请求退钱(refund)，不同的角色在不同的时机去调用不同的接口即可。</p>
+<p>在UTxO模型下实现这个功能大概流程是这样的：</p>
+<ul class="simple">
+<li>发起人创建一个合约脚本，并公布它的脚本地址。</li>
+<li>投资人往这个地址转账(contribute)，也就是创建这个脚本的UTxO。</li>
+<li>这个脚本执行的时候接受一个参数，表示这次调用行为是collect还是refund。</li>
+<li>发起人发现融资成功条件满足后，构造一笔交易，给脚本传入collect参数，花费该地址所有的UTxO转到自己账户去。
+脚本可以检查发起人的身份，融资行为成功的条件等等。</li>
+<li>如果融资失败后，投资人请求refund，给脚本传入refund参数，花费自己创建的那个UTxO，转到自己账户去。
+这个时候脚本要检查调用者身份的时候存在一点问题，UTxO里面的数据只有脚本地址和金额，并没有当时转入人的账户信息。这个时候我们可以利用前面说的data</li>
+</ul>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 31)</p>
+Bullet list ends without a blank line; unexpected unindent.</div>
+<p>script字段，在contribute阶段，给自己创建的那个UTxO添加一个共钥数据。脚本就可以校验当前交易发起人和UTxO中保存的共钥是否匹配了。</p>
+<p>可以看出UTxO合约的编程模式和以太坊还是挺不一样的，利用data script存储状态就像是函数式编程利用递归来保存中间状态的感觉，
+具体优劣可能还需要更多的实践才知道。感兴趣可以看一个完整的 <a href="#id1"><span class="problematic" id="id2">``</span></a>Plutus Tutorial &lt;<a class="reference external" href="https://github.com/input-output-hk/plutus/blob/master/plutus-use-cases/src/Language/PlutusTx/Coordination/Contracts/CrowdFunding.hs">https://github.com/input-output-hk/plutus/blob/master/plutus-use-cases/src/Language/PlutusTx/Coordination/Contracts/CrowdFunding.hs</a>&gt;`_ 是什么样的。</p>
+<div class="system-message" id="id1">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 33); <em><a href="#id2">backlink</a></em></p>
+Inline literal start-string without end-string.</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2018-12-17_utxo-smart-contract-state';
+                        var disqus_url = 'http://www.yi-programmer.com/2018-12-17_utxo-smart-contract-state.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/2018-12-17_utxo-smart-contract-state.html&title=UTxO模型下的智能合约"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/2018-12-17_utxo-smart-contract-state.html&title=UTxO模型下的智能合约"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=UTxO模型下的智能合约&uri=http://www.yi-programmer.com/2018-12-17_utxo-smart-contract-state.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/2018-12-17_utxo-smart-contract-state.html&title=UTxO模型下的智能合约"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/2018-12-17_utxo-smart-contract-state.html&it=UTxO模型下的智能合约&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/2018-12-17_utxo-smart-contract-state.html&title=UTxO模型下的智能合约&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/2018-12-17_utxo-smart-contract-state.html&t=UTxO模型下的智能合约"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/2018-12-17_utxo-smart-contract-state.html&title=UTxO模型下的智能合约"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=UTxO模型下的智能合约&rurl=http://www.yi-programmer.com/2018-12-17_utxo-smart-contract-state.html&rcontent=http://www.yi-programmer.com/2018-12-17_utxo-smart-contract-state.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/2018-12-17_utxo-smart-contract-state.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/2018-12-17_utxo-smart-contract-state.html&t=UTxO模型下的智能合约"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2018-12-17_utxo-smart-contract-state.txt">View document source</a>.
+Generated on: 2018-12-19.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>
