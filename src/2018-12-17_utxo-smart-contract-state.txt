@@ -27,8 +27,8 @@ data script是新增的字段，以前output只有地址和Value两个字段，�
 * 发起人发现融资成功条件满足后，构造一笔交易，给脚本传入collect参数，花费该地址所有的UTxO转到自己账户去。
   脚本可以检查发起人的身份，融资行为成功的条件等等。
 * 如果融资失败后，投资人请求refund，给脚本传入refund参数，花费自己创建的那个UTxO，转到自己账户去。
-  这个时候脚本要检查调用者身份的时候存在一点问题，UTxO里面的数据只有脚本地址和金额，并没有当时转入人的账户信息。这个时候我们可以利用前面说的data
-script字段，在contribute阶段，给自己创建的那个UTxO添加一个共钥数据。脚本就可以校验当前交易发起人和UTxO中保存的共钥是否匹配了。
+  这个时候脚本要检查调用者身份的时候存在一点问题，UTxO里面的数据只有脚本地址和金额，并没有当时转入人的账户信息。
+  这个时候我们可以利用前面说的data script字段，在contribute阶段，给自己创建的那个UTxO添加一个共钥数据。脚本就可以校验当前交易发起人和UTxO中保存的共钥是否匹配了。
 
 可以看出UTxO合约的编程模式和以太坊还是挺不一样的，利用data script存储状态就像是函数式编程利用递归来保存中间状态的感觉，
-具体优劣可能还需要更多的实践才知道。感兴趣可以看一个完整的 ``Plutus Tutorial <https://github.com/input-output-hk/plutus/blob/master/plutus-use-cases/src/Language/PlutusTx/Coordination/Contracts/CrowdFunding.hs>`_ 是什么样的。
+具体优劣可能还需要更多的实践才知道。感兴趣可以看一个完整的 `Plutus Tutorial <https://github.com/input-output-hk/plutus/blob/master/plutus-use-cases/src/Language/PlutusTx/Coordination/Contracts/CrowdFunding.hs>`_ 是什么样的。

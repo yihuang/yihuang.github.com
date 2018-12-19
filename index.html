@@ -61,17 +61,11 @@ data script是新增的字段，以前output只有地址和Value两个字段，�
 <li>发起人发现融资成功条件满足后，构造一笔交易，给脚本传入collect参数，花费该地址所有的UTxO转到自己账户去。
 脚本可以检查发起人的身份，融资行为成功的条件等等。</li>
 <li>如果融资失败后，投资人请求refund，给脚本传入refund参数，花费自己创建的那个UTxO，转到自己账户去。
-这个时候脚本要检查调用者身份的时候存在一点问题，UTxO里面的数据只有脚本地址和金额，并没有当时转入人的账户信息。这个时候我们可以利用前面说的data</li>
+这个时候脚本要检查调用者身份的时候存在一点问题，UTxO里面的数据只有脚本地址和金额，并没有当时转入人的账户信息。
+这个时候我们可以利用前面说的data script字段，在contribute阶段，给自己创建的那个UTxO添加一个共钥数据。脚本就可以校验当前交易发起人和UTxO中保存的共钥是否匹配了。</li>
 </ul>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">../src/2018-12-17_utxo-smart-contract-state.txt</tt>, line 31)</p>
-Bullet list ends without a blank line; unexpected unindent.</div>
-<p>script字段，在contribute阶段，给自己创建的那个UTxO添加一个共钥数据。脚本就可以校验当前交易发起人和UTxO中保存的共钥是否匹配了。</p>
 <p>可以看出UTxO合约的编程模式和以太坊还是挺不一样的，利用data script存储状态就像是函数式编程利用递归来保存中间状态的感觉，
-具体优劣可能还需要更多的实践才知道。感兴趣可以看一个完整的 <a href="#id1"><span class="problematic" id="id2">``</span></a>Plutus Tutorial &lt;<a class="reference external" href="https://github.com/input-output-hk/plutus/blob/master/plutus-use-cases/src/Language/PlutusTx/Coordination/Contracts/CrowdFunding.hs">https://github.com/input-output-hk/plutus/blob/master/plutus-use-cases/src/Language/PlutusTx/Coordination/Contracts/CrowdFunding.hs</a>&gt;`_ 是什么样的。</p>
-<div class="system-message" id="id1">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">../src/2018-12-17_utxo-smart-contract-state.txt</tt>, line 33); <em><a href="#id2">backlink</a></em></p>
-Inline literal start-string without end-string.</div>
+具体优劣可能还需要更多的实践才知道。感兴趣可以看一个完整的 <a class="reference external" href="https://github.com/input-output-hk/plutus/blob/master/plutus-use-cases/src/Language/PlutusTx/Coordination/Contracts/CrowdFunding.hs">Plutus Tutorial</a> 是什么样的。</p>
 
                 </div>
                 <div class="post">
