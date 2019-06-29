@@ -3,13 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.12: http://docutils.sourceforge.net/" />
-<title>Yi Huang</title>
+<meta name="generator" content="Docutils 0.14: http://docutils.sourceforge.net/" />
+<title>Yi Huang (黄毅)</title>
 <style type="text/css">
 
 /*
 :Author: David Goodger (goodger@python.org)
-:Id: $Id: html4css1.css 7614 2013-02-21 15:55:51Z milde $
+:Id: $Id: html4css1.css 7952 2016-07-26 18:15:59Z milde $
 :Copyright: This stylesheet has been placed in the public domain.
 
 Default cascading style sheet for the HTML output of Docutils.
@@ -36,6 +36,14 @@ table.borderless td, table.borderless th {
 
 .hidden {
   display: none }
+
+.subscript {
+  vertical-align: sub;
+  font-size: smaller }
+
+.superscript {
+  vertical-align: super;
+  font-size: smaller }
 
 a.toc-backref {
   text-decoration: none ;
@@ -161,18 +169,23 @@ h2.subtitle {
 hr.docutils {
   width: 75% }
 
-img.align-left, .figure.align-left, object.align-left {
+img.align-left, .figure.align-left, object.align-left, table.align-left {
   clear: left ;
   float: left ;
   margin-right: 1em }
 
-img.align-right, .figure.align-right, object.align-right {
+img.align-right, .figure.align-right, object.align-right, table.align-right {
   clear: right ;
   float: right ;
   margin-left: 1em }
 
 img.align-center, .figure.align-center, object.align-center {
   display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.align-center {
   margin-left: auto;
   margin-right: auto;
 }
@@ -193,6 +206,15 @@ div.align-right {
 
 /* div.align-center * { */
 /*   text-align: left } */
+
+.align-top    {
+  vertical-align: top }
+
+.align-middle {
+  vertical-align: middle }
+
+.align-bottom {
+  vertical-align: bottom }
 
 ol.simple, ul.simple {
   margin-bottom: 1em }
@@ -339,7 +361,7 @@ ul.auto-toc {
 </head>
 <body>
 <div class="document" id="yi-huang">
-<h1 class="title">Yi Huang</h1>
+<h1 class="title">Yi Huang (黄毅)</h1>
 
 <ul class="simple">
 <li>Mobile：+86 13760493659</li>
@@ -350,19 +372,19 @@ ul.auto-toc {
 <div class="section" id="work-experience">
 <h1>Work Experience</h1>
 <ul>
+<li><p class="first"><strong>FengLei Tech, Co-founder</strong> (2017.12 - now)</p>
+<p>Develop casino games which can be played with all kinds of cryptocurrenties.
+Research on blockchain projects, especially Cardano.
+Develop <a class="reference external" href="https://github.com/yihuang/python-cardano">python-cardano</a> project.</p>
+</li>
 <li><p class="first"><strong>Boyaa Interactive, Senior game engine developer</strong>  (2015.11 - 2017.12)</p>
-<p>I joined Boyaa to help to improve their in-house mobile 2d game engine.</p>
-<p>In the end, I wrote a brand new engine and UI framework with backward compatibility and migrated most of their products
-to the new engine.</p>
-<p>The engine is written in c++ and Lua, running on both iOS and Android, based on opengles2.0.</p>
+<p>Develop mobile game engine from ground up in C++ and lua, works on all opengles2.0 platform.</p>
 </li>
 <li><p class="first"><strong>YunYue Tech, Co-founder</strong> (2012.10 - 2015.10)</p>
-<p>I co-founded this company and lead the tech team. We made mobile RPG games for iOS/Android.</p>
-<p>I used python/cython/gevent to develop a high-performance long connection game server, which is capable of horizontally scaling.
-Some parts of the project are open sourced on my Github page.</p>
-<p>I built our persistence solution based on redis-nds, which embed lmdb library with redis, providing a lovely database solution for game server.
-What I contribute is fixing several serious memory-related bugs which is hard to track, including memory leak and dangling pointers. (<a class="reference external" href="https://github.com/yihuang/redis/tree/nds-2.6">https://github.com/yihuang/redis/tree/nds-2.6</a>)</p>
-<p>I also built our game engine and UI framework solution based on cocos2d-x.</p>
+<p>Lead the tech team. We made mobile RPG games for iOS/Android.</p>
+<p>Used python/cython/gevent to develop a high-performance long connection game server.</p>
+<p>Make project redis-nds production ready, fixed several serious memory-related bugs which is hard to track. (<a class="reference external" href="https://github.com/yihuang/redis/tree/nds-2.6">https://github.com/yihuang/redis/tree/nds-2.6</a>)</p>
+<p>I also built our game engine and UI framework based on cocos2d-x.</p>
 </li>
 <li><p class="first"><strong>ZhongLu Fund, Tech Leader</strong> (2010.09 - 2012.10)</p>
 <p>I lead the tech team(5 people) to build fund news portal, fund investment simulation service, and fund trade system with web technology.</p>
@@ -378,7 +400,6 @@ What I contribute is fixing several serious memory-related bugs which is hard to
 <p>I've spent much time to learn Haskell and read a lot papers about the language and GHC implementation,</p>
 <p>I've written a streamlined parsing library in Haskell which is used by Yesod project.</p>
 <p>I've given several talks about Haskell.</p>
-<p>I'm quite confident in writing real-world Haskell code.</p>
 </div>
 <div class="section" id="education">
 <h1>Education</h1>
@@ -404,6 +425,9 @@ What I contribute is fixing several serious memory-related bugs which is hard to
 <div class="section" id="open-source-projects">
 <h1>Open Source Projects</h1>
 <ul>
+<li><p class="first"><a class="reference external" href="https://github.com/yihuang/python-cardano">https://github.com/yihuang/python-cardano</a></p>
+<p>Implement Cardano in python.</p>
+</li>
 <li><p class="first"><a class="reference external" href="https://github.com/yihuang/tagstream-conduit">https://github.com/yihuang/tagstream-conduit</a></p>
 <p>Error-tolerant streamlined HTML tag parse library in Haskell</p>
 </li>

@@ -5,7 +5,7 @@ templates=$(wildcard templates/*.mako)
 
 comm_dep=*.py docutils.conf
 
-$(root)%.html : $(root)src/%.txt templates/detail_tpl.mako $(comm_dep)
+$(root)%.html : $(root)src/%.txt templates/detail_tpl.mako templates/header.mako $(comm_dep)
 	./imgmathhack.py $< | python gen_detail.py $(patsubst %.txt,%.html,$<)
 
 detailpages=$(htmls)

@@ -1,6 +1,6 @@
-========
-Yi Huang
-========
+================
+Yi Huang (黄毅)
+================
 
 * Mobile：+86 13760493659
 
@@ -13,26 +13,25 @@ Yi Huang
 Work Experience
 ===============
 
+* **FengLei Tech, Co-founder** (2017.12 - now)
+
+  Develop casino games which can be played with all kinds of cryptocurrenties.
+  Research on blockchain projects, especially Cardano.
+  Develop `python-cardano <https://github.com/yihuang/python-cardano>`_ project.
+
 * **Boyaa Interactive, Senior game engine developer**  (2015.11 - 2017.12)
 
-  I joined Boyaa to help to improve their in-house mobile 2d game engine.
- 
-  In the end, I wrote a brand new engine and UI framework with backward compatibility and migrated most of their products
-  to the new engine.
-
-  The engine is written in c++ and Lua, running on both iOS and Android, based on opengles2.0.
+  Develop mobile game engine from ground up in C++ and lua, works on all opengles2.0 platform.
 
 * **YunYue Tech, Co-founder** (2012.10 - 2015.10)
 
-  I co-founded this company and lead the tech team. We made mobile RPG games for iOS/Android.
+  Lead the tech team. We made mobile RPG games for iOS/Android.
 
-  I used python/cython/gevent to develop a high-performance long connection game server, which is capable of horizontally scaling.
-  Some parts of the project are open sourced on my Github page.
+  Used python/cython/gevent to develop a high-performance long connection game server.
 
-  I built our persistence solution based on redis-nds, which embed lmdb library with redis, providing a lovely database solution for game server.
-  What I contribute is fixing several serious memory-related bugs which is hard to track, including memory leak and dangling pointers. (https://github.com/yihuang/redis/tree/nds-2.6)
+  Make project redis-nds production ready, fixed several serious memory-related bugs which is hard to track. (https://github.com/yihuang/redis/tree/nds-2.6)
 
-  I also built our game engine and UI framework solution based on cocos2d-x.
+  I also built our game engine and UI framework based on cocos2d-x.
 
 * **ZhongLu Fund, Tech Leader** (2010.09 - 2012.10)
 
@@ -52,8 +51,6 @@ I've spent much time to learn Haskell and read a lot papers about the language a
 I've written a streamlined parsing library in Haskell which is used by Yesod project.
 
 I've given several talks about Haskell.
-
-I'm quite confident in writing real-world Haskell code.
 
 Education
 =========
@@ -79,6 +76,10 @@ Talks(in Chinese)
 
 Open Source Projects
 ====================
+
+* https://github.com/yihuang/python-cardano
+
+  Implement Cardano in python.
 
 * https://github.com/yihuang/tagstream-conduit
 

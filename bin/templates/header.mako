@@ -15,7 +15,7 @@
             % if name=='break':
             <br/>
             % else:
-            <a title="${name}" href="${url}" class="${class_}"><img src="${src}" alt="${name}"/></a>
+            <a title="${name}" href="${url}" class="${class_}"><img width="16" src="${src}" alt="${name}"/></a>
             % endif
             % endfor
         </p>
