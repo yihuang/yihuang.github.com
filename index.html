@@ -41,6 +41,46 @@
         <div id="content">
             <div id="right">
                 <div class="post">
+                    <a href="2019-06-29_crypto-exchange-architecture.html"><h1>数字货币交易系统架构设计 <span class="date">2019-06-29</span></h1></a>
+                    <p>交易系统是一个读写请求频率都很高的系统，优化读请求比较轻松，优化写请求是难点，往往很难做到无限扩展。
+首先尽可能按照业务逻辑进行分区，其次要兼顾持久化、数据一致性和性能各方面的要求，甚至要在其中进行权衡，比如数据的最终一致性。
+好在业务层面大家已经习惯了异步的处理机制，发起请求和请求执行结果是异步的，这使得我们可以采用流水线架构提高吞吐量。</p>
+<div class="section" id="id2">
+<h2>流水线</h2>
+<p># 下单</p>
+<blockquote>
+下单是个无状态的Web服务，冻结资产成功后把请求转发给撮合引擎。</blockquote>
+<p># 撮合引擎</p>
+<blockquote>
+撮合引擎需要维护一个持久化的OrderBook。撮合后输出成交记录和订单状态变更。</blockquote>
+<p># 清算</p>
+<blockquote>
+根据成交结果修改用户资产。</blockquote>
+<p># 行情分发</p>
+<blockquote>
+根据成交记录计算K线、深度、最近成交等行情数据。</blockquote>
+<p>撮合引擎首先可以按照币对分区，但是单个币对的请求基本上需要顺序执行。具体实现可以用数据库（比如postgresql的plpgsql），吞吐量也可以做到每秒上万比成交，并且持久化和可用性方面都不用担心。
+性能上要再一个数量级只能自己在内存实现，只是要处理好数据持久化，容错容灾等机制，一般来说每秒几十万比成交都还比较轻松。</p>
+<p>清算的关键点在于多币种资产系统的设计，多纬度资金对账，在确保资金安全的前提下提升性能。设计上可以参考复式记账法，对系统钱包、手续费账户等热点系统账户特殊处理。</p>
+<p>行情分发就K线的处理稍微麻烦点，本质上K线就是对成交记录的一次聚合查询：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="k">select</span> <span class="n">time_bucket</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="s1">&#39;1 minute&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">time</span><span class="p">,</span>
+</div><div class="line" id="LC1">       <span class="k">first</span><span class="p">(</span><span class="n">price</span> <span class="k">order</span> <span class="k">by</span> <span class="n">time</span><span class="p">)</span> <span class="k">as</span> <span class="k">open</span><span class="p">,</span>
+</div><div class="line" id="LC1">       <span class="k">max</span><span class="p">(</span><span class="n">price</span><span class="p">)</span> <span class="k">as</span> <span class="n">high</span><span class="p">,</span>
+</div><div class="line" id="LC1">       <span class="k">min</span><span class="p">(</span><span class="n">price</span><span class="p">)</span> <span class="k">as</span> <span class="n">low</span><span class="p">,</span>
+</div><div class="line" id="LC1">       <span class="k">last</span><span class="p">(</span><span class="n">price</span> <span class="k">order</span> <span class="k">by</span> <span class="n">time</span><span class="p">)</span> <span class="k">as</span> <span class="k">close</span><span class="p">,</span>
+</div><div class="line" id="LC1">       <span class="k">sum</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="k">as</span> <span class="n">volume</span><span class="p">,</span>
+</div><div class="line" id="LC1">       <span class="k">sum</span><span class="p">(</span><span class="n">amount</span> <span class="o">*</span> <span class="n">price</span><span class="p">)</span> <span class="k">as</span> <span class="n">value</span>
+</div><div class="line" id="LC1">  <span class="k">from</span> <span class="n">trades</span> <span class="k">group</span> <span class="k">by</span> <span class="mi">1</span><span class="p">;</span>
+</div></pre></div>
+<p>但是不停的全量扫描肯定不行，使用某种continuous aggregates机制，持续的对增量数据进行聚合，一些专门的时序数据库都支持这种操作，postgresql的timescaledb扩展也可以。
+另外只有1分钟的k线需要直接从成交记录里聚合，其他k线可以从低纬度的k线数据聚合而成。</p>
+<p>系统整体性能取决于短板，短板往往出现在数据库操作并且数据量大的时候，成交记录和订单记录的插入和变更，对于这种插入为主的时序数据，使用timescaledb可以轻松处理上百万tps。</p>
+<p>看到很多因为使用方式不佳造成关系数据库性能底下的案例，比较可惜，现在Postgresql的可玩性已经很强，尤其大量扩展，用的好的话，应对大部分的业务压力都是问题不大的。</p>
+<p>本人目前自由职业，可以提供技术方面的咨询服务，有这方面需要的朋友，欢迎联系。</p>
+</div>
+
+                </div>
+                <div class="post">
                     <a href="2018-12-17_utxo-smart-contract-state.html"><h1>UTxO模型下的智能合约 <span class="date">2018-12-17</span></h1></a>
                     <p>大家都熟悉了以太坊风格的智能合约。以太坊的智能合约首先是基于账户模型，每个合约有一个自己独立的账户地址，这个账户地址可以存储合约持有的资产，也可以存储合约的状态。
 以太坊基于这个持久化的状态存储，把智能合约设计成了命令式编程语言的模式，就像传统客户端服务器编程一样，链下代码调用链上代码暴露的API，对合约状态直接进行修改。</p>
@@ -256,21 +296,6 @@ Cardano这方面的规则刚出草案，在正式发布之前都还有可能修�
 <img alt="images/pool_reward1.jpg" src="images/pool_reward1.jpg" style="width: 100%;" />
 <p class="caption">考虑矿池不出块的惩罚</p>
 </div>
-
-                </div>
-                <div class="post">
-                    <a href="2018-07-27_blockchain-network-architecture.html"><h1>轻量级连接 - 区块链的网络层设计 <span class="date">2018-07-27</span></h1></a>
-                    <p>区块链是一种比较复杂的P2P软件，P2P软件本身也是网络编程中较为复杂的一种，网络编程本身也比传统编程更复杂一点。网络编程的复杂性来自于节点的状态，以及节点之间关系带来的状态空间的爆炸。P2P模糊了客户端服务器角色的界限，而区块链在普通P2P软件基础上则增加了大量的协议。归根结底，复杂性就是来源于状态空间规模的巨大增长。</p>
-<p>节点需要保存的状态可以分为本地状态和远程状态，本地状态就是节点自身的数据，通常需要进行持久化保存，远程状态是用来记录一条连接的远端节点的状态，并由网络消息驱动状态的变迁，通常其生命周期和这条连接本身的生命周期绑定。</p>
-<p>传统网络编程虽然节点之间关系简单，但使用事件驱动的方式编程的话，也会发现状态空间组合起来还是很头疼的。
-这也是为什么微线程技术会成为网络编程的神器，因为线程的模型大大简化了状态之间潜在的组合关系。</p>
-<p>用过微线程的朋友会发现，微线程简化了节点的状态组合，代价其实是对连接资源的独占，多条微线程想公用同一个连接的话，往往很容易会回到事件驱动编程的老路上去。</p>
-<p>偏偏区块链的项目往往要在节点之间运行多套协议，常见的比如：节点发现、共识算法、区块同步、投票等等，未来专用或通用的MPC模型可能也是一个发展方向，除了节点发现往往会单独开一个UDP的端口以外，其他协议都是跑在一个TCP端口下。
-这么复杂的协议如果要用微线程模型来开发的话，每套协议都得要一条甚至多条连接才能来搭配对应的微线程逻辑。然而就像原生线程一样，TCP连接也是成本高昂。</p>
-<p>那么很自然的，轻量级连接的概念就可以提出来了。在一条TCP连接上多播大量的轻量级连接，是今天要介绍的重点。轻量级线程要配合轻量级连接才能发挥它完全的潜力。
-据我所知，这个模式已经在一些项目中应用了，包括 <a class="reference external" href="https://whycardano.com/">Cardano</a> 、 <a class="reference external" href="https://github.com/libp2p">libp2p</a> 。</p>
-<p>Cardano的实现是基于Haskell的 <a class="reference external" href="https://github.com/haskell-distributed/network-transport-tcp">network-transport</a> 库，
-有兴趣的可以看看 <a class="reference external" href="http://haskell-distributed.github.io/tutorials/tutorial-NT2.html">教程</a> 。</p>
 
                 </div>
                 <p class="more"><a href="list.html">查看全部文章>></a></p>

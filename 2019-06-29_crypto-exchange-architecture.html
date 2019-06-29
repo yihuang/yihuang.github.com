@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.12: http://docutils.sourceforge.net/" />
+<title>数字货币交易系统架构设计</title>
+
+        <meta name="viewport" contect="width=device-width"></meta>
+        <link rel="alternate" type="application/rss+xml" title="blog post summary feeds" href="rss.xml" />
+        <link type="text/css" rel="stylesheet" href="css/html4css1.css"/>
+        <link rel="stylesheet" type="text/css" href="css/blog.css" media="screen" />
+        <link type="text/css" rel="stylesheet" href="css/pygments.css"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+        <style type="text/css">
+            .contents {
+            margin-top:0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+    <a href="index.html"><h1>精确编程</h1></a>
+    <div class="nav-icons">
+        <p class="nav">
+            <a title="首页" href="index.html" class=""><img src="images/icons/home.png" alt="首页"/></a>
+            <a title="文章列表" href="list.html" class=""><img src="images/icons/blog.png" alt="文章列表"/></a>
+            <a title="订阅" href="rss.xml" class=""><img src="images/icons/about.png" alt="订阅"/></a>
+        </p>
+        <p class="link">
+            <a title="Github" href="https://github.com/yihuang/" class=""><img src="images/icons/github.png" alt="Github"/></a>
+            <a title="知乎" href="https://zhuanlan.zhihu.com/fp-blockchain" class=""><img src="images/icons/zhihu.ico" alt="知乎"/></a>
+            <a title="豆瓣" href="http://www.douban.com/people/huangyi/" class=""><img src="images/icons/douban.png" alt="豆瓣"/></a>
+            <a title="Blogger" href="http://codeplayer.blogspot.com/" class=""><img src="images/icons/blogger.png" alt="Blogger"/></a>
+            <a title="啄木鸟社区" href="http://wiki.woodpecker.org.cn/moin/HuangYi" class=""><img src="images/icons/woodpecker.png" alt="啄木鸟社区"/></a>
+        </p>
+    </div>
+</div>
+
+            <div id="middle">
+                <div class="postdetail">
+                    <h1 class="title">数字货币交易系统架构设计</h1>
+
+                    <p class="author">2019-06-29 黄毅</p>
+                    <p>交易系统是一个读写请求频率都很高的系统，优化读请求比较轻松，优化写请求是难点，往往很难做到无限扩展。
+首先尽可能按照业务逻辑进行分区，其次要兼顾持久化、数据一致性和性能各方面的要求，甚至要在其中进行权衡，比如数据的最终一致性。
+好在业务层面大家已经习惯了异步的处理机制，发起请求和请求执行结果是异步的，这使得我们可以采用流水线架构提高吞吐量。</p>
+<div class="section" id="id2">
+<h2>流水线</h2>
+<p># 下单</p>
+<blockquote>
+下单是个无状态的Web服务，冻结资产成功后把请求转发给撮合引擎。</blockquote>
+<p># 撮合引擎</p>
+<blockquote>
+撮合引擎需要维护一个持久化的OrderBook。撮合后输出成交记录和订单状态变更。</blockquote>
+<p># 清算</p>
+<blockquote>
+根据成交结果修改用户资产。</blockquote>
+<p># 行情分发</p>
+<blockquote>
+根据成交记录计算K线、深度、最近成交等行情数据。</blockquote>
+<p>撮合引擎首先可以按照币对分区，但是单个币对的请求基本上需要顺序执行。具体实现可以用数据库（比如postgresql的plpgsql），吞吐量也可以做到每秒上万比成交，并且持久化和可用性方面都不用担心。
+性能上要再一个数量级只能自己在内存实现，只是要处理好数据持久化，容错容灾等机制，一般来说每秒几十万比成交都还比较轻松。</p>
+<p>清算的关键点在于多币种资产系统的设计，多纬度资金对账，在确保资金安全的前提下提升性能。设计上可以参考复式记账法，对系统钱包、手续费账户等热点系统账户特殊处理。</p>
+<p>行情分发就K线的处理稍微麻烦点，本质上K线就是对成交记录的一次聚合查询：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="k">select</span> <span class="n">time_bucket</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="s1">&#39;1 minute&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">time</span><span class="p">,</span>
+</div><div class="line" id="LC1">       <span class="k">first</span><span class="p">(</span><span class="n">price</span> <span class="k">order</span> <span class="k">by</span> <span class="n">time</span><span class="p">)</span> <span class="k">as</span> <span class="k">open</span><span class="p">,</span>
+</div><div class="line" id="LC1">       <span class="k">max</span><span class="p">(</span><span class="n">price</span><span class="p">)</span> <span class="k">as</span> <span class="n">high</span><span class="p">,</span>
+</div><div class="line" id="LC1">       <span class="k">min</span><span class="p">(</span><span class="n">price</span><span class="p">)</span> <span class="k">as</span> <span class="n">low</span><span class="p">,</span>
+</div><div class="line" id="LC1">       <span class="k">last</span><span class="p">(</span><span class="n">price</span> <span class="k">order</span> <span class="k">by</span> <span class="n">time</span><span class="p">)</span> <span class="k">as</span> <span class="k">close</span><span class="p">,</span>
+</div><div class="line" id="LC1">       <span class="k">sum</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="k">as</span> <span class="n">volume</span><span class="p">,</span>
+</div><div class="line" id="LC1">       <span class="k">sum</span><span class="p">(</span><span class="n">amount</span> <span class="o">*</span> <span class="n">price</span><span class="p">)</span> <span class="k">as</span> <span class="n">value</span>
+</div><div class="line" id="LC1">  <span class="k">from</span> <span class="n">trades</span> <span class="k">group</span> <span class="k">by</span> <span class="mi">1</span><span class="p">;</span>
+</div></pre></div>
+<p>但是不停的全量扫描肯定不行，使用某种continuous aggregates机制，持续的对增量数据进行聚合，一些专门的时序数据库都支持这种操作，postgresql的timescaledb扩展也可以。
+另外只有1分钟的k线需要直接从成交记录里聚合，其他k线可以从低纬度的k线数据聚合而成。</p>
+<p>系统整体性能取决于短板，短板往往出现在数据库操作并且数据量大的时候，成交记录和订单记录的插入和变更，对于这种插入为主的时序数据，使用timescaledb可以轻松处理上百万tps。</p>
+<p>看到很多因为使用方式不佳造成关系数据库性能底下的案例，比较可惜，现在Postgresql的可玩性已经很强，尤其大量扩展，用的好的话，应对大部分的业务压力都是问题不大的。</p>
+<p>本人目前自由职业，可以提供技术方面的咨询服务，有这方面需要的朋友，欢迎联系。</p>
+</div>
+
+                    <br/>
+                    <div id="disqus_thread"></div>
+                    <script type="text/javascript">
+                        var disqus_shortname = 'yi-programmer';
+                        var disqus_identifier = '2019-06-29_crypto-exchange-architecture';
+                        var disqus_url = 'http://www.yi-programmer.com/2019-06-29_crypto-exchange-architecture.html';
+
+                        (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                        })();
+                    </script>
+                    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                    <p class="announce">转载请注明出处，收藏或分享这篇文章到：</p>
+                    <p class="share-icons">
+                        <a target="_blank" title="分享到豆瓣" href="http://www.douban.com/recommend/?url=http://www.yi-programmer.com/2019-06-29_crypto-exchange-architecture.html&title=数字货币交易系统架构设计"><img src="images/icons/douban.png" alt="分享到豆瓣"/></a>
+                        <a target="_blank" title="收藏到delicious" href="http://del.icio.us/post?url=http://www.yi-programmer.com/2019-06-29_crypto-exchange-architecture.html&title=数字货币交易系统架构设计"><img src="images/icons/delicious.png" alt="收藏到delicious"/></a>
+                        <a target="_blank" title="收藏到QQ书签" href="http://shuqian.qq.com/post?from=3&title=数字货币交易系统架构设计&uri=http://www.yi-programmer.com/2019-06-29_crypto-exchange-architecture.html&jumpback=2&noui=1"><img src="images/icons/qqbookmark.gif" alt="收藏到QQ书签"/></a>
+                        <a target="_blank" title="收藏到google书签" href="https://www.google.com/bookmarks/mark?op=add&bkmk=http://www.yi-programmer.com/2019-06-29_crypto-exchange-architecture.html&title=数字货币交易系统架构设计"><img src="images/icons/google.gif" alt="收藏到google书签"/></a>
+                        <a target="_blank" title="收藏到百度搜藏" href="http://cang.baidu.com/do/add?iu=http://www.yi-programmer.com/2019-06-29_crypto-exchange-architecture.html&it=数字货币交易系统架构设计&fr=ien#nw=1"><img src="images/icons/baidu.gif" alt="收藏到百度搜藏"/></a>
+                        <a target="_blank" title="分享到新浪围脖" href="http://v.t.sina.com.cn/share/share.php?url=http://www.yi-programmer.com/2019-06-29_crypto-exchange-architecture.html&title=数字货币交易系统架构设计&source=bookmark"><img src="images/icons/sina-t.jpg" alt="分享到新浪围脖"/></a>
+                        <a target="_blank" title="分享到facebook" href="http://www.facebook.com/sharer.php?u=http://www.yi-programmer.com/2019-06-29_crypto-exchange-architecture.html&t=数字货币交易系统架构设计"><img src="images/icons/facebook.png" alt="分享到facebook"/></a>
+                        <a target="_blank" title="分享到人人网" href="http://share.renren.com/share/buttonshare.do?link=http://www.yi-programmer.com/2019-06-29_crypto-exchange-architecture.html&title=数字货币交易系统架构设计"><img src="images/icons/renren.gif" alt="分享到人人网"/></a>
+                        <a target="_blank" title="分享到开心网" href="http://www.kaixin001.com/repaste/share.php?rtitle=数字货币交易系统架构设计&rurl=http://www.yi-programmer.com/2019-06-29_crypto-exchange-architecture.html&rcontent=http://www.yi-programmer.com/2019-06-29_crypto-exchange-architecture.html"><img src="images/icons/kaixin.gif" alt="分享到开心网"/></a>
+                        <a target="_blank" title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.yi-programmer.com/2019-06-29_crypto-exchange-architecture.html"><img src="images/icons/qzone.gif" alt="分享到QQ空间"/></a>
+                        <a target="_blank" title="分享到MySpace" href="http://www.myspace.cn/Modules/PostTo/Pages/Default.aspx?u=http://www.yi-programmer.com/2019-06-29_crypto-exchange-architecture.html&t=数字货币交易系统架构设计"><img src="images/icons/myspace.jpg" alt="分享到MySpace"/></a>
+                    </p>
+                </div>
+                <div class="footer">
+<hr class="footer" />
+<a class="reference external" href="src/2019-06-29_crypto-exchange-architecture.txt">View document source</a>.
+Generated on: 2019-06-29.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
+</div>
+
+                <p class="copyright">Website content copyright &copy; by 黄毅. All rights reserved. </p>
+
+            </div>
+        </div>
+                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try{
+            var pageTracker = _gat._getTracker("UA-415070-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
+    </body>
+</html>
