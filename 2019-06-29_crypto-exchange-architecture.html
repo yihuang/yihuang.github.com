@@ -47,22 +47,24 @@
 好在业务层面大家已经习惯了异步的处理机制，发起请求和请求执行结果是异步的，这使得我们可以采用流水线架构提高吞吐量。</p>
 <div class="section" id="id2">
 <h2>流水线</h2>
-<p># 下单</p>
-<blockquote>
-下单是个无状态的Web服务，冻结资产成功后把请求转发给撮合引擎。</blockquote>
-<p># 撮合引擎</p>
-<blockquote>
-撮合引擎需要维护一个持久化的OrderBook。撮合后输出成交记录和订单状态变更。</blockquote>
-<p># 清算</p>
-<blockquote>
-根据成交结果修改用户资产。</blockquote>
-<p># 行情分发</p>
-<blockquote>
-根据成交记录计算K线、深度、最近成交等行情数据。</blockquote>
-<p>撮合引擎首先可以按照币对分区，但是单个币对的请求基本上需要顺序执行。具体实现可以用数据库（比如postgresql的plpgsql），吞吐量也可以做到每秒上万比成交，并且持久化和可用性方面都不用担心。
-性能上要再一个数量级只能自己在内存实现，只是要处理好数据持久化，容错容灾等机制，一般来说每秒几十万比成交都还比较轻松。</p>
+<ol class="arabic">
+<li><p class="first">下单</p>
+<p>下单是个无状态的Web服务，冻结资产成功后把请求转发给撮合引擎。</p>
+</li>
+<li><p class="first">撮合引擎</p>
+<p>撮合引擎需要维护一个持久化的OrderBook。撮合后输出成交记录和订单状态变更。</p>
+</li>
+<li><p class="first">清算</p>
+<p>根据成交结果修改用户资产。</p>
+</li>
+<li><p class="first">行情分发</p>
+<p>根据成交记录计算K线、深度、最近成交等行情数据。</p>
+</li>
+</ol>
+<p>撮合引擎首先可以按照币对分区，但是单个币对的请求基本上需要顺序执行。具体实现用关系数据库（比如postgresql的plpgsql）吞吐量可以做到每秒上万比成交，并且持久化和可用性方面都不用担心。
+性能上要再上一个数量级只能自己在内存实现，需要自己处理好数据持久化，容错容灾等机制，一般来说每秒几十万比成交都还比较轻松。</p>
 <p>清算的关键点在于多币种资产系统的设计，多纬度资金对账，在确保资金安全的前提下提升性能。设计上可以参考复式记账法，对系统钱包、手续费账户等热点系统账户特殊处理。</p>
-<p>行情分发就K线的处理稍微麻烦点，本质上K线就是对成交记录的一次聚合查询：</p>
+<p>行情分发里面K线的处理稍微麻烦点，逻辑上K线就是对成交记录的一次聚合查询：</p>
 <div class="highlight None"><pre><div class="line" id="LC1"><span class="k">select</span> <span class="n">time_bucket</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="s1">&#39;1 minute&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">time</span><span class="p">,</span>
 </div><div class="line" id="LC1">       <span class="k">first</span><span class="p">(</span><span class="n">price</span> <span class="k">order</span> <span class="k">by</span> <span class="n">time</span><span class="p">)</span> <span class="k">as</span> <span class="k">open</span><span class="p">,</span>
 </div><div class="line" id="LC1">       <span class="k">max</span><span class="p">(</span><span class="n">price</span><span class="p">)</span> <span class="k">as</span> <span class="n">high</span><span class="p">,</span>
@@ -72,10 +74,10 @@
 </div><div class="line" id="LC1">       <span class="k">sum</span><span class="p">(</span><span class="n">amount</span> <span class="o">*</span> <span class="n">price</span><span class="p">)</span> <span class="k">as</span> <span class="n">value</span>
 </div><div class="line" id="LC1">  <span class="k">from</span> <span class="n">trades</span> <span class="k">group</span> <span class="k">by</span> <span class="mi">1</span><span class="p">;</span>
 </div></pre></div>
-<p>但是不停的全量扫描肯定不行，使用某种continuous aggregates机制，持续的对增量数据进行聚合，一些专门的时序数据库都支持这种操作，postgresql的timescaledb扩展也可以。
+<p>但是不停的全量扫描肯定不行，使用continuous aggregates机制，持续的对增量数据进行聚合，一些专门的时序数据库都支持这种操作，postgresql的 <a class="reference external" href="https://timescale.com/">timescaledb</a> 扩展也可以。
 另外只有1分钟的k线需要直接从成交记录里聚合，其他k线可以从低纬度的k线数据聚合而成。</p>
-<p>系统整体性能取决于短板，短板往往出现在数据库操作并且数据量大的时候，成交记录和订单记录的插入和变更，对于这种插入为主的时序数据，使用timescaledb可以轻松处理上百万tps。</p>
-<p>看到很多因为使用方式不佳造成关系数据库性能底下的案例，比较可惜，现在Postgresql的可玩性已经很强，尤其大量扩展，用的好的话，应对大部分的业务压力都是问题不大的。</p>
+<p>系统整体性能取决于短板，短板往往出现在数据库操作并且数据量大的时候，成交记录和订单记录的插入和变更，对于这种插入为主的时序数据，使用 <a class="reference external" href="https://timescale.com/">timescaledb</a> 可以轻松处理上百万tps。</p>
+<p>看到很多因为使用方式不佳造成关系数据库性能底下的案例，比较可惜，现在Postgresql的可玩性已经很强，尤其大量扩展，搭配其他组件一起使用，应对大部分的业务压力都是问题不大的，同时又能保留关系数据库的便利。</p>
 <p>本人目前自由职业，可以提供技术方面的咨询服务，有这方面需要的朋友，欢迎联系。</p>
 </div>
 
