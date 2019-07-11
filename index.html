@@ -41,6 +41,91 @@
         <div id="content">
             <div id="right">
                 <div class="post">
+                    <a href="2019-07-11_postgresql-tips.html"><h1>Postgresql实用技巧 <span class="date">2019-07-11</span></h1></a>
+                    <p>总结一下最近用到的几个实用的PG特性：</p>
+<ul>
+<li><p class="first">domain 创建类型别名</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="k">create</span> <span class="k">domain</span> <span class="n">amount</span> <span class="k">as</span> <span class="nb">decimal</span><span class="p">(</span><span class="mi">33</span><span class="p">,</span> <span class="mi">18</span><span class="p">);</span>
+</div><div class="line" id="LC1"><span class="k">create</span> <span class="k">domain</span> <span class="n">price</span> <span class="k">as</span> <span class="nb">decimal</span><span class="p">(</span><span class="mi">33</span><span class="p">,</span> <span class="mi">18</span><span class="p">);</span>
+</div></pre></div>
+</li>
+<li><p class="first">自定义枚举类型</p>
+<p>使用的时候可以传字符串，实际存储是整数。 <tt class="docutils literal">create type</tt> 还可以创建其他更复杂的类型，这里就不详细介绍了。</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="k">create</span> <span class="k">type</span> <span class="n">side</span> <span class="k">as</span> <span class="n">enum</span> <span class="p">(</span><span class="s1">&#39;buy&#39;</span><span class="p">,</span> <span class="s1">&#39;sell&#39;</span><span class="p">);</span>
+</div></pre></div>
+</li>
+<li><p class="first">Heap-Only-Tuple 和 fillfactor</p>
+<p>这个和PG的MVCC实现有关系，简单的说，PG的表数据是存在无序的堆上的，包括主键的所有索引都是单独的，索引引用数据行在堆上的位置。
+加上MVCC的实现，Update其实是Insert+Delete，新的行数据在堆上的位置发生改变，使得需要更新索引数据。为了优化这种情况，
+如果在该条数据相同的Page上面有空闲位置，新插入数据优先放在相同页上，并和旧版本数据建立链表。在查询数据的时候，根据这个链表再去处理事务可见性等判断。
+这样就不需要去更新索引数据了。如果Page上没有空闲位置就没办法了。所以 <tt class="docutils literal">create table</tt> 的时候可以指定 <tt class="docutils literal">fillfactor</tt> 选项，预先留出一些位置。
+适合数据量不大且更新频繁的场景。</p>
+</li>
+<li><p class="first">用snowflake算法生成唯一ID很实用，但是在PG上有个问题，PG遵循SQL标准，不支持无符号64位整数。snowflake留了41bit给毫秒级时间戳，去一位给符号位，剩下40位。
+算一下发现2004年就溢出了，其实就算无符号64位整数，2039年也就溢出了。解决方案，时间戳统一减去一个最近的时间点，瞬间多出50年。
+在PG里面用这种ID，结合自定义函数，连时间戳字段都省了(PG12貌似要支持虚拟字段了)。自动分表也可以按照ID进行，达到按时间戳分表一样的效果，还能保留主键功能，一举多得。</p>
+</li>
+<li><p class="first">批量insert/update/upsert/delete/move</p>
+<p>数据库里面，批量操作的吞吐量和单条执行不在一个数量级。insert批量大家都知道：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="k">insert</span> <span class="k">into</span> <span class="k">table</span> <span class="k">values</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)...</span>
+</div></pre></div>
+<p>用psycopg2的朋友需要注意的是， <tt class="docutils literal">cur.executemany</tt> 函数并不是真批量操作，他还是生成一堆独立的insert执行，真正的批量操作要这么写：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="n">psycopg2</span><span class="p">.</span><span class="n">extra</span><span class="p">.</span><span class="n">insertvalues</span><span class="p">(</span><span class="s1">&#39;insert into table values %s&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)])</span>
+</div></pre></div>
+<p>update 如何批量呢：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="k">with</span> <span class="n">tmp</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="k">values</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">))</span>
+</div><div class="line" id="LC1"><span class="k">update</span> <span class="k">table</span> <span class="k">set</span> <span class="n">name</span><span class="o">=</span><span class="n">tmp</span><span class="p">.</span><span class="n">name</span> <span class="k">from</span> <span class="n">tmp</span> <span class="k">where</span> <span class="k">table</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">tmp</span><span class="p">.</span><span class="n">id</span><span class="p">;</span>
+</div></pre></div>
+<p>upsert:</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="k">insert</span> <span class="k">into</span> <span class="k">table</span> <span class="k">values</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)...</span>
+</div><div class="line" id="LC1"><span class="k">on</span> <span class="n">conflict</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">do</span> <span class="k">update</span> <span class="k">set</span> <span class="n">a</span><span class="o">=</span><span class="k">table</span><span class="p">.</span><span class="n">a</span><span class="o">+</span><span class="n">excluded</span><span class="p">.</span><span class="n">a</span>
+</div></pre></div>
+<p>delete:</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="k">delete</span> <span class="k">from</span> <span class="k">table</span> <span class="k">where</span> <span class="n">id</span> <span class="o">=</span> <span class="k">ANY</span><span class="p">[</span><span class="o">%</span><span class="n">s</span><span class="p">]</span>
+</div></pre></div>
+<p>move, 有时候我们想把数据批量从一个表移动到另一个表：</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="k">with</span> <span class="n">moved_rows</span> <span class="k">as</span> <span class="p">(</span>
+</div><div class="line" id="LC1">  <span class="k">with</span> <span class="n">tmp</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="k">values</span> <span class="o">%</span><span class="n">s</span><span class="p">)</span>
+</div><div class="line" id="LC1">  <span class="k">delete</span> <span class="k">from</span> <span class="n">t_old_table</span> <span class="n">a</span>
+</div><div class="line" id="LC1">  <span class="k">using</span> <span class="n">tmp</span>
+</div><div class="line" id="LC1">  <span class="k">where</span> <span class="n">tmp</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">a</span><span class="p">.</span><span class="n">id</span>
+</div><div class="line" id="LC1">  <span class="n">returning</span> <span class="n">a</span><span class="p">.</span><span class="o">*</span>
+</div><div class="line" id="LC1"><span class="p">)</span>
+</div><div class="line" id="LC1"><span class="k">insert</span> <span class="k">into</span> <span class="n">t_new_table</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">moved_rows</span>
+</div></pre></div>
+</li>
+<li><p class="first">mvcc snapshot。问题：如何把一个并发访问的表一致的分割成多段，比如我们想要分批次对里面的数据进行处理，但不希望漏数据，也不希望重复处理。</p>
+<div class="note">
+<p class="first admonition-title">注解</p>
+<p class="last">自增ID？在并发访问下，自增ID并不能保证连续没有间断的，比如中间可能还有事务没有提交。</p>
+</div>
+<p>解决方案是，在表里保存 <tt class="docutils literal">txid_current()</tt> ，要分段的时候，记录下 <tt class="docutils literal">txid_current_snapshot()</tt> ，snapshot由三个信息组成：xmin, xmax, xip。
+xmin是当前进行中的事务ID中最小的，也就是比xmin更小的事务都已提交或者撤销，xmax是下一个将要分配的事务ID，比xmax更大的事务还没出现，xip是当前进行中的事务ID列表。
+那么一条记录是否发生在这个snapshot之前就很明确了， <tt class="docutils literal">txid &lt; xmin or (txid &lt; xmax and txid not in xip)</tt> ，对应的函数是 <tt class="docutils literal">txid_visible_in_snapshot(txid, snapshot)</tt> 。</p>
+</li>
+<li><p class="first">pipelinedb，流式聚合</p>
+<div class="highlight None"><pre><div class="line" id="LC1"><span class="k">create</span> <span class="k">foreign</span> <span class="k">table</span> <span class="n">trade</span> <span class="p">(</span><span class="n">time</span> <span class="k">timestamp</span> <span class="k">with</span> <span class="n">time</span> <span class="k">zone</span><span class="p">,</span> <span class="n">price</span> <span class="nb">decimal</span><span class="p">,</span> <span class="n">amount</span> <span class="nb">decimal</span><span class="p">)</span> <span class="n">server</span> <span class="n">pipelinedb</span><span class="p">;</span>
+</div><div class="line" id="LC1"><span class="k">create</span> <span class="k">view</span> <span class="n">kline_1m</span> <span class="k">as</span> <span class="k">select</span>
+</div><div class="line" id="LC1">    <span class="n">date_trunc</span><span class="p">(</span><span class="s1">&#39;minute&#39;</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span> <span class="k">as</span> <span class="n">time</span><span class="p">,</span>
+</div><div class="line" id="LC1">    <span class="n">keyed_min</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">price</span><span class="p">)</span> <span class="k">as</span> <span class="k">open</span><span class="p">,</span>
+</div><div class="line" id="LC1">    <span class="k">max</span><span class="p">(</span><span class="n">price</span><span class="p">)</span> <span class="k">as</span> <span class="n">high</span><span class="p">,</span>
+</div><div class="line" id="LC1">    <span class="k">min</span><span class="p">(</span><span class="n">price</span><span class="p">)</span> <span class="k">as</span> <span class="n">low</span><span class="p">,</span>
+</div><div class="line" id="LC1">    <span class="n">keyed_max</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">price</span><span class="p">)</span> <span class="k">as</span> <span class="k">close</span><span class="p">,</span>
+</div><div class="line" id="LC1">    <span class="k">sum</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="k">as</span> <span class="n">volume</span><span class="p">,</span>
+</div><div class="line" id="LC1">    <span class="k">sum</span><span class="p">(</span><span class="n">amount</span> <span class="o">*</span> <span class="n">price</span><span class="p">)</span> <span class="k">as</span> <span class="n">value</span><span class="p">,</span>
+</div><div class="line" id="LC1">    <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="k">count</span>
+</div><div class="line" id="LC1"><span class="k">from</span> <span class="n">trade</span> <span class="k">group</span> <span class="k">by</span> <span class="mi">1</span><span class="p">;</span>
+</div><div class="line" id="LC1"><span class="k">create</span> <span class="k">unique</span> <span class="k">index</span> <span class="n">kline_1m_time_idx</span> <span class="k">on</span> <span class="n">kline_1m</span><span class="p">(</span><span class="n">time</span><span class="p">);</span>
+</div></pre></div>
+<p>然后只管疯狂对 <tt class="docutils literal">trade</tt> 表insert， <tt class="docutils literal">kline_1m</tt> 会自动更新聚合数据，而且 <tt class="docutils literal">trade</tt> 不会保留数据。</p>
+</li>
+<li><p class="first">timescaledb，时序数据库，按照时间戳字段全自动分表。虽然pg有了声明式分表，但还是不如全自动来的爽。再也不用担心表数据量过太多影响性能了。</p>
+</li>
+</ul>
+<p>其他的留到下篇再介绍。</p>
+
+                </div>
+                <div class="post">
                     <a href="2019-06-29_crypto-exchange-architecture.html"><h1>数字货币交易系统架构设计 <span class="date">2019-06-29</span></h1></a>
                     <p>交易系统是一个读写请求频率都很高的系统，优化读请求比较轻松，优化写请求是难点，往往很难做到无限扩展。
 首先尽可能按照业务逻辑进行分区，其次要兼顾持久化、数据一致性和性能各方面的要求，甚至要在其中进行权衡，比如数据的最终一致性。
@@ -243,60 +328,6 @@ extra block data: 0
 </ul>
 <p>下一步计划是基于它开发ADA手机钱包，未来这个项目可能也可以作为Cardano侧链生态中的一个开发平台，目前也可以作为大家学习研究的一个基础。有兴趣的朋友可以加电报群一起探讨：
 <a class="reference external" href="https://t.me/safeadawallet">Safe ADA Wallet</a> 。</p>
-</div>
-
-                </div>
-                <div class="post">
-                    <a href="2018-08-02_cardano-delegation-incentive.html"><h1>Cardano的委托和奖励机制 <span class="date">2018-08-02</span></h1></a>
-                    <p>区块链中除了共识算法以外最重要的可能就是经济系统了，经济系统的设计目的是在大家都追求利益最大化的前提下，让系统进入我们希望达到的目标均衡状态。
-Cardano这方面的规则刚出草案，在正式发布之前都还有可能修改，我们可以先大体了解一下。</p>
-<p>简单介绍一下Cardano的Ouroboros协议。首先这是一个PoS协议，每个人都可以运行一个核心节点(通俗的说就是矿工节点)，即可获得与自己持有份额等比例的出块奖励。</p>
-<p>为了让普通用户不用那么麻烦去维护一个服务器节点，Ouroboros支持委托机制，不想自己维护节点的人可以把自己的份额委托给其他人。
-委托是可选的，并且是递归的，也就是说你可以选择自己挖矿，也可以选择委托别人挖矿，如果别人委托给你了，你还可以继续委托给其他人（递归的最大深度会有限制）。
-也就是所谓的 <a class="reference external" href="https://medium.com/organizer-sandbox/liquid-democracy-true-democracy-for-the-21st-century-7c66f5e53b6f">Liquid Democracy</a> 。
-同时会要求交易所钱包使用不同的地址类型，禁止交易所使用用户的币参与挖矿。</p>
-<p>总之，有这么几种角色：独立挖矿者、矿池主、代理给矿池挖矿的普通持币者。</p>
-<p>作为一个去中心化自治系统，我们又不希望设置太多硬性规定，尽量只设定最基本的规则，其中一些参数可以交给市场去博弈出具体的值，而另外一些固定的参数也可以在未来的财政系统中由大家投票去决定。</p>
-<p>另外，Ouroboros的委托是不需要冻结用户的币的（除了矿池主注册矿池的时候可以主动冻结一些币，后面会提到），系统会在每个epoch开始的时候计算整体份额比例，并在一个epoch过程中保持不变，但是币本身随时都可以自由交易，在目前的设定下一个epoch持续5天。</p>
-<p>奖励规则的设计目的主要是为了：</p>
-<ul>
-<li><p class="first">安全性</p>
-<p>没有绝对的安全性，最终系统的安全性取决于各个角色攻击协议需要付出的成本，比如PoW系统的攻击成本是51%的算力，PoS系统的理论攻击成本是51%的币，但是因为有了委托的存在，矿池主用来出块的币实际上大于他本身持有的币，那么这种情况安全性上受到多大影响，是需要计算的。</p>
-</li>
-<li><p class="first">去中心化程度和稳定性的权衡</p>
-<p>任何一个去中心化网络要保持稳定高效的运行，需要有稳定高效的矿工节点协同工作。作为一个去中心化系统，我们希望通过规则的设置让系统能够自动达到我们希望的稳定状态。</p>
-</li>
-</ul>
-<p>我们先来看看其中涉及到的几个关键参数：</p>
-<ul>
-<li><p class="first">k</p>
-<p>系统希望的均衡状态下矿池数量，默认值100。</p>
-</li>
-<li><p class="first">cost/margin</p>
-<p>矿池运行需要的成本和利润抽成，矿池主的奖励计算大致逻辑是 <tt class="docutils literal">cost + margin * reward</tt> ，</p>
-<p>如果margin为0，矿池主只拿cost数量的固定奖励，如果margin为1，矿池主拿走全部奖励。这个由矿池主注册矿池的时候设定，大家可以根据矿池主的设定选择代理给合适的矿池。</p>
-</li>
-<li><p class="first">s</p>
-<p>矿池主注册矿池的时候主动选择冻结的币的比例，冻结越多，矿池整体奖励越高。</p>
-</li>
-<li><p class="first">σ</p>
-<p>矿池整体拥有的stake比例。</p>
-</li>
-<li><p class="first">a0</p>
-<p>这个系数是控制矿池主冻结份额数量对矿池整体奖励的影响程度，a0越小，影响程度越低。</p>
-</li>
-<li><p class="first">γ</p>
-<p>如果矿池错过了出块，奖励会有减少，这个系数控制具体的减少程度。多出来的奖励并不会分给其他节点，而是全部进入财政系统。这样可以降低矿池之间彼此攻击的动机。</p>
-</li>
-</ul>
-<p>其实从定性的角度大体上就清楚了，具体的定量分析大家可以期待Dr. Wang的分析结果，我这里就截个图大家自己看公式把：</p>
-<div class="figure align-center">
-<img alt="images/pool_reward.jpg" src="images/pool_reward.jpg" style="width: 100%;" />
-<p class="caption">一个矿池在一个epoch中的奖励上限</p>
-</div>
-<div class="figure align-center">
-<img alt="images/pool_reward1.jpg" src="images/pool_reward1.jpg" style="width: 100%;" />
-<p class="caption">考虑矿池不出块的惩罚</p>
 </div>
 
                 </div>

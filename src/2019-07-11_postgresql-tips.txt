@@ -1,0 +1,112 @@
+==================
+Postgresql实用技巧
+==================
+
+总结一下最近用到的几个实用的PG特性：
+
+* domain 创建类型别名
+
+  .. code-block:: sql
+
+    create domain amount as decimal(33, 18);
+    create domain price as decimal(33, 18);
+
+* 自定义枚举类型
+
+  使用的时候可以传字符串，实际存储是整数。 ``create type`` 还可以创建其他更复杂的类型，这里就不详细介绍了。
+
+  .. code-block:: sql
+
+    create type side as enum ('buy', 'sell');
+
+* Heap-Only-Tuple 和 fillfactor
+
+  这个和PG的MVCC实现有关系，简单的说，PG的表数据是存在无序的堆上的，包括主键的所有索引都是单独的，索引引用数据行在堆上的位置。
+  加上MVCC的实现，Update其实是Insert+Delete，新的行数据在堆上的位置发生改变，使得需要更新索引数据。为了优化这种情况，
+  如果在该条数据相同的Page上面有空闲位置，新插入数据优先放在相同页上，并和旧版本数据建立链表。在查询数据的时候，根据这个链表再去处理事务可见性等判断。
+  这样就不需要去更新索引数据了。如果Page上没有空闲位置就没办法了。所以 ``create table`` 的时候可以指定 ``fillfactor`` 选项，预先留出一些位置。
+  适合数据量不大且更新频繁的场景。
+
+* 用snowflake算法生成唯一ID很实用，但是在PG上有个问题，PG遵循SQL标准，不支持无符号64位整数。snowflake留了41bit给毫秒级时间戳，去一位给符号位，剩下40位。
+  算一下发现2004年就溢出了，其实就算无符号64位整数，2039年也就溢出了。解决方案，时间戳统一减去一个最近的时间点，瞬间多出50年。
+  在PG里面用这种ID，结合自定义函数，连时间戳字段都省了(PG12貌似要支持虚拟字段了)。自动分表也可以按照ID进行，达到按时间戳分表一样的效果，还能保留主键功能，一举多得。
+
+* 批量insert/update/upsert/delete/move
+
+  数据库里面，批量操作的吞吐量和单条执行不在一个数量级。insert批量大家都知道：
+
+  .. code-block:: sql
+
+    insert into table values (1,3,3), (2,3,3), (3,3,3)...
+
+  用psycopg2的朋友需要注意的是， ``cur.executemany`` 函数并不是真批量操作，他还是生成一堆独立的insert执行，真正的批量操作要这么写：
+
+  .. code-block:: sql
+
+    psycopg2.extra.insertvalues('insert into table values %s', [(1,3,3), (2,3,3), (3,3,3)])
+
+  update 如何批量呢：
+
+  .. code-block:: sql
+
+    with tmp(id, name) as (values (1, 'a'), (2, 'b'), (3, 'c'))
+    update table set name=tmp.name from tmp where table.id=tmp.id;
+
+  upsert:
+
+  .. code-block:: sql
+
+    insert into table values (1,3,3), (2,3,3), (3,3,3)...
+    on conflict (a) do update set a=table.a+excluded.a
+
+  delete:
+
+  .. code-block:: sql
+
+    delete from table where id = ANY[%s]
+
+  move, 有时候我们想把数据批量从一个表移动到另一个表：
+
+  .. code-block:: sql
+
+    with moved_rows as (
+      with tmp(id, a, b) as (values %s)
+      delete from t_old_table a
+      using tmp
+      where tmp.id=a.id
+      returning a.*
+    )
+    insert into t_new_table select * from moved_rows
+
+* mvcc snapshot。问题：如何把一个并发访问的表一致的分割成多段，比如我们想要分批次对里面的数据进行处理，但不希望漏数据，也不希望重复处理。
+
+  .. note::
+
+      自增ID？在并发访问下，自增ID并不能保证连续没有间断的，比如中间可能还有事务没有提交。
+
+  解决方案是，在表里保存 ``txid_current()`` ，要分段的时候，记录下 ``txid_current_snapshot()`` ，snapshot由三个信息组成：xmin, xmax, xip。
+  xmin是当前进行中的事务ID中最小的，也就是比xmin更小的事务都已提交或者撤销，xmax是下一个将要分配的事务ID，比xmax更大的事务还没出现，xip是当前进行中的事务ID列表。
+  那么一条记录是否发生在这个snapshot之前就很明确了， ``txid < xmin or (txid < xmax and txid not in xip)`` ，对应的函数是 ``txid_visible_in_snapshot(txid, snapshot)`` 。
+
+* pipelinedb，流式聚合
+
+  .. code-block:: sql
+    
+    create foreign table trade (time timestamp with time zone, price decimal, amount decimal) server pipelinedb;
+    create view kline_1m as select
+        date_trunc('minute', time) as time,
+        keyed_min(time, price) as open,
+        max(price) as high,
+        min(price) as low,
+        keyed_max(time, price) as close,
+        sum(amount) as volume,
+        sum(amount * price) as value,
+        count(*) as count
+    from trade group by 1;
+    create unique index kline_1m_time_idx on kline_1m(time);
+
+  然后只管疯狂对 ``trade`` 表insert， ``kline_1m`` 会自动更新聚合数据，而且 ``trade`` 不会保留数据。
+
+* timescaledb，时序数据库，按照时间戳字段全自动分表。虽然pg有了声明式分表，但还是不如全自动来的爽。再也不用担心表数据量过太多影响性能了。
+
+其他的留到下篇再介绍。
