@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="HuangYi(huang@crypto.com)">
+  <meta name="dcterms.date" content="2022-05-28">
+  <title>Blockchain And Scalability</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@4.1.2//dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@4.1.2//dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@4.1.2//dist/theme/solarized.css" id="theme">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Blockchain And Scalability</h1>
+  <p class="author">HuangYi(<a href="mailto:huang@crypto.com" class="email">huang@crypto.com</a>)</p>
+  <p class="date">May 28, 2022</p>
+</section>
+
+<section id="block-chain" class="slide level2">
+<h2>Block Chain</h2>
+<ul>
+<li>Consensus + Ledger</li>
+<li>Throughput = Block size / Block time</li>
+</ul>
+</section>
+<section>
+<section id="consensus" class="title-slide slide level1">
+<h1>Consensus</h1>
+
+</section>
+<section id="consensus-1" class="slide level2">
+<h2>Consensus</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Consensus</th>
+<th>Finality</th>
+<th>Message Complexity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Nakamoto Consensus</td>
+<td>Probabilistic</td>
+<td>Low</td>
+</tr>
+<tr class="even">
+<td>PBFT</td>
+<td>Instant</td>
+<td>High</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="nakamoto-consensus" class="slide level2">
+<h2>Nakamoto Consensus</h2>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>Scarce Resource</th>
+<th>Energy Consumption</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>PoW</td>
+<td>Objective</td>
+<td>High</td>
+</tr>
+<tr class="even">
+<td>PoS</td>
+<td>Circular Argument</td>
+<td>Low</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="nakamoto-consensus-1" class="slide level2">
+<h2>Nakamoto Consensus</h2>
+<ul>
+<li>Bootstrapping?</li>
+<li>Sybil attack?</li>
+<li>Long range attack?</li>
+<li>Self healing?</li>
+<li>Time stamping?</li>
+</ul>
+</section>
+<section id="p2p-networking" class="slide level2">
+<h2>P2P Networking</h2>
+<ul>
+<li>Efficient topology</li>
+<li>Eclipse attack</li>
+<li>Random gossiping + latency measurements.</li>
+</ul>
+</section></section>
+<section>
+<section id="ledger" class="title-slide slide level1">
+<h1>Ledger</h1>
+
+</section>
+<section id="ledger-1" class="slide level2">
+<h2>Ledger</h2>
+<ul>
+<li>Deterministic state machine</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>On-Chain State</th>
+<th>Off-chain support <br />for smart contract</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Account</td>
+<td>Complex</td>
+<td>Less</td>
+</tr>
+<tr class="even">
+<td>UTxO</td>
+<td>Simple</td>
+<td>More</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="ledger-2" class="slide level2">
+<h2>Ledger</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">def</span> apply_block(state: State, block) <span class="op">-&gt;</span> State:</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>    <span class="cf">for</span> tx <span class="kw">in</span> block:</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>        state <span class="op">=</span> apply_tx(state, tx)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>    <span class="cf">return</span> state</span></code></pre></div>
+</section>
+<section id="account-model" class="slide level2">
+<h2>Account Model</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="bu">type</span> State <span class="op">=</span> KVStore</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="kw">def</span> apply_tx(state: State, tx) <span class="op">-&gt;</span> State:</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>    code <span class="op">=</span> state.get_code(tx.to)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>    <span class="bu">eval</span>(state, code, tx)</span></code></pre></div>
+<ul>
+<li>Blockchain as a world computer</li>
+<li>Scalability of merkle trie</li>
+</ul>
+</section>
+<section id="utxo-model" class="slide level2">
+<h2>UTxO Model</h2>
+<p><img data-src="eutxo_diagram.png" /></p>
+</section>
+<section id="utxo-model-1" class="slide level2">
+<h2>UTxO Model</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="bu">type</span> State <span class="op">=</span> Set[TxIn]</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="kw">def</span> apply_tx(state: State, tx) <span class="op">-&gt;</span> State:</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>    <span class="cf">for</span> <span class="bu">input</span> <span class="kw">in</span> tx.inputs:</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>        <span class="cf">assert</span> <span class="bu">input</span>.txin <span class="kw">in</span> state</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>        <span class="cf">assert</span> verfy(<span class="bu">input</span>.txin, <span class="bu">input</span>.witness)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>    state.remove(tx.inputs)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a>    state.add(tx.outputs)</span></code></pre></div>
+<ul>
+<li>Local validation</li>
+<li>Parallelization</li>
+<li>Deterministic</li>
+<li>How to support smart contract?</li>
+</ul>
+</section>
+<section id="utxo-smart-contract" class="slide level2">
+<h2>UTxO Smart Contract</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="kw">def</span> verify(txin, witness):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>    <span class="cf">assert</span> <span class="bu">hash</span>(witness.code) <span class="op">==</span> txin.address</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>    <span class="cf">assert</span> <span class="bu">eval</span>(witness.code, context) <span class="op">==</span> <span class="va">True</span></span></code></pre></div>
+<ul>
+<li>Constraint Emitting Machines (State Machines)</li>
+</ul>
+</section>
+<section id="utxo-smart-contract---swap" class="slide level2">
+<h2>UTxO Smart Contract - Swap</h2>
+<p><img data-src="eutxo-swap.png" /></p>
+</section></section>
+<section>
+<section id="l1-scalability" class="title-slide slide level1">
+<h1>L1 Scalability</h1>
+
+</section>
+<section id="scalability" class="slide level2">
+<h2>Scalability</h2>
+<blockquote>
+<p>Throughput = Block size / Block time</p>
+</blockquote>
+<ul>
+<li>Block time = block diffusion time + consensus overhead</li>
+<li>Block diffusion time 和网络质量和区块大小相关</li>
+</ul>
+</section>
+<section id="pipelining" class="slide level2">
+<h2>Pipelining</h2>
+<ul>
+<li>Block diffusion | block execution</li>
+</ul>
+<p><img data-src="pipelining.png" /></p>
+</section>
+<section id="decompose-block-prism-protocol" class="slide level2">
+<h2>Decompose Block (prism protocol)</h2>
+<p>Decompose three tasks:</p>
+<ul>
+<li>Transaction validation and diffusion</li>
+<li>Block proposal</li>
+<li>Block voting</li>
+</ul>
+</section>
+<section id="decompose-block-prism-protocol-1" class="slide level2">
+<h2>Decompose Block (prism protocol)</h2>
+<p><img data-src="prism.png" /></p>
+</section>
+<section id="sharding" class="slide level2">
+<h2>Sharding</h2>
+<ul>
+<li>Fix state explosion in account model</li>
+</ul>
+</section></section>
+<section>
+<section id="l23-scalability" class="title-slide slide level1">
+<h1>L2/3 Scalability</h1>
+
+</section>
+<section id="payment-channel" class="slide level2">
+<h2>Payment Channel</h2>
+<ul>
+<li>Multisig transaction</li>
+<li>Hash Time-lock Contract</li>
+</ul>
+<p><img src="payment-channel.png" style="zoom: 67%;" /></p>
+</section>
+<section id="payment-channel---lightning-network" class="slide level2">
+<h2>Payment Channel - Lightning Network</h2>
+<p><img src="lightning-network.png" alt="lightning-network" style="zoom: 50%;" /></p>
+</section>
+<section id="state-channel" class="slide level2">
+<h2>State Channel</h2>
+<ul>
+<li><em>[on chain]</em> Open a channel</li>
+<li><em>[off chain]</em> Execute transactions and checkpoints</li>
+<li><em>[on chain]</em> Commit successfully or resolve dispute on-chain</li>
+<li>Example: Poker Game</li>
+<li>Fixed number of online participants</li>
+</ul>
+</section>
+<section id="state-channel---hydra" class="slide level2">
+<h2>State Channel - Hydra</h2>
+<p><img src="hydra.png" alt="hydra" style="zoom: 67%;" /></p>
+</section>
+<section id="state-channel-1" class="slide level2">
+<h2>State Channel</h2>
+<ul>
+<li>Cross channel communication</li>
+<li>Tail protocol</li>
+</ul>
+</section>
+<section id="side-chain-cosmos" class="slide level2">
+<h2>Side Chain [cosmos]</h2>
+<ul>
+<li>Inter-blockchain-Communication</li>
+<li>Inter-blockchain-Security</li>
+</ul>
+</section>
+<section id="client-side-validation-rgb-protocol" class="slide level2">
+<h2>Client Side Validation (RGB protocol)</h2>
+<figure>
+<img data-src="client-side-validation.jpg" alt="client-side-validation" /><figcaption aria-hidden="true">client-side-validation</figcaption>
+</figure>
+</section>
+<section id="client-side-validation-rgb-protocol-1" class="slide level2">
+<h2>Client Side Validation (RGB protocol)</h2>
+<ul>
+<li>Only use L1 as verifiable publication medium.</li>
+<li>Works on both bitcoin L1 and lightning network.</li>
+</ul>
+</section>
+<section id="rollups" class="slide level2">
+<h2>Rollups</h2>
+<ul>
+<li>Optimistic Rollups</li>
+<li>ZK Rollups</li>
+</ul>
+</section></section>
+<section id="q-a" class="title-slide slide level1">
+<h1>Q &amp; A</h1>
+
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@4.1.2//dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="https://unpkg.com/reveal.js@4.1.2//plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@4.1.2//plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@4.1.2//plugin/zoom/zoom.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>
